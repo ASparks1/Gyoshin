@@ -1,4 +1,5 @@
 # Gyoshin
+https://www.code-inspector.com/project/29407/status/svg
 A Discord bot to help plan dungeon & raid runs for mmorpgs like FFXIV
 
 Currently supports:
