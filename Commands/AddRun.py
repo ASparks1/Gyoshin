@@ -28,7 +28,7 @@ async def AddRunInDM(message, bot):
     UserID = message.author.id
     CreatorDisplay = await UserHelper.GetDisplayName(message, UserID, bot)
     ChannelID = message.channel.id
-  except ValueError:
+  except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
@@ -70,13 +70,13 @@ async def AddRunInDM(message, bot):
       if not sqldatetime:
         await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
         continue
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
       continue
 
     try:
       DateTime = response.content
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong saving the date & time")
       return
 
@@ -129,7 +129,7 @@ async def AddRunInDM(message, bot):
         if not row:
           await DMHelper.DMUserByID(bot, UserID, f"I could not find the template {Template} on this server, please ensure name is correct.")
           continue
-      except ValueError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking for template, please try again.")
         conn.close()
         continue
@@ -139,7 +139,7 @@ async def AddRunInDM(message, bot):
         NrOfTanks = row[1]
         NrOfDps = row[2]
         NrOfHealers = row[3]
-      except IndexError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the player and/or role numbers from the template, please try again.")
         conn.close()
         continue
@@ -162,7 +162,7 @@ async def AddRunInDM(message, bot):
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
           try:
             NrOfPlayers = int(response.content)
-          except TypeError:
+          except:
             await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
             continue
         except asyncio.TimeoutError:
@@ -184,7 +184,7 @@ async def AddRunInDM(message, bot):
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
           try:
             NrOfTanks = int(response.content)
-          except TypeError:
+          except:
             await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
             continue
         except asyncio.TimeoutError:
@@ -201,7 +201,7 @@ async def AddRunInDM(message, bot):
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
           try:
             NrOfHealers = int(response.content)
-          except TypeError:
+          except:
             await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
             continue
         except asyncio.TimeoutError:
@@ -219,7 +219,7 @@ async def AddRunInDM(message, bot):
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
           try:
             NrOfDps = int(response.content)
-          except TypeError:
+          except:
             await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
             continue
         except asyncio.TimeoutError:
@@ -249,7 +249,7 @@ async def AddRunInDM(message, bot):
     # Role verification
     try:
       RoleID = await RoleHelper.GetRoleID(response.content)
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles in the servers Gyoshin channel to have available roles sent to this DM.")
       continue
 
@@ -279,7 +279,7 @@ async def AddRunInDM(message, bot):
           RoleName = response.content
       else:
         pass
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking the role and number of slots available.")
       conn.close()
       return
@@ -312,7 +312,7 @@ async def AddRunInDM(message, bot):
     c.execute("SELECT Name FROM Raids WHERE Origin = (?) and Name = (?) and Date = (?)", (Origin, Name, sqldatetime))
 
     row = c.fetchone()
-  except ValueError:
+  except:
     conn.close()
     return
 
@@ -324,7 +324,7 @@ async def AddRunInDM(message, bot):
   # 2.4 Create query to insert raid into database
   try:
     c.execute("INSERT INTO Raids (Name, Origin, Date, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status, ChannelID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Name, Origin, sqldatetime, UserID, NrOfPlayers, 1, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID))
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to create the run.")
     conn.close()
     return
@@ -335,7 +335,7 @@ async def AddRunInDM(message, bot):
   #Create joining data for raid members with join on Raid ID
   try:
     c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to add you as a member to this run.")
     conn.close()
     return
@@ -345,7 +345,7 @@ async def AddRunInDM(message, bot):
     TankIcon = await RoleIconHelper.GetTankIcon()
     DpsIcon = await RoleIconHelper.GetDpsIcon()
     HealerIcon = await RoleIconHelper.GetHealerIcon()
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     conn.close()
     return
@@ -355,7 +355,7 @@ async def AddRunInDM(message, bot):
     conn.commit()
     message = await message.channel.send(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}",components=[[Button(style=ButtonStyle.blue, label="Tank", custom_id="tank_btn"),Button(style=ButtonStyle.red, label="DPS", custom_id="dps_btn"),Button(style=ButtonStyle.green, label="Healer", custom_id="healer_btn"),Button(style=ButtonStyle.grey, label="Rally", custom_id="rally_btn")],[Button(style=ButtonStyle.grey, label="Members", custom_id="members_btn"),Button(style=ButtonStyle.grey, label="Reserves", custom_id="reserves_btn")],[Button(style=ButtonStyle.grey, label="Edit description", custom_id="editdesc_btn"),Button(style=ButtonStyle.grey, label="Reschedule", custom_id="reschedule_btn"),Button(style=ButtonStyle.red, label="Cancel", custom_id="cancel_btn")]])
     conn.close()
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong creating the run")
     conn.close()
     return

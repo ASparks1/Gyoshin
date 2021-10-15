@@ -11,7 +11,7 @@ from Helpers import MessageHelper
 async def ChangeRole(message, bot, RoleName, UserID):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining run information")
     return
 
@@ -35,7 +35,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
     OldRoleName = await RoleHelper.GetRoleName(OldRoleID)
     NewRoleID = await RoleHelper.GetRoleID(RoleName)
     DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, f"Run {RaidID} or role {RoleName} not found")
     conn.close()
     return
@@ -68,7 +68,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
         conn.commit()
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-      except ValueError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
@@ -82,12 +82,12 @@ async def ChangeRole(message, bot, RoleName, UserID):
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
           conn.close()
           return
-      except ValueError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
 
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
       conn.close()
       return

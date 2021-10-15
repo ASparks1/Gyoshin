@@ -16,7 +16,7 @@ async def NotifyRaidMembers(message, raidmembers):
       elif Message:
         Message = f"{Message} {Notification}"
     return Message
-  except ValueError:
+  except:
     await DMHelper.DMUser(message, "Something went wrong tagging one of the users.")
     return
 
@@ -25,6 +25,6 @@ async def NotifyUser(message, userid):
   try:
     Message = f"<@!{userid}>"
     return Message
-  except ValueError:
+  except:
     await DMHelper.DMUser(message, "Something went wrong tagging the user.")
     return

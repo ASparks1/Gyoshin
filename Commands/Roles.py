@@ -17,7 +17,7 @@ async def ListRoles(message):
   # Execute query
   try:
     c.execute("SELECT Name FROM Roles ORDER BY Name ASC")
-  except ValueError:
+  except:
     await DMHelper.DMUser(message, "Something went wrong trying to retrieve roles")
     conn.close()
     return
@@ -45,7 +45,7 @@ async def ListRoles(message):
         Message = f"The following roles are available:\n{RolesMessage}"
       elif Message:
         Message = f"{Message}\n{RolesMessage}"
-    except IndexError:
+    except:
       await DMHelper.DMUser(message, "Unable to assign variables")
       conn.close()
       return

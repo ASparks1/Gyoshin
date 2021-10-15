@@ -19,14 +19,14 @@ async def GetTemplates(message):
     TankIcon = await RoleIconHelper.GetTankIcon()
     DpsIcon = await RoleIconHelper.GetDpsIcon()
     HealerIcon = await RoleIconHelper.GetHealerIcon()
-  except ValueError:
+  except:
     await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
     return
 
   # Execute query
   try:
     c.execute("SELECT Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Origin = (?)", (Origin,))
-  except ValueError:
+  except:
     await DMHelper.DMUser(message, "Something went wrong trying to retrieve templates")
     conn.close()
     return
@@ -51,7 +51,7 @@ async def GetTemplates(message):
       NrOfTanks = row[2]
       NrOfDps = row[3]
       NrOfHealers = row[4]
-    except IndexError:
+    except:
       await DMHelper.DMUser(message, "Unable to convert variables")
       conn.close()
       return

@@ -13,7 +13,7 @@ async def AddTemplate(message, bot):
     GuildName = await OriginHelper.GetName(message)
     Creator = await UserHelper.GetUserID(message)
     CreatorDisplay = await UserHelper.GetDisplayName(message, Creator, bot)
-  except ValueError:
+  except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
@@ -43,7 +43,7 @@ async def AddTemplate(message, bot):
         await DMHelper.DMUserByID(bot, UserID, f"There already exists a template with the name {TemplateName} on the {GuildName} server")
         conn.close()
         return
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if a template with the same name already exists on this server")
       conn.close()
       return
@@ -57,7 +57,7 @@ async def AddTemplate(message, bot):
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfPlayers = int(response.content)
-      except TypeError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
@@ -74,7 +74,7 @@ async def AddTemplate(message, bot):
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfTanks = int(response.content)
-      except TypeError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
@@ -91,7 +91,7 @@ async def AddTemplate(message, bot):
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfDps = int(response.content)
-      except TypeError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
@@ -108,7 +108,7 @@ async def AddTemplate(message, bot):
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfHealers = int(response.content)
-      except TypeError:
+      except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
@@ -131,7 +131,7 @@ async def AddTemplate(message, bot):
             await DMHelper.DMUserByID(bot, UserID, "Template added succesfully.")
             conn.close()
             return
-          except ValueError:
+          except:
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding the template.")
             conn.close()
             return

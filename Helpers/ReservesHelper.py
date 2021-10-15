@@ -12,7 +12,7 @@ async def JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDa
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a reserve {RoleName}!")
     return
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding you to the reserves")
     conn.close()
     return
@@ -27,7 +27,7 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has withdrawn from the reserves for the party {Description} on {LocalDate}!")
     return
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong removing you from the reserves")
     conn.close()
     return

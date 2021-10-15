@@ -8,7 +8,7 @@ from Helpers import DateTimeFormatHelper
 async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the run information.")
     return
 
@@ -16,7 +16,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
     TankIcon = await RoleIconHelper.GetTankIcon()
     DpsIcon = await RoleIconHelper.GetDpsIcon()
     HealerIcon = await RoleIconHelper.GetHealerIcon()
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
 
@@ -44,7 +44,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
 
         try:
           OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
-        except ValueError:
+        except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
           conn.close()
           return
@@ -53,7 +53,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
           # Generate message
           UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
         return UpdatedMessage
-    except ValueError:
+    except:
       await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to retrieve run {RaidID}")
       conn.close()
       return UpdatedMessage

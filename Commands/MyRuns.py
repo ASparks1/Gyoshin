@@ -25,7 +25,7 @@ async def ListMyRuns(message, bot):
     TankIcon = await RoleIconHelper.GetTankIcon()
     DpsIcon = await RoleIconHelper.GetDpsIcon()
     HealerIcon = await RoleIconHelper.GetHealerIcon()
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
 
@@ -36,7 +36,7 @@ async def ListMyRuns(message, bot):
   # Get current date
   try:
     current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-  except TypeError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the current date and time")
     conn.close()
     return
@@ -44,7 +44,7 @@ async def ListMyRuns(message, bot):
   # Execute query
   try:
     c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidMembers WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
-  except ValueError:
+  except:
     await DMHelper.DMUserByID(bot, UserID, "Run not found")
     conn.close()
     return
@@ -83,17 +83,17 @@ async def ListMyRuns(message, bot):
           guild = bot.get_guild(Origin)
           # Get member object by discord user id
           member_obj = await guild.fetch_member(OrganizerUserID)
-        except ValueError:
+        except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving this users display name, perhaps they have left the server")
 
         try:
           if member_obj:
             OrganizerName = member_obj.display_name
-        except ValueError:
+        except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
           conn.close()
           return
-      except IndexError:
+      except:
         await DMHelper.DMUser(message, "Unable to convert variables")
         conn.close()
         return
