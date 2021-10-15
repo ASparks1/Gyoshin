@@ -9,7 +9,7 @@ Currently supports:
 * Editing the run name
 * Use of templates
 * Joining runs
-* Withdrawing from runs*
+* Withdrawing from runs
 * Changing role for a run you signed up to
 * Signing up as a reserve for a run
 * Withdrawing as a reserve
