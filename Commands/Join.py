@@ -185,9 +185,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
-              else:
-                await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-                continue
+              
+			  await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+              continue
             except asyncio.TimeoutError:
               conn.close()
               await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
@@ -207,9 +207,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
               TankReserveResponse = "no"
               conn.close()
               return
-            else:
-              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-              continue
+            
+			await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+            continue
           except asyncio.TimeoutError:
             conn.close()
             await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
@@ -263,22 +263,21 @@ async def JoinRaid(message, bot, RoleName, UserID):
               DPSReserveResponse = "no"
               conn.close()
               return
-            else:
-              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-              continue
+            
+			await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+            continue
           except asyncio.TimeoutError:
             conn.close()
             await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
             return
         conn.close()
         return
-      else:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
-          conn.close()
-          return
+      try:
+        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+      except:
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
+        conn.close()
+        return
     elif RoleName == 'healer':
       if NrOfHealersSignedUp == NrOfHealersRequired:
         # Check if user is already signed up as a reserve
@@ -299,9 +298,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
-              else:
-                await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-                continue
+              
+			  await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+              continue
             except asyncio.TimeoutError:
               conn.close()
               await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
@@ -321,9 +320,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
               HealerReserveResponse = "no"
               conn.close()
               return
-            else:
-              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-              continue
+            
+			await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+            continue
           except asyncio.TimeoutError:
             conn.close()
             await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
