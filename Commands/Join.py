@@ -185,8 +185,8 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
-              
-			  await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+
+              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
               continue
             except asyncio.TimeoutError:
               conn.close()
