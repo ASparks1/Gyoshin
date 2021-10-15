@@ -110,7 +110,7 @@ async def AddRunInDM(message, bot):
   # Code for obtaining template information from database if user is using a template
   if UsingTemplate == 'yes':
     template_completion = False
-    while template_completion == False:
+    while not template_completion:
       try:
         await DMHelper.DMUserByID(bot, UserID, "Which template would you like to use from the list above? Please respond with the name of the template.")
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -149,14 +149,14 @@ async def AddRunInDM(message, bot):
   # Code for if user is not using a template
   else:
     variable_completion = False
-    while variable_completion == False:
+    while not variable_completion:
       PlayerLoop = False
       TankLoop = False
       HealerLoop = False
       DpsLoop = False
 
       # Obtaining and checking NrOfPlayers
-      while PlayerLoop == False:
+      while not PlayerLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of players for your crew? Please enter a number greater than 0.")
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -178,7 +178,7 @@ async def AddRunInDM(message, bot):
         PlayerLoop = True
 
       # Obtaining and checking number of tanks
-      while TankLoop == False:
+      while not TankLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of tanks for your crew? Please enter a number equal or greater than 0.")
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -195,7 +195,7 @@ async def AddRunInDM(message, bot):
         TankLoop = True
 
       # Obtaining and checking number of healers
-      while HealerLoop == False:
+      while not HealerLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of healers for your crew? Please enter a number equal or greater than 0.")
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -213,7 +213,7 @@ async def AddRunInDM(message, bot):
         HealerLoop = True
 
       # Obtaining and checking number of dps
-      while DpsLoop == False:
+      while not DpsLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of dps for your crew? Please enter a number equal or greater than 0.")
           response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -291,7 +291,7 @@ async def AddRunInDM(message, bot):
     Status = "Forming"
 
   final_confirmation = False
-  while final_confirmation == False:
+  while not final_confirmation:
     try:
       await DMHelper.DMUserByID(bot, UserID, f"Please confirm that you wish to create a crew with the following details (Y/N): \n**Description**: {Name}\n**Date:** {DateTime}\n**Number of Tanks:** {NrOfTanks}\n**Number of Healers:** {NrOfHealers}\n**Number of DPS:** {NrOfDps}")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)

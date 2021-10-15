@@ -38,7 +38,7 @@ async def LocalToSqlite(message, datetime):
     isdatevalid = await DateTimeValidationHelper.ValidateDateTime(message, day, month, year, hour, minute)
 
     # If date is valid return date in sqlite format
-    if isdatevalid == True:
+    if isdatevalid:
       return sqlitedatetime
 
 # Helper function to convert sqlite date to local format
@@ -73,7 +73,7 @@ async def SqliteToLocal(message, datetime):
     isdatevalid = await DateTimeValidationHelper.ValidateDateTime(message, day, month, year, hour, minute)
 
     # Return local time if date is valid
-    if isdatevalid == True:
+    if isdatevalid:
       localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
       return localdatetime
     else:
