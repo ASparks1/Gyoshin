@@ -12,8 +12,8 @@ async def OnButtonClick(interaction, bot):
 
   if interaction.custom_id == "tank_btn":
     try:
-    await interaction.respond(type=6)
-    await Join.JoinRaid(interaction.message, bot, "tank", UserID)
+      await interaction.respond(type=6)
+      await Join.JoinRaid(interaction.message, bot, "tank", UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return 
