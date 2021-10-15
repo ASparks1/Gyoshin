@@ -417,7 +417,7 @@ async def OnAddRallyReaction(message, bot, UserID):
     conn.close()
     return
 
-  if TimeDifference > timedelta(0) and TimeDifference < timedelta(hours = 2):
+  if TimeDifference > timedelta(0) and TimeDifference < timedelta(hours=2):
     #Complete Notifications
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
@@ -535,15 +535,6 @@ async def OnMemberReaction(message, bot, UserID):
 
 async def OnReservesReaction(message, bot, UserID):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
-  # Get role icons
-  try:
-    TankIcon = await RoleIconHelper.GetTankIcon()
-    DpsIcon = await RoleIconHelper.GetDpsIcon()
-    HealerIcon = await RoleIconHelper.GetHealerIcon()
-  except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
-    return
 
   if RaidID:
     # Open connection to DB
