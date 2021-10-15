@@ -11,7 +11,6 @@ async def DeleteTemplate(message, bot):
     Origin = await OriginHelper.GetOrigin(message)
     UserID = message.author.id
     GuildName = await OriginHelper.GetName(message)
-    Creator = await UserHelper.GetUserID(message)
   except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return

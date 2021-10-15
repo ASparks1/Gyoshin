@@ -50,7 +50,7 @@ async def on_member_remove(member):
 # Bot commands
 @bot.command(name='templates', aliases=['Templates'])
 async def templates(ctx):
-  await Templates.GetTemplates(ctx.message, bot)
+  await Templates.GetTemplates(ctx.message)
 
 @bot.command(name='runs', aliases=['Runs'])
 async def runs(ctx):

@@ -89,9 +89,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       conn.close()
       return
 
-    # Get users
     try:
-      user = await bot.fetch_user(int(UserID))
       GuildName = await OriginHelper.GetName(message)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
@@ -472,15 +470,6 @@ async def OnAddRallyReaction(message, bot, UserID):
 
 async def OnMemberReaction(message, bot, UserID):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
-  # Get role icons
-  try:
-    TankIcon = await RoleIconHelper.GetTankIcon()
-    DpsIcon = await RoleIconHelper.GetDpsIcon()
-    HealerIcon = await RoleIconHelper.GetHealerIcon()
-  except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
-    return
 
   if RaidID:
     # Open connection to DB

@@ -23,21 +23,15 @@ async def ChangeRole(message, bot, RoleName, UserID):
 
   # Check if the run exists and if the user is a member
   try:
-    c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
+    c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
 
     row = c.fetchone()
 
     OldRoleID = row[0]
     RaidMemberID = row[1]
     RaidID = row[2]
-    NrOfTanksRequired = row[3]
-    NrOfTanksSignedUp = row[4]
-    NrOfDpsRequired = row[5]
-    NrOfDpsSignedUp = row[6]
-    NrOfHealersRequired = row[7]
-    NrOfHealersSignedUp = row[8]
-    RaidName = row[9]
-    Date = row[10]
+    RaidName = row[3]
+    Date = row[4]
     SplitDate = Date.split(' ')
     Date = SplitDate[0]
     Time = SplitDate[1]

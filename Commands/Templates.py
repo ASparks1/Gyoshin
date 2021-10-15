@@ -3,7 +3,7 @@ from Helpers import OriginHelper
 from Helpers import RoleIconHelper
 from Helpers import DMHelper
 
-async def GetTemplates(message, bot):
+async def GetTemplates(message):
   # Get server ID
   Origin = await OriginHelper.GetOrigin(message)
 
