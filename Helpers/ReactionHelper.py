@@ -417,7 +417,7 @@ async def OnAddRallyReaction(message, bot, UserID):
     conn.close()
     return
 
-  if TimeDifference > timedelta(0) and TimeDifference < timedelta(hours=2):
+  if TimeDifference > timedelta(0) < timedelta(hours=2):
     #Complete Notifications
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
