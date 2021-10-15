@@ -62,7 +62,7 @@ async def ListRunsOnDate(message, bot):
       DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
       HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
     except:
-      await DMHelper.DMUser(message,f"Something went wrong retrieving role icons")
+      await DMHelper.DMUser(message,"Something went wrong retrieving role icons")
       conn.close()
       return
 
@@ -71,7 +71,7 @@ async def ListRunsOnDate(message, bot):
       ChannelID = message.channel.id
       c.execute(f"SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE Date like (?) AND Origin = (?) AND Status != 'Cancelled' AND ChannelID = {ChannelID} ORDER BY Date ASC, ID ASC", (sqlitedate+'%', Origin,))
     except:
-      await DMHelper.DMUser(message, f"Run not found")
+      await DMHelper.DMUser(message, "Run not found")
       conn.close()
       return
   
@@ -115,12 +115,12 @@ async def ListRunsOnDate(message, bot):
           try:
             OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
           except:
-            await DMHelper.DMUser(message, f"Something went wrong getting the display name of the organizer, perhaps they have left the server")
+            await DMHelper.DMUser(message, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
             conn.close()
             return
             
         except:
-          await DMHelper.DMUser(message, f"Unable to convert variables")
+          await DMHelper.DMUser(message, "Unable to convert variables")
           conn.close()
           return
         
@@ -133,7 +133,7 @@ async def ListRunsOnDate(message, bot):
        return
 
   else:
-    await DMHelper.DMUser(message, f"Invalid date and time detected please use the dd-mm-yyyy format")
+    await DMHelper.DMUser(message, "Invalid date and time detected please use the dd-mm-yyyy format")
     conn.close()
     return
   

@@ -20,14 +20,14 @@ async def GetTemplates(message, bot):
     DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
     HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
   except:
-    await DMHelper.DMUser(message, f"Something went wrong retrieving role icons")
+    await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
     return
   
   # Execute query
   try:
-    c.execute(f"SELECT Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Origin = (?)", (Origin,))
+    c.execute("SELECT Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Origin = (?)", (Origin,))
   except:
-    await DMHelper.DMUser(message, f"Something went wrong trying to retrieve templates")
+    await DMHelper.DMUser(message, "Something went wrong trying to retrieve templates")
     conn.close()
     return
 
@@ -35,7 +35,7 @@ async def GetTemplates(message, bot):
   rows = c.fetchall()    
 
   if not rows:
-    await DMHelper.DMUser(message, f"No templates found")
+    await DMHelper.DMUser(message, "No templates found")
     conn.close()
     return
   
@@ -52,12 +52,12 @@ async def GetTemplates(message, bot):
       NrOfDps = row[3]
       NrOfHealers = row[4]
     except:
-      await DMHelper.DMUser(message, f"Unable to convert variables")
+      await DMHelper.DMUser(message, "Unable to convert variables")
       conn.close()
       return
   
     if not Message:
-        Message = f"The following templates are available on this server:\n"
+        Message = "The following templates are available on this server:\n"
         TemplateMessage = f"Name: {Name}\nNumber of players: {NrOfPlayers}\n{TankIcon} {NrOfTanks} {DpsIcon} {NrOfDps} {HealerIcon} {NrOfHealers}"
         Message = f"{Message}{TemplateMessage}\n"
     elif Message:

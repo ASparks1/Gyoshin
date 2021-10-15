@@ -6,7 +6,7 @@ async def GetRoleName(RoleID):
   c = conn.cursor()
 
   try:
-    c.execute(f"SELECT Name FROM Roles WHERE ID = (?)", (RoleID,))
+    c.execute("SELECT Name FROM Roles WHERE ID = (?)", (RoleID,))
     RoleName = c.fetchone()[0]
   except:
     conn.close()
@@ -19,7 +19,7 @@ async def GetRoleID(RoleName):
   c = conn.cursor()
 
   try:
-    c.execute(f"SELECT ID FROM Roles WHERE Name = (?)", (RoleName,))
+    c.execute("SELECT ID FROM Roles WHERE Name = (?)", (RoleName,))
     RoleID = c.fetchone()[0]
   except: 
     conn.close()

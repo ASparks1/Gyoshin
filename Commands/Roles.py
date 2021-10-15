@@ -16,9 +16,9 @@ async def ListRoles(message):
     
   # Execute query
   try:
-    c.execute(f"SELECT Name FROM Roles ORDER BY Name ASC")
+    c.execute("SELECT Name FROM Roles ORDER BY Name ASC")
   except:
-    await DMHelper.DMUser(message, f"Something went wrong trying to retrieve roles")
+    await DMHelper.DMUser(message, "Something went wrong trying to retrieve roles")
     conn.close()
     return
 
@@ -26,7 +26,7 @@ async def ListRoles(message):
   rows = c.fetchall()
 
   if not rows:
-    await DMHelper.DMUser(message, f"No roles found")
+    await DMHelper.DMUser(message, "No roles found")
     conn.close()
     return
   
@@ -46,7 +46,7 @@ async def ListRoles(message):
       elif Message:
         Message = f"{Message}\n{RolesMessage}"
     except:
-      await DMHelper.DMUser(message, f"Unable to assign variables")
+      await DMHelper.DMUser(message, "Unable to assign variables")
       conn.close()
       return
   await DMHelper.DMUser(message, f"{Message}")

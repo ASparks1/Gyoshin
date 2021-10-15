@@ -14,7 +14,7 @@ async def DismissMember(message, client):
     RaidID = commands[1]
     UserID = message.mentions[0].id
   except ValueError:
-    await DMHelper.DMUser(message, f"Something went wrong processing the run number or user to dismiss")
+    await DMHelper.DMUser(message, "Something went wrong processing the run number or user to dismiss")
     return
 
   # Get display name of user on the server
@@ -24,7 +24,7 @@ async def DismissMember(message, client):
   Origin = await OriginHelper.GetOrigin(message)
 
   if not Origin:
-    await DMHelper.DMUser(message, f"An error occurred trying to resolve the server ID")
+    await DMHelper.DMUser(message, "An error occurred trying to resolve the server ID")
     # Delete message that contains command
     await message.delete()
     return
@@ -34,13 +34,13 @@ async def DismissMember(message, client):
   CreatorDisplayName = await UserHelper.GetDisplayName(message, Creator, client)
 
   if not Creator:
-    await DMHelper.DMUser(message, f"Something went wrong retrieving the user ID")
+    await DMHelper.DMUser(message, "Something went wrong retrieving the user ID")
     # Delete message that contains command
     await message.delete()
     return
 
   if UserID == Creator:
-        await DMHelper.DMUser(message, f"You cannot dismiss yourself as the organizer of this run")
+        await DMHelper.DMUser(message, "You cannot dismiss yourself as the organizer of this run")
         conn.close()
         # Delete message that contains command
         await message.delete()
@@ -54,7 +54,7 @@ async def DismissMember(message, client):
   
   # Search if raid exists and check if the user who entered the command is the organizer
   try:
-    c.execute(f"SELECT ID, Name, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+    c.execute("SELECT ID, Name, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
     row = c.fetchone()
     RaidID = row[0]
     RaidName = row[1]
@@ -68,21 +68,21 @@ async def DismissMember(message, client):
   if RaidID:
     # Check if the user is part of this run
     try:
-      c.execute(f"SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID = (?)", (RaidID, Origin, UserID,))
+      c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID = (?)", (RaidID, Origin, UserID,))
       row = c.fetchone()
       RaidMemberID = row[0]
       RoleID = row[1]
       RoleName = await RoleHelper.GetRoleName(RoleID)
     except:
-      await DMHelper.DMUser(message, f"Something went wrong checking if the provided member is part of this run")
+      await DMHelper.DMUser(message, "Something went wrong checking if the provided member is part of this run")
       conn.close()
       return
 
   if RaidMemberID:
     try:        
-      c.execute(f"DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
+      c.execute("DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
     except:
-      await DMHelper.DMUser(message, f"Something went wrong removing this member from the run")
+      await DMHelper.DMUser(message, "Something went wrong removing this member from the run")
       conn.close()
       return
 

@@ -21,7 +21,7 @@ async def DeleteOldRaidData():
     
   # Store query results
   try:
-    c.execute(f"SELECT ID FROM Raids WHERE Date <= (?)", (yesterday,))
+    c.execute("SELECT ID FROM Raids WHERE Date <= (?)", (yesterday,))
   except:
     print("Something went wrong checking for old raids")
     return
@@ -33,7 +33,7 @@ async def DeleteOldRaidData():
     for row in rows:
       try:
         ID = row[0]
-        c.execute(f"DELETE FROM RaidReserves WHERE RaidID = (?)", (ID,))
+        c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (ID,))
         print(f"Cleaning up raidreserves data for run {ID}")
         conn.commit()
       except:
@@ -42,7 +42,7 @@ async def DeleteOldRaidData():
         return
       try:
         ID = row[0]
-        c.execute(f"DELETE FROM RaidMembers WHERE RaidID = (?)", (ID,))
+        c.execute("DELETE FROM RaidMembers WHERE RaidID = (?)", (ID,))
         print(f"Cleaning up raidmember data for run {ID}")
         conn.commit()
       except:
@@ -50,7 +50,7 @@ async def DeleteOldRaidData():
         conn.close()
         return
       try:
-        c.execute(f"DELETE FROM Raids WHERE ID = (?)", (ID,))
+        c.execute("DELETE FROM Raids WHERE ID = (?)", (ID,))
         print(f"Cleaning up raid data for run {ID}")
         conn.commit()
       except:

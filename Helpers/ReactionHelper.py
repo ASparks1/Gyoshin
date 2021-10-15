@@ -34,7 +34,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
       conn.close()
       return
-    c.execute(f"SELECT OrganizerUserID, Name, Date FROM Raids WHERE ID = (?)",(RaidID,))
+    c.execute("SELECT OrganizerUserID, Name, Date FROM Raids WHERE ID = (?)",(RaidID,))
     row = c.fetchone()
     Creator = row[0]
     RaidName = row[1]
@@ -67,26 +67,26 @@ async def OnAddCancelReaction(message, bot, UserID):
       
       # Check that the user attempting to cancel the party is the party leader
       if UserID != Creator:
-        await DMHelper.DMUserByID(bot, UserID, f"Only the organizer of this run is allowed to cancel the run")
+        await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to cancel the run")
         conn.close()
         return
       
       # See if there are other members other than the leader, and send notifications to all
     try:
-      c.execute(f"SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, Creator))
+      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, Creator))
       UserIDs = c.fetchall()
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving raid members")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
       conn.close()
       return
 
     try:
       if UserIDs:
-        c.execute(f"SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator))
+        c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator))
         RaidMembers = c.fetchall()
         CancelNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
     except:
-      await DMHelper.DMUser(message, f"Something went wrong retrieving raid members")
+      await DMHelper.DMUser(message, "Something went wrong retrieving raid members")
       conn.close()
       return
   
@@ -96,7 +96,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       GuildName = await OriginHelper.GetName(message)
       username = user.display_name
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining your nickname.")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
       conn.close()
       return
 
@@ -112,22 +112,22 @@ async def OnAddCancelReaction(message, bot, UserID):
         elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
           CancelRun = "no"
         else:
-          await DMHelper.DMUserByID(bot, UserID, f"Invalid answer detected, please respond with Y/N")
+          await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with Y/N")
           continue
       except asyncio.TimeoutError:
-        await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
+        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
         conn.close()
         return
     
     if CancelRun == "yes":
-      c.execute(f"DELETE FROM RaidReserves WHERE RaidID = (?)",(RaidID,))
-      c.execute(f"DELETE FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
-      c.execute(f"DELETE FROM Raids WHERE ID = (?)", (RaidID,))
+      c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)",(RaidID,))
+      c.execute("DELETE FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
+      c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
     
       try:
         OrganizerDisplayName = await UserHelper.GetDisplayName(message, Creator, bot)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong resolving the organizers' display name")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the organizers' display name")
         conn.close()
         return
   
@@ -142,20 +142,20 @@ async def OnAddCancelReaction(message, bot, UserID):
         conn.close()
         return
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong cancelling the run")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong cancelling the run")
         conn.close()
         return
     elif CancelRun == "no":
         conn.close()
         return
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong checking if this run still exists perhaps this run has been cancelled.")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if this run still exists perhaps this run has been cancelled.")
     conn.close()
     return
   
     if not Origin or not UserID:
       
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong resolving the server or user IDs.")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the server or user IDs.")
       return
 
 async def OnAddRescheduleReaction(message, bot, UserID, Origin):
@@ -173,7 +173,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
     user = await bot.fetch_user(int(UserID))
     username = user.display_name
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining your nickname.")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
     conn.close()
     return
     
@@ -188,7 +188,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
   # If run exists
   if RaidID:
     try:
-      c.execute(f"SELECT Name, Date, OrganizerUserID FROM Raids WHERE ID = (?) AND NOT Status = 'Cancelled'", (RaidID,))
+      c.execute("SELECT Name, Date, OrganizerUserID FROM Raids WHERE ID = (?) AND NOT Status = 'Cancelled'", (RaidID,))
       row = c.fetchone()
         
       RaidName = row[0]
@@ -197,12 +197,12 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
       LocalOldDate = await DateTimeFormatHelper.SqliteToLocal(message, OldDate)
       
       if OrganizerUserID != UserID:
-        await DMHelper.DMUserByID(bot, UserID, f"Only the organizer of this run is allowed to reschedule this run.")
+        await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to reschedule this run.")
         conn.close()
         return 
       
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining information for this run")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run")
       conn.close()
       return 
       
@@ -212,7 +212,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
       CreatorID = await UserHelper.GetUserID(message)
       DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining the server information")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the server information")
       conn.close()
       return
         
@@ -227,7 +227,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
         try:
           response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
         except asyncio.TimeoutError:
-          await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
+          await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
           conn.close()
           return None
 
@@ -236,7 +236,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
         match = pattern.match(response.content)
 
         if not match:
-          await DMHelper.DMUserByID(bot, UserID, f"Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
+          await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
           continue 
 
         # Send datetime to function to format for SQL
@@ -244,12 +244,12 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
           NewDate = response.content
           sqlitenewdate = await DateTimeFormatHelper.LocalToSqlite(message, NewDate)
         except:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong formatting the new date and time")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong formatting the new date and time")
           conn.close()
           return
           
         if not sqlitenewdate or not NewDate:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong checking if date values are filled, please beware that you cannot reschedule to a date in the past.")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if date values are filled, please beware that you cannot reschedule to a date in the past.")
           continue
         
         if sqlitenewdate >= current_date:
@@ -264,54 +264,54 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
               elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
                 RescheduleRun = "no"
               else:
-                await DMHelper.DMUserByID(bot, UserID, f"Please enter a valid response of yes or no.")
+                await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of yes or no.")
                 continue
             except asyncio.TimeoutError:
-              await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
+              await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
               conn.close()
               return
         
           if RescheduleRun == "yes":
             # Check if there are members signed up besides the organizer
             try:
-              c.execute(f"SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, UserID,))
+              c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, UserID,))
               UserIDs = c.fetchall()
             except:
-              await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving raid members")
+              await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
               conn.close()
               return
 
             try:
               if UserIDs:
-                c.execute(f"SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
+                c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
                 RaidMembers = c.fetchall()
                 
                 if RaidMembers:
                   RescheduleNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
             except:
-              await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving raidmembers")
+              await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers")
               conn.close()
               return
 
             # Delete all raidmembers that are not the creator of the raid and reserves
             try:
-              c.execute(f"DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
-              c.execute(f"DELETE FROM RaidReserves WHERE RaidID = (?) AND Origin = (?)",(RaidID, Origin))
+              c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
+              c.execute("DELETE FROM RaidReserves WHERE RaidID = (?) AND Origin = (?)",(RaidID, Origin))
             except:
               conn.close()
               return
       
             # Get role of the Creator
             try:
-              c.execute(f"SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?) AND Origin = (?)", (RaidID, UserID, Origin,))
+              c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?) AND Origin = (?)", (RaidID, UserID, Origin,))
               row = c.fetchone()        
             except:
-              await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining the role of the organizer")
+              await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the role of the organizer")
               conn.close()
               return
 
             if not row:
-              await DMHelper.DMUserByID(bot, UserID, f"Unable to find role of the creator of this run")    
+              await DMHelper.DMUserByID(bot, UserID, "Unable to find role of the creator of this run")    
               conn.close()
               return
 
@@ -325,35 +325,35 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
             RoleName = await RoleHelper.GetRoleName(RoleID)
 
             if not RoleName:
-              await DMHelper.DMUserByID(bot, UserID, f"Unable to resolve role name")
+              await DMHelper.DMUserByID(bot, UserID, "Unable to resolve role name")
               conn.close()
               return
 
             # Update Raids table
             if RoleName == 'tank':
               try:
-                c.execute(f"Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 1, 0, 0, RaidID,))
+                c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 1, 0, 0, RaidID,))
                 conn.commit()
               except:
-                await DMHelper.DMUserByID(bot, UserID, f"Something went wrong updating the number of players and tanks")
+                await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and tanks")
                 conn.close()
                 return
       
             if RoleName == 'dps':
               try:
-                c.execute(f"Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 1, 0, RaidID,))
+                c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 1, 0, RaidID,))
                 conn.commit()
               except:
-                await DMHelper.DMUserByID(bot, UserID, f"Something went wrong updating the number of players and dps")
+                await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and dps")
                 conn.close()
                 return
 
             if RoleName == 'healer':
               try:
-                c.execute(f"Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 0, 1, RaidID,))
+                c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 0, 1, RaidID,))
                 conn.commit()
               except:
-                await DMHelper.DMUserByID(bot, UserID, f"Something went wrong updating the number of players and healers")
+                await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and healers")
                 conn.close()
                 return
             
@@ -370,7 +370,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
               conn.close()
               return
             except:
-              await DMHelper.DMUserByID(bot, UserID, f"Something went wrong rescheduling the run")
+              await DMHelper.DMUserByID(bot, UserID, "Something went wrong rescheduling the run")
               conn.close()
               return
 
@@ -384,7 +384,7 @@ async def OnAddRallyReaction(message, bot, UserID):
       conn.close()
       return    
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong resolving the run number.")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the run number.")
   # Obtain server ID
   Origin = await OriginHelper.GetOrigin(message)
 
@@ -397,7 +397,7 @@ async def OnAddRallyReaction(message, bot, UserID):
 
   # Find party through name and date for discord channel
   try:
-    c.execute(f"SELECT ID, Date FROM Raids WHERE ID = (?) and Origin = (?)", (RaidID, Origin,))
+    c.execute("SELECT ID, Date FROM Raids WHERE ID = (?) and Origin = (?)", (RaidID, Origin,))
     row = c.fetchone()
     RaidID = row[0]
     DateTime = row[1]
@@ -408,7 +408,7 @@ async def OnAddRallyReaction(message, bot, UserID):
 
   # Check to see if user is a member of party.
   try:
-    c.execute(f"SELECT ID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
+    c.execute("SELECT ID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
     row = c.fetchone()
     if not row:
       await DMHelper.DMUserByID(bot, UserID, f"Only members of run {RaidID} are allowed to rally the crew.")
@@ -426,57 +426,57 @@ async def OnAddRallyReaction(message, bot, UserID):
     DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M")
     TimeDifference = DateTime - now
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong checking dates.")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
     conn.close()
     return
     
   if TimeDifference > timedelta(0) and TimeDifference < timedelta(hours = 2):
     #Complete Notifications
     try:
-      c.execute(f"SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
+      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
       RaidMembers = c.fetchall()
       
-      c.execute(f"SELECT RallyCount, Name FROM Raids WHERE ID = (?)", (RaidID,))
+      c.execute("SELECT RallyCount, Name FROM Raids WHERE ID = (?)", (RaidID,))
       row = c.fetchone()
       RallyCount = row[0]
       Name = row[1]
 
       if not RaidMembers:
           conn.close()
-          await DMHelper.DMUserByID(bot, UserID, f"There is nobody else in the crew to rally.")
+          await DMHelper.DMUserByID(bot, UserID, "There is nobody else in the crew to rally.")
           return
       elif RaidMembers:
         RallyNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
         if RallyCount < 3:
           try:
-            c.execute(f"UPDATE Raids SET RallyCount = RallyCount + 1 WHERE ID = (?)",(RaidID,))
+            c.execute("UPDATE Raids SET RallyCount = RallyCount + 1 WHERE ID = (?)",(RaidID,))
           except:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong updating the rally count.")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the rally count.")
             conn.close()
             return
 
           try:
             TimeTillRun = TimeDifference.seconds // 60
           except:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong calculating the time.")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong calculating the time.")
             conn.close()
             return
           await message.channel.send(f"{RallyNotifications}\nGet ready crew! Only {TimeTillRun} minutes left until you assemble for {Name}!")
           conn.commit()
           conn.close()
         else:
-          await DMHelper.DMUserByID(bot, UserID, f"This crew has been rallied the maximum amount of 3 times already.")
+          await DMHelper.DMUserByID(bot, UserID, "This crew has been rallied the maximum amount of 3 times already.")
           conn.close()
       else:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving the crew members.")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the crew members.")
         conn.close()
         return
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong with retrieving the names of the crew.")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong with retrieving the names of the crew.")
       conn.close()
       return
   else:
-    await DMHelper.DMUserByID(bot, UserID, f"You can only rally the crew within an hour of the start time, it's too early to rally the crew for this run or the run has already started.")
+    await DMHelper.DMUserByID(bot, UserID, "You can only rally the crew within an hour of the start time, it's too early to rally the crew for this run or the run has already started.")
     conn.close()
     return
   return
@@ -490,7 +490,7 @@ async def OnMemberReaction(message, bot, UserID):
     DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
     HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving role icons")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
   
   if RaidID:
@@ -500,9 +500,9 @@ async def OnMemberReaction(message, bot, UserID):
 
     # Execute query to retrieve all raidmembers
     try:
-      c.execute(f"SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
+      c.execute("SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to retrieve raidmembers")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve raidmembers")
       conn.close()
       return
 
@@ -518,12 +518,12 @@ async def OnMemberReaction(message, bot, UserID):
           RoleName = await RoleHelper.GetRoleName(RoleID)
           UserName = await UserHelper.GetDisplayName(message, UserID, bot)
           if not RoleName:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving the role name for one of the members")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the role name for one of the members")
             conn.close()
             return
 
           if not UserName:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
             conn.close()              
 
           if RoleName == 'tank':
@@ -541,7 +541,7 @@ async def OnMemberReaction(message, bot, UserID):
             MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
             Message = f"{Message}{MemberRoleMessage}" 
         except:
-          await DMHelper.DMUserByID(bot, UserID, f"Unable to convert variables")
+          await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
           conn.close()
           return
       conn.close()
@@ -564,7 +564,7 @@ async def OnReservesReaction(message, bot, UserID):
     DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
     HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving role icons")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
   
   if RaidID:
@@ -574,9 +574,9 @@ async def OnReservesReaction(message, bot, UserID):
 
     # Execute query to retrieve all reserves
     try:
-      c.execute(f"SELECT UserID, RoleID FROM RaidReserves WHERE RaidID = (?) ORDER BY RoleID, ID", (RaidID,))
+      c.execute("SELECT UserID, RoleID FROM RaidReserves WHERE RaidID = (?) ORDER BY RoleID, ID", (RaidID,))
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to retrieve raidmembers")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve raidmembers")
       conn.close()
       return
 
@@ -592,12 +592,12 @@ async def OnReservesReaction(message, bot, UserID):
           RoleName = await RoleHelper.GetRoleName(RoleID)
           UserName = await UserHelper.GetDisplayName(message, UserID, bot)
           if not RoleName:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving the role name for one of the members")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the role name for one of the members")
             conn.close()
             return
 
           if not UserName:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
             conn.close()              
 
           if RoleName == 'tank':
@@ -615,7 +615,7 @@ async def OnReservesReaction(message, bot, UserID):
             MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
             Message = f"{Message}{MemberRoleMessage}" 
         except:
-          await DMHelper.DMUserByID(bot, UserID, f"Unable to convert variables")
+          await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
           conn.close()
           return
       conn.close()
@@ -638,7 +638,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
       conn.close()
       return
 	  
-    c.execute(f"SELECT ID, Name, OrganizerUserID, Date FROM Raids WHERE ID = (?)",(RaidID,))
+    c.execute("SELECT ID, Name, OrganizerUserID, Date FROM Raids WHERE ID = (?)",(RaidID,))
     row = c.fetchone()
     RaidID = row[0]
     RaidName = row[1]
@@ -667,7 +667,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
 	
     if row:
       if UserID != Creator:
-        await DMHelper.DMUserByID(bot, UserID, f"Only the organizer of this run is allowed to change the description of the run")
+        await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to change the description of the run")
         conn.close()
         return
 		
@@ -675,7 +675,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
       try:
         response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
       except asyncio.TimeoutError:
-        await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
+        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
         conn.close()
         return
     
@@ -692,16 +692,16 @@ async def OnAddEditDescReaction(message, bot, UserID):
             elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
               EditDescription = "no"
             else:
-              await DMHelper.DMUserByID(bot, UserID, f"Invalid answer detected, please respond with Y/N")
+              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with Y/N")
               continue
           except asyncio.TimeoutError:
-            await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
+            await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
             conn.close()
             return
         
         if EditDescription == 'yes':
           try:
-            c.execute(f"UPDATE Raids set Name = (?) WHERE ID = (?)",(NewDescription, RaidID,))
+            c.execute("UPDATE Raids set Name = (?) WHERE ID = (?)",(NewDescription, RaidID,))
             conn.commit()
             await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalTime} from {RaidName} to {NewDescription}.")
             UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
@@ -709,10 +709,10 @@ async def OnAddEditDescReaction(message, bot, UserID):
             conn.close()
             return
           except:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong updating the description of this run 1")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the description of this run 1")
             conn.close()
             return
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong updating the description of this run 2")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the description of this run 2")
     conn.close()
     return

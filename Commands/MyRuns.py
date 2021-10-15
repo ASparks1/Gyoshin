@@ -17,7 +17,7 @@ async def ListMyRuns(message, bot):
   UserID = message.author.id
   
   if not UserID:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong getting user information")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting user information")
     return
 
   try:
@@ -25,7 +25,7 @@ async def ListMyRuns(message, bot):
     DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
     HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving role icons")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     conn.close()
     return
 
@@ -37,22 +37,22 @@ async def ListMyRuns(message, bot):
   try:
     current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong getting the current date and time")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the current date and time")
     conn.close()
     return
 
   # Execute query
   try:
-    c.execute(f"SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidMembers WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
+    c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidMembers WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Run not found")
+    await DMHelper.DMUserByID(bot, UserID, "Run not found")
     conn.close()
     return
 
   rows = c.fetchmany(5)
     
   if not rows:
-    await DMHelper.DMUserByID(bot, UserID, f"You have no upcoming runs")
+    await DMHelper.DMUserByID(bot, UserID, "You have no upcoming runs")
     conn.close()
     return
     
@@ -95,17 +95,17 @@ async def ListMyRuns(message, bot):
           # Get member object by discord user id
           member_obj = await guild.fetch_member(UserID)
         except:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving this users display name, perhaps they have left the server")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving this users display name, perhaps they have left the server")
   
         try:
           if member_obj:
             OrganizerName = member_obj.display_name
         except:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong getting the display name of the organizer, perhaps they have left the server")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
           conn.close()
           return
       except:
-        await DMHelper.DMUser(message, f"Unable to convert variables")
+        await DMHelper.DMUser(message, "Unable to convert variables")
         conn.close()
         return
         

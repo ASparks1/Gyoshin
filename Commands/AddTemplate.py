@@ -14,7 +14,7 @@ async def AddTemplate(message, bot):
     Creator = await UserHelper.GetUserID(message)
     CreatorDisplay = await UserHelper.GetDisplayName(message, Creator, bot)
   except:
-     await DMHelper.DMUserByID(bot, UserID, f"Something went wrong when gathering server and user information.")
+     await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
   
   # Checks for waiting for dm replies
@@ -36,7 +36,7 @@ async def AddTemplate(message, bot):
     try:
       conn = sqlite3.connect('RaidPlanner.db')
       c = conn.cursor()
-      c.execute(f"SELECT ID FROM Templates WHERE Name = (?) AND Origin = (?)", (TemplateName, Origin,))
+      c.execute("SELECT ID FROM Templates WHERE Name = (?) AND Origin = (?)", (TemplateName, Origin,))
       row = c.fetchone()
       
       if row:
@@ -44,7 +44,7 @@ async def AddTemplate(message, bot):
         conn.close()
         return
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong checking if a template with the same name already exists on this server")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if a template with the same name already exists on this server")
       conn.close()
       return
   
@@ -52,16 +52,16 @@ async def AddTemplate(message, bot):
   NrOfPlayers = None
   
   while not NrOfPlayers:
-    await DMHelper.DMUserByID(bot, UserID, f"Please provide the amount of players required next.\n")
+    await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of players required next.\n")
     try:
       response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
       try:
         NrOfPlayers = int(response.content)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Please enter a valid number.")
+        await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please call the command again from a server if you still wish to add a template.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a template.")
       conn.close()
       return
   
@@ -69,16 +69,16 @@ async def AddTemplate(message, bot):
   NrOfTanks = None
   
   while not NrOfTanks:
-    await DMHelper.DMUserByID(bot, UserID, f"Please provide the amount of tanks required next.\n")
+    await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of tanks required next.\n")
     try:
       response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
       try:
         NrOfTanks = int(response.content)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Please enter a valid number.")
+        await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please call the command again from a server if you still wish to add a template.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a template.")
       conn.close()
       return
   
@@ -86,16 +86,16 @@ async def AddTemplate(message, bot):
   NrOfDps = None
   
   while not NrOfDps:
-    await DMHelper.DMUserByID(bot, UserID, f"Please provide the amount of dps required next.\n")
+    await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of dps required next.\n")
     try:
       response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
       try:
         NrOfDps = int(response.content)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Please enter a valid number.")
+        await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please call the command again from a server if you still wish to add a template.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a template.")
       conn.close()
       return
   
@@ -103,16 +103,16 @@ async def AddTemplate(message, bot):
   NrOfHealers = None
   
   while not NrOfHealers:
-    await DMHelper.DMUserByID(bot, UserID, f"Please provide the amount of healers required next.\n")
+    await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of healers required next.\n")
     try:
       response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
       try:
         NrOfHealers = int(response.content)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Please enter a valid number.")
+        await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
         continue
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please call the command again from a server if you still wish to add a template.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a template.")
       conn.close()
       return
   
@@ -127,13 +127,13 @@ async def AddTemplate(message, bot):
         if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
           CreateTemplate = "yes"
           try:
-            c.execute(f"INSERT INTO Templates (Origin, CreatorUserID, Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES (?, ?, ?, ?, ?, ?, ?)", (Origin, UserID, TemplateName, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers,))
+            c.execute("INSERT INTO Templates (Origin, CreatorUserID, Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES (?, ?, ?, ?, ?, ?, ?)", (Origin, UserID, TemplateName, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers,))
             conn.commit()
-            await DMHelper.DMUserByID(bot, UserID, f"Template added succesfully.")
+            await DMHelper.DMUserByID(bot, UserID, "Template added succesfully.")
             conn.close()
             return
           except:
-            await DMHelper.DMUserByID(bot, UserID, f"Something went wrong adding the template.")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding the template.")
             conn.close()
             return  
         elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
@@ -141,11 +141,11 @@ async def AddTemplate(message, bot):
           conn.close()
           return
         else:
-          await DMHelper.DMUserByID(bot, UserID, f"Invalid answer detected, please respond with yes or no.")
+          await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
           continue
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, f"Your request has timed out, please call the command again from a server if you still wish to add a template.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a template.")
       conn.close()
       return
   else:
-    await DMHelper.DMUserByID(bot, UserID, f"The total amount of players required doesn't match the provided number of tanks, dps and healers provided.")
+    await DMHelper.DMUserByID(bot, UserID, "The total amount of players required doesn't match the provided number of tanks, dps and healers provided.")

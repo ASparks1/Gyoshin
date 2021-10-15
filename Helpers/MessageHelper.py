@@ -8,7 +8,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining the run information.")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the run information.")
     return
     
   try:
@@ -16,7 +16,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
     DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
     HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong retrieving role icons")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
     
   if RaidID:
@@ -24,7 +24,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
     c = conn.cursor()
     
     try:
-      c.execute(f"SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+      c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
       
       row = c.fetchone()
       
@@ -63,7 +63,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
         try:
           OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
         except:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong getting the display name of the organizer, perhaps they have left the server")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
           conn.close()
           return
         

@@ -12,7 +12,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except ValueError:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong obtaining run information")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining run information")
     return
 
   # Get discord server ID
@@ -23,7 +23,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
   
   # Check if the run exists and if the user is a member
   try:
-    c.execute(f"SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
+    c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
 
     row = c.fetchone()
 
@@ -83,12 +83,12 @@ async def ChangeRole(message, bot, RoleName, UserID):
       # Change role
       try:
         c.execute(f"UPDATE Raids set {OldRoleSignedUpColumn} = {OldRoleSignedUpColumn} - 1, {NewRoleSignedUpColumn} = {NewRoleSignedUpColumn} + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-        c.execute(f"UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
         await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
         conn.commit()
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
       
@@ -98,20 +98,20 @@ async def ChangeRole(message, bot, RoleName, UserID):
           conn.close()
           return
         if not UpdatedMessage:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
           conn.close()
           return
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
      
     except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
       conn.close()
       return
   else:
-    await DMHelper.DMUserByID(bot, UserID, f"You cannot change to the same role you already signed up as")
+    await DMHelper.DMUserByID(bot, UserID, "You cannot change to the same role you already signed up as")
     conn.close()
     return
   return

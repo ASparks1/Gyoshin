@@ -8,12 +8,12 @@ async def JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDa
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
 	
-    c.execute(f"INSERT INTO RaidReserves (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
+    c.execute("INSERT INTO RaidReserves (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a reserve {RoleName}!")
     return
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong adding you to the reserves")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding you to the reserves")
     conn.close()
     return
 
@@ -23,11 +23,11 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
 	
-    c.execute(f"DELETE FROM RaidReserves WHERE Origin = (?) AND RaidID = (?) and UserID = (?)", (Origin, RaidID, UserID,))
+    c.execute("DELETE FROM RaidReserves WHERE Origin = (?) AND RaidID = (?) and UserID = (?)", (Origin, RaidID, UserID,))
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has withdrawn from the reserves for the party {Description} on {LocalDate}!")
     return
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong removing you from the reserves")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong removing you from the reserves")
     conn.close()
     return

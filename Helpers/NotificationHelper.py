@@ -17,7 +17,7 @@ async def NotifyRaidMembers(message, raidmembers):
         Message = f"{Message} {Notification}"
     return Message
   except:
-    await DMHelper.DMUser(message, f"Something went wrong tagging one of the users.")
+    await DMHelper.DMUser(message, "Something went wrong tagging one of the users.")
     return   
 
 # Helper function to tag a single user
@@ -26,5 +26,5 @@ async def NotifyUser(message, userid):
     Message = f"<@!{userid}>"
     return Message
   except:
-    await DMHelper.DMUser(message, f"Something went wrong tagging the user.")
+    await DMHelper.DMUser(message, "Something went wrong tagging the user.")
     return
