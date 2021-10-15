@@ -1,5 +1,4 @@
-# Gyoshin
-![Code quality](https://www.code-inspector.com/project/29407/status/svg)
+# Gyoshin ![Code grade](https://www.code-inspector.com/project/29407/status/svg)
 A Discord bot to help plan dungeon & raid runs for mmorpgs like FFXIV
 
 Currently supports:
@@ -13,5 +12,7 @@ Currently supports:
 * Withdrawing from runs*
 * Changing role for a run you signed up to
 * Signing up as a reserve for a run
+* Withdrawing as a reserve
 * Tagging all members signed up to a run
 * Viewing the list of members and reserves signed up to a run
+* Dismissing members from a run
