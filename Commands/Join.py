@@ -21,7 +21,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     return
 
   # Role verification
-  try:     
+  try:
     RoleID = await RoleHelper.GetRoleID(RoleName)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles to see available roles.")
@@ -39,7 +39,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  #Collect required information from raid, number of players and roles, and if already formed or cancelled. 
+  #Collect required information from raid, number of players and roles, and if already formed or cancelled.
   try:
     c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
   except:
@@ -67,7 +67,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     day = splitdate[2]
     month = splitdate[1]
     year = splitdate[0]
-    
+
     LocalDate = f"{day}-{month}-{year} {Time}"
     Origin = row[3]
     Organizer = row[4]
@@ -78,7 +78,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     NrOfDpsRequired = row[9]
     NrOfDpsSignedUp = row[10]
     NrOfHealersRequired = row[11]
-    NrOfHealersSignedUp = row[12]  
+    NrOfHealersSignedUp = row[12]
     Status = row[13]
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving run information.")
@@ -94,11 +94,11 @@ async def JoinRaid(message, bot, RoleName, UserID):
   c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
 
   usercheck = c.fetchone()
-  
+
   # Checks for waiting for dm replies
   def DMCheck(dm_message):
-    return (dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID)
-    
+    return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
+
   if usercheck:
     try:
       RoleIDSignedUpAs = usercheck[1]
@@ -107,14 +107,14 @@ async def JoinRaid(message, bot, RoleName, UserID):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining role information")
       conn.close()
       return
-    
+
     # Offer to withdraw if user is signed up as this role
     if RoleID == RoleIDSignedUpAs:
       CanWithdraw = None
       while not CanWithdraw:
         await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to withdraw from this run (Y/N)?")
         try:
-          withdrawresponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+          withdrawresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
           if withdrawresponse.content == "Y" or withdrawresponse.content == "y" or withdrawresponse.content == "Yes" or withdrawresponse.content == "yes":
             CanWithdraw = "yes"
           elif withdrawresponse.content == "N" or withdrawresponse.content == "n" or withdrawresponse.content == "No" or withdrawresponse.content == "no":
@@ -126,7 +126,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
           conn.close()
           await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the run.")
           return
-    
+
       if CanWithdraw == "yes":
         await Withdraw.WithdrawFromRaid(message, bot, UserID)
         conn.close()
@@ -134,14 +134,14 @@ async def JoinRaid(message, bot, RoleName, UserID):
       elif CanWithdraw == "no":
         conn.close()
         return
-      
+
     # Offer to change role if user is signed up with another role
     elif RoleID != RoleIDSignedUpAs:
       CanChangeRole = None
       while not CanChangeRole:
         await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to change to {RoleName} for this run (Y/N)?")
         try:
-          changeroleresponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+          changeroleresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
           if changeroleresponse.content == "Y" or changeroleresponse.content == "y" or changeroleresponse.content == "Yes" or changeroleresponse.content == "yes":
             CanChangeRole = "yes"
           elif changeroleresponse.content == "N" or changeroleresponse.content == "n" or changeroleresponse.content == "No" or changeroleresponse.content == "no":
@@ -153,7 +153,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
           conn.close()
           await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to change your role for this run.")
           return
-      
+
       if CanChangeRole == "yes":
         await ChangeRole.ChangeRole(message, bot, RoleName, UserID)
         conn.close()
@@ -168,14 +168,14 @@ async def JoinRaid(message, bot, RoleName, UserID):
     if RoleName == 'tank':
       if NrOfTanksSignedUp == NrOfTanksRequired:
         # Check if user is already signed up as a reserve
-        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)",(RaidID, UserID))
+        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
         row = c.fetchone()
         if row:
           await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
           WithdrawFromReserves = None
           while not WithdrawFromReserves:
             try:
-              WithdrawFromReserveResponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+              WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
               if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
                 WithdrawFromReserveResponse = "yes"
                 await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
@@ -192,12 +192,12 @@ async def JoinRaid(message, bot, RoleName, UserID):
               conn.close()
               await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
               return
-          
+
         await DMHelper.DMUserByID(bot, UserID, "This run already has the required number of tanks, would you like to be put on the reserve list? (Y/N).")
         TankReserve = None
         while not TankReserve:
           try:
-            TankReserveResponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+            TankReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
             if TankReserveResponse.content == "Y" or TankReserveResponse.content == "y" or TankReserveResponse.content == "Yes" or TankReserveResponse.content == "yes":
               TankReserveResponse = "yes"
               await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
@@ -215,7 +215,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
             await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
             return
       else:
-        try:        
+        try:
           c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
@@ -224,14 +224,14 @@ async def JoinRaid(message, bot, RoleName, UserID):
     elif RoleName == 'dps':
       if NrOfDpsSignedUp == NrOfDpsRequired:
         # Check if user is already signed up as a reserve
-        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)",(RaidID, UserID))
+        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
         row = c.fetchone()
         if row:
           await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
           WithdrawFromReserves = None
           while not WithdrawFromReserves:
             try:
-              WithdrawFromReserveResponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+              WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
               if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
                 WithdrawFromReserveResponse = "yes"
                 await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
@@ -248,12 +248,12 @@ async def JoinRaid(message, bot, RoleName, UserID):
               conn.close()
               await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
               return
-          
+
         await DMHelper.DMUserByID(bot, UserID, "This run already has the required number of dps, would you like to be put on the reserve list? (Y/N).")
         DPSReserve = None
         while not DPSReserve:
           try:
-            DPSReserveResponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+            DPSReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
             if DPSReserveResponse.content == "Y" or DPSReserveResponse.content == "y" or DPSReserveResponse.content == "Yes" or DPSReserveResponse.content == "yes":
               DPSReserveResponse = "yes"
               await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
@@ -282,14 +282,14 @@ async def JoinRaid(message, bot, RoleName, UserID):
     elif RoleName == 'healer':
       if NrOfHealersSignedUp == NrOfHealersRequired:
         # Check if user is already signed up as a reserve
-        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)",(RaidID, UserID))
+        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
         row = c.fetchone()
         if row:
           await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
           WithdrawFromReserves = None
           while not WithdrawFromReserves:
             try:
-              WithdrawFromReserveResponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+              WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
               if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
                 WithdrawFromReserveResponse = "yes"
                 await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
@@ -306,12 +306,12 @@ async def JoinRaid(message, bot, RoleName, UserID):
               conn.close()
               await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
               return
-          
+
         await DMHelper.DMUserByID(bot, UserID, "This run already has the required number of healers, would you like to be put on the reserve list? (Y/N).")
         HealerReserve = None
         while not HealerReserve:
           try:
-            HealerReserveResponse = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+            HealerReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
             if HealerReserveResponse.content == "Y" or HealerReserveResponse.content == "y" or HealerReserveResponse.content == "Yes" or HealerReserveResponse.content == "yes":
               HealerReserveResponse = "yes"
               await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
@@ -343,7 +343,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     # Insert user into raid members for raidID
     try:
       # Delete user from reserves
-      c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?) AND Origin = (?)",(RaidID, UserID, Origin))
+      c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?) AND Origin = (?)", (RaidID, UserID, Origin))
       # Add user to run
       c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
       conn.commit()
@@ -360,13 +360,13 @@ async def JoinRaid(message, bot, RoleName, UserID):
     try:
       c.execute("SELECT NrOfPlayersRequired, NrOfPlayersSignedUp FROM Raids  WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
       row = c.fetchone()
-      
+
       if row:
         NrOfPlayersRequired = row[0]
         NrOfPlayersSignedUp = row[1]
-        
+
       if NrOfPlayersRequired == NrOfPlayersSignedUp:
-        try:  
+        try:
           c.execute("UPDATE Raids SET Status = 'Formed' WHERE ID = (?) and Origin = (?)", (RaidID, Origin))
           try:
             conn.commit()

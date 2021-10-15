@@ -7,7 +7,7 @@ async def JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDa
   try:
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
-	
+
     c.execute("INSERT INTO RaidReserves (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a reserve {RoleName}!")
@@ -22,7 +22,7 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
   try:
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
-	
+
     c.execute("DELETE FROM RaidReserves WHERE Origin = (?) AND RaidID = (?) and UserID = (?)", (Origin, RaidID, UserID,))
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has withdrawn from the reserves for the party {Description} on {LocalDate}!")

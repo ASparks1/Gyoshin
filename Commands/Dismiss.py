@@ -31,7 +31,6 @@ async def DismissMember(message, client):
 
   # Get user ID of the person who entered the commands
   Creator = message.author.id
-  CreatorDisplayName = await UserHelper.GetDisplayName(message, Creator, client)
 
   if not Creator:
     await DMHelper.DMUser(message, "Something went wrong retrieving the user ID")
@@ -41,17 +40,16 @@ async def DismissMember(message, client):
 
   if UserID == Creator:
         await DMHelper.DMUser(message, "You cannot dismiss yourself as the organizer of this run")
-        conn.close()
         # Delete message that contains command
         await message.delete()
         return
-  
+
   # Delete message that contains the command
   await message.delete()
-  
+
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-  
+
   # Search if raid exists and check if the user who entered the command is the organizer
   try:
     c.execute("SELECT ID, Name, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
@@ -79,7 +77,7 @@ async def DismissMember(message, client):
       return
 
   if RaidMemberID:
-    try:        
+    try:
       c.execute("DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
     except:
       await DMHelper.DMUser(message, "Something went wrong removing this member from the run")
@@ -93,13 +91,13 @@ async def DismissMember(message, client):
       ColumnToUpdate = 'NrOfDpsSignedUp'
     elif RoleName == 'healer':
       ColumnToUpdate = 'NrOfHealersSignedUp'
-  
-    try:        
+
+    try:
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, (?) = (?) - 1, Status = 'Forming' WHERE ID = (?)", (ColumnToUpdate, RaidID,))
     except:
       await DMHelper.DMUser(message, "Something went wrong updating the number of signed up players")
       conn.close()
-      return   
+      return
     try:
       conn.commit()
       await message.channel.send(f"{UserName} has been dismissed from the run {RaidName} on {Date}")

@@ -89,11 +89,10 @@ async def OnAddCancelReaction(message, bot, UserID):
       conn.close()
       return
 
-    # Get users' display name
+    # Get users 
     try:
       user = await bot.fetch_user(int(UserID))
       GuildName = await OriginHelper.GetName(message)
-      username = user.display_name
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
       conn.close()
@@ -150,7 +149,7 @@ async def OnAddCancelReaction(message, bot, UserID):
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if this run still exists perhaps this run has been cancelled.")
     conn.close()
-    return    
+    return
 
 async def OnAddRescheduleReaction(message, bot, UserID, Origin):
   global RescheduleNotifications
@@ -200,11 +199,8 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
       conn.close()
       return
 
-    # Obtain user and server information
     try:
       GuildName = await OriginHelper.GetName(message)
-      CreatorID = await UserHelper.GetUserID(message)
-      DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the server information")
       conn.close()
@@ -423,7 +419,7 @@ async def OnAddRallyReaction(message, bot, UserID):
     conn.close()
     return
 
-  if TimeDifference>timedelta(0) and TimeDifference<timedelta(hours = 2):
+  if TimeDifference > timedelta(0) and TimeDifference < timedelta(hours = 2):
     #Complete Notifications
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
@@ -540,7 +536,7 @@ async def OnMemberReaction(message, bot, UserID):
       conn.close()
       return Message
     else:
-      await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RunID}.")
+      await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}.")
       conn.close()
       return
 

@@ -7,7 +7,7 @@ async def NotifyRaidMembers(message, raidmembers):
   try:
     # Start with an empty message
     Message = None
- 
+
     for member in raidmembers:
       # Generate notification format
       Notification = f"<@!{member[0]}> "

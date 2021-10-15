@@ -10,43 +10,42 @@ async def DeleteTemplate(message, bot):
   try:
     Origin = await OriginHelper.GetOrigin(message)
     UserID = message.author.id
-    GuildName = await OriginHelper.GetName(message) 
+    GuildName = await OriginHelper.GetName(message)
     Creator = await UserHelper.GetUserID(message)
-    CreatorDisplay = await UserHelper.GetDisplayName(message, Creator, bot)
   except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
-  
+
   # Checks for waiting for dm replies
   def DMCheck(dm_message):
-    return (dm_message.channel.type == ChannelType.private and dm_message.author == message.author)
-    
+    return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
+
   # Check if this user has created templates on the server
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("SELECT Name FROM Templates WHERE CreatorUserID = (?) AND Origin = (?)", (UserID, Origin,))
   rows = c.fetchall()
-  
+
   if not rows:
     await DMHelper.DMUserByID(bot, UserID, f"You have not created any templates on the {GuildName} server")
     conn.close()
     return
 
   if rows:
-    Message = None  
+    Message = None
     for row in rows:
       Name = row[0]
       if not Message:
         Message = f"{Name}"
       elif Message:
         Message = f"{Message}, {Name}"
-    
+
     await DMHelper.DMUserByID(bot, UserID, f"You have created the following templates on the {GuildName} server:\n{Message}")
     ValidTemplateName = None
     while not ValidTemplateName:
       await DMHelper.DMUserByID(bot, UserID, "Please provide the name of the template you wish to delete")
       try:
-        response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+        response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         TemplateName = response.content
         c.execute("SELECT ID FROM Templates WHERE Name = (?) AND Origin = (?)", (TemplateName, Origin,))
         row = c.fetchone()
@@ -59,10 +58,10 @@ async def DeleteTemplate(message, bot):
             CanDelete = None
             while not CanDelete:
               await DMHelper.DMUserByID(bot, UserID, f"Do you want to delete the template {TemplateName} on the {GuildName} server? (Y/N)")
-              response = await bot.wait_for(event='message' ,timeout = 60, check= DMCheck)
+              response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
               if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
                 CanDelete = 'yes'
-                c.execute("DELETE FROM Templates WHERE Name = (?) AND Origin = (?)",(TemplateName, Origin,))
+                c.execute("DELETE FROM Templates WHERE Name = (?) AND Origin = (?)", (TemplateName, Origin,))
                 conn.commit()
                 conn.close()
                 await DMHelper.DMUserByID(bot, UserID, "Template succesfully deleted.")

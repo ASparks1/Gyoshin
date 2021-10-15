@@ -11,7 +11,7 @@ async def GetDisplayName(message, userid, bot):
   if not Origin:
     await DMHelper.DMUser(message, "Something went wrong retrieving the server ID")
     return
-  
+
   # Get member object by discord user id
   try:
     member_obj = await guild.fetch_member(userid)
@@ -28,7 +28,7 @@ async def GetDisplayName(message, userid, bot):
   if not display_name:
     await DMHelper.DMUser(message, "Something went wrong retrieving the users' display name")
     return
-  return display_name 
+  return display_name
 
 async def GetUserID(message):
   userid = message.author.id
