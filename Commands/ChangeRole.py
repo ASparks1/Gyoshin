@@ -23,7 +23,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
 
   # Check if the run exists and if the user is a member
   try:
-    c.execute(f"SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
+    c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
     row = c.fetchone()
 
     OldRoleID = row[0]
@@ -44,78 +44,78 @@ async def ChangeRole(message, bot, RoleName, UserID):
     conn.close()
     return
 
-    if OldRoleID != NewRoleID:
+    if (OldRoleID != NewRoleID):
+    try:
+      # Create an empty message variable first
+      UpdatedMessage = None
+      # Change from tank to dps
+      if OldRoleName == 'tank' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:
+        c.execute("UPDATE Raids set NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
+        conn.commit()
+        UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+
+      # Change from tank to healer
+      elif OldRoleName == 'tank' and RoleName == 'healer' and NrOfHealersSignedUp < NrOfHealersRequired:
+        c.execute("UPDATE Raids set NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
+        conn.commit()
+        UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+
+      # Change from dps to tank
+      elif OldRoleName == 'dps' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
+        c.execute("UPDATE Raids set NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
+        conn.commit()
+        UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+
+      # Change from dps to healer
+      elif OldRoleName == 'dps' and RoleName == 'healer' and NrOfHealersSignedUp < NrOfHealersRequired:
+        c.execute("UPDATE Raids set NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
+        conn.commit()
+        UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+        
+      # Change from healer to tank
+      elif OldRoleName == 'healer' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
+        c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
+        conn.commit()
+        UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+
+      # Change from healer to dps
+      elif OldRoleName == 'healer' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:
+        c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
+        await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
+        conn.commit()
+        UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+      
       try:
-        # Create an empty message variable first
-        UpdatedMessage = None
-        # Change from tank to dps
-        if OldRoleName == 'tank' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:
-          c.execute("UPDATE Raids set NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-          c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
-          await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
-          conn.commit()
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-
-        # Change from tank to healer
-        elif OldRoleName == 'tank' and RoleName == 'healer' and NrOfHealersSignedUp < NrOfHealersRequired:
-          c.execute("UPDATE Raids set NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-          c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
-          await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
-          conn.commit()
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-
-        # Change from dps to tank
-        elif OldRoleName == 'dps' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
-          c.execute("UPDATE Raids set NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-          c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
-          await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
-          conn.commit()
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-
-        # Change from dps to healer
-        elif OldRoleName == 'dps' and RoleName == 'healer' and NrOfHealersSignedUp < NrOfHealersRequired:
-          c.execute("UPDATE Raids set NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-          c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
-          await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
-          conn.commit()
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-
-        # Change from healer to tank
-        elif OldRoleName == 'healer' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
-          c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-          c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
-          await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
-          conn.commit()
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-
-        # Change from healer to dps
-        elif OldRoleName == 'healer' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:
-          c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-          c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
-          await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
-          conn.commit()
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-
-        try:
-          if UpdatedMessage:
-            await message.edit(content=UpdatedMessage)
-            conn.close()
-            return
-          if not UpdatedMessage:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
-            conn.close()
-            return
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
+        if UpdatedMessage:
+          await message.edit(content=UpdatedMessage)
           conn.close()
           return
-
+        if not UpdatedMessage:
+          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
+          conn.close()
+          return
       except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
+        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
         conn.close()
         return
-    else:
-      await DMHelper.DMUserByID(bot, UserID, "You cannot change to the same role you already signed up as")
+     
+    except:
+      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
       conn.close()
       return
+  else:
+    await DMHelper.DMUserByID(bot, UserID, f"You cannot change to the same role you already signed up as")
+    conn.close()
+    return
   return
