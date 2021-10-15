@@ -1,6 +1,7 @@
+import datetime
+date = datetime.date.today()
 from datetime import datetime
 from Helpers import DMHelper
-date = datetime.date.today()
 
 async def ValidateDateTime(message, day, month, year, hour, minute):
 
