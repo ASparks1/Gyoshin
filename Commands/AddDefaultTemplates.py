@@ -11,15 +11,16 @@ async def AddDefaultTemplates(message):
     Origin = await OriginHelper.GetOrigin(message)
     if not Origin:
       return
-  
+
     CreatorID = message.author.id
-    c.execute(f"INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('alliance', {Origin}, {CreatorID}, 24, 3, 15, 6)")
+    c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('alliance', (?), (?), 24, 3, 15, 6)",(Origin, CreatorID,))
+    
 
-    c.execute(f"INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('raid', {Origin}, {CreatorID}, 8, 2, 4, 2)")
+    c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('raid', (?), (?), 8, 2, 4, 2)",(Origin, CreatorID,))
 
-    c.execute(f"INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('dungeon', {Origin}, {CreatorID}, 4, 1, 2, 1)")
+    c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('dungeon', (?), (?), 4, 1, 2, 1)",(Origin, CreatorID,))
 
-    c.execute(f"INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('maps', {Origin}, {CreatorID}, 8, 1, 6, 1)")
+    c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('maps', (?), (?), 8, 1, 6, 1)",(Origin, CreatorID,))
 
     conn.commit()
     await DMHelper.DMUser(message, "Default templates added")
