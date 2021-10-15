@@ -37,14 +37,12 @@ async def ChangeRole(message, bot, RoleName, UserID):
     NrOfHealersSignedUp = row[8]
     RaidName = row[9]
     Date = row[10]
-    Date = await DateTimeFormatHelper.SqliteToLocal(message, Date)
+    LocalDate = await DateTimeFormatHelper.SqliteToLocal(message, Date)
     OldRoleName = await RoleHelper.GetRoleName(OldRoleID)
-    NewRoleID = await RoleHelper.GetRoleID(RoleName)    
+    NewRoleID = await RoleHelper.GetRoleID(RoleName)
     DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
-    conn.close()
-    return
 
-    if (OldRoleID != NewRoleID):
+    if OldRoleID != NewRoleID:
       # Create an empty message variable first
       UpdatedMessage = None
       # Change from tank to dps
@@ -78,7 +76,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
         conn.commit()
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-        
+
       # Change from healer to tank
       elif OldRoleName == 'healer' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
         c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
@@ -94,25 +92,25 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
         conn.commit()
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
-      
+
       try:
         if UpdatedMessage:
           await message.edit(content=UpdatedMessage)
           conn.close()
           return
         if not UpdatedMessage:
-          await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role, please make sure you're changing to a role that still has free slots")
           conn.close()
           return
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
     else:
-      await DMHelper.DMUserByID(bot, UserID, f"You cannot change to the same role you already signed up as")
+      await DMHelper.DMUserByID(bot, UserID, "You cannot change to the same role you already signed up as")
       conn.close()
       return
   except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
