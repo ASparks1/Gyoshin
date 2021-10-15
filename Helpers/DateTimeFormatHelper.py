@@ -95,6 +95,6 @@ async def SqliteToLocalNoCheck(Date):
   splittime = time.split(':')
   hour = splittime[0]
   minute = splittime[1]
-  
+
   localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
   return localdatetime
