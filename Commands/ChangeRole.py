@@ -24,7 +24,6 @@ async def ChangeRole(message, bot, RoleName, UserID):
   # Check if the run exists and if the user is a member
   try:
     c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
-
     row = c.fetchone()
 
     OldRoleID = row[0]
@@ -32,21 +31,9 @@ async def ChangeRole(message, bot, RoleName, UserID):
     RaidID = row[2]
     RaidName = row[3]
     Date = row[4]
-    SplitDate = Date.split(' ')
-    Date = SplitDate[0]
-    Time = SplitDate[1]
-
-    # Split date into day, month and year values
-    splitdate = Date.split('-')
-    day = splitdate[2]
-    month = splitdate[1]
-    year = splitdate[0]
-
-    LocalDate = f"{day}-{month}-{year} {Time}"
-
+    LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
     OldRoleName = await RoleHelper.GetRoleName(OldRoleID)
     NewRoleID = await RoleHelper.GetRoleID(RoleName)
-
     DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
   except ValueError:
     await DMHelper.DMUserByID(bot, UserID, f"Run {RaidID} or role {RoleName} not found")

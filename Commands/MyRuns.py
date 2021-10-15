@@ -7,6 +7,7 @@ from Helpers import UserHelper
 from Helpers import RoleIconHelper
 from Helpers import DMHelper
 from Helpers import DateTimeValidationHelper
+from Helpers import DateTimeFormatHelper
 from Helpers import ReactionHelper
 from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
@@ -76,18 +77,7 @@ async def ListMyRuns(message, bot):
         NrOfhealersSignedUp = row[9]
         Date = row[10]
         Origin = row[11]
-        SplitDate = str.split(Date, ' ')
-        Date = SplitDate[0]
-        Time = SplitDate[1]
-
-        # Split date into day, month and year values
-        splitdate = Date.split('-')
-        day = splitdate[2]
-        month = splitdate[1]
-        year = splitdate[0]
-
-        # Generate date in sqlite format
-        LocalTime = f"{day}-{month}-{year} {Time}"
+        LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
 
         try:
           guild = bot.get_guild(Origin)
@@ -110,11 +100,11 @@ async def ListMyRuns(message, bot):
 
       if OrganizerName:
         # Post upcoming runs to DM
-        RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
+        RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
         if not Message:
           Message = f"You have signed up for the following runs:\n{RunMessage}"
         elif Message:
-          RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
+          RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
           Message = f"{Message}{RunMessage}"
 
     await DMHelper.DMUser(message, f"{Message}")

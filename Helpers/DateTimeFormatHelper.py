@@ -76,3 +76,25 @@ async def SqliteToLocal(message, datetime):
     if isdatevalid:
       localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
       return localdatetime
+
+# Helper function without future check
+async def SqliteToLocalNoCheck(Date):
+
+  # Split date into date and time values
+  splitdate = Date.split(' ')
+  date = splitdate[0]
+  time = splitdate[1]
+
+  # Split date into day, month and year values
+  splitdate = date.split('-')
+  day = splitdate[2]
+  month = splitdate[1]
+  year = splitdate[0]
+
+  # Split time into hours and minutes
+  splittime = time.split(':')
+  hour = splittime[0]
+  minute = splittime[1]
+  
+  localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
+  return localdatetime

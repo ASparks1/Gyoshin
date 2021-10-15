@@ -4,6 +4,7 @@ from Helpers import OriginHelper
 from Helpers import RoleHelper
 from Helpers import UserHelper
 from Helpers import DMHelper
+from Helpers import DateTimeFormatHelper
 from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 
@@ -46,17 +47,7 @@ async def WithdrawFromRaid(message, bot, UserID):
     UserID = row[3]
     RoleID = row[4]
     Date = row[5]
-    SplitDate = Date.split(' ')
-    Date = SplitDate[0]
-    Time = SplitDate[1]
-
-    # Split date into day, month and year values
-    splitdate = Date.split('-')
-    day = splitdate[2]
-    month = splitdate[1]
-    year = splitdate[0]
-
-    LocalDate = f"{day}-{month}-{year} {Time}"
+    LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
     OrganizerID = row[6]
     UserName = await UserHelper.GetDisplayName(message, UserID, bot)
 

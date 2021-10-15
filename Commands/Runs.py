@@ -7,6 +7,7 @@ from Helpers import UserHelper
 from Helpers import RoleIconHelper
 from Helpers import DMHelper
 from Helpers import DateTimeValidationHelper
+from Helpers import DateTimeFormatHelper
 from Helpers import ReactionHelper
 from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
@@ -99,18 +100,7 @@ async def ListRunsOnDate(message, bot):
           NrOfHealersRequired = row[8]
           NrOfhealersSignedUp = row[9]
           Date = row[10]
-          SplitDate = str.split(Date, ' ')
-          Date = SplitDate[0]
-          Time = SplitDate[1]
-
-          # Split date into day, month and year values
-          splitdate = Date.split('-')
-          day = splitdate[2]
-          month = splitdate[1]
-          year = splitdate[0]
-
-          # Generate date in sqlite format
-          LocalTime = f"{day}-{month}-{year} {Time}"
+          LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
 
           try:
             OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
@@ -125,7 +115,7 @@ async def ListRunsOnDate(message, bot):
           return
 
         if OrganizerName:
-          await message.channel.send(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}",components=[[Button(style=ButtonStyle.blue, label="Tank", custom_id="tank_btn"),Button(style=ButtonStyle.red, label="DPS", custom_id="dps_btn"),Button(style=ButtonStyle.green, label="Healer", custom_id="healer_btn"),Button(style=ButtonStyle.grey, label="Rally", custom_id="rally_btn")],[Button(style=ButtonStyle.grey, label="Members", custom_id="members_btn"),Button(style=ButtonStyle.grey, label="Reserves", custom_id="reserves_btn")],[Button(style=ButtonStyle.grey, label="Edit description", custom_id="editdesc_btn"),Button(style=ButtonStyle.grey, label="Reschedule", custom_id="reschedule_btn"),Button(style=ButtonStyle.red, label="Cancel", custom_id="cancel_btn")]])
+          await message.channel.send(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}",components=[[Button(style=ButtonStyle.blue, label="Tank", custom_id="tank_btn"),Button(style=ButtonStyle.red, label="DPS", custom_id="dps_btn"),Button(style=ButtonStyle.green, label="Healer", custom_id="healer_btn"),Button(style=ButtonStyle.grey, label="Rally", custom_id="rally_btn")],[Button(style=ButtonStyle.grey, label="Members", custom_id="members_btn"),Button(style=ButtonStyle.grey, label="Reserves", custom_id="reserves_btn")],[Button(style=ButtonStyle.grey, label="Edit description", custom_id="editdesc_btn"),Button(style=ButtonStyle.grey, label="Reschedule", custom_id="reschedule_btn"),Button(style=ButtonStyle.red, label="Cancel", custom_id="cancel_btn")]])
 
     else:
        await message.channel.send(f"No runs found on {date}")

@@ -38,25 +38,7 @@ async def OnAddCancelReaction(message, bot, UserID):
     Creator = row[0]
     RaidName = row[1]
     Date = row[2]
-
-    # Split date into date and time values
-    splitdate = Date.split(' ')
-    Date = splitdate[0]
-    Time = splitdate[1]
-
-    # Split date into day, month and year values
-    splitdate = Date.split('-')
-    day = splitdate[2]
-    month = splitdate[1]
-    year = splitdate[0]
-
-    # Split time into hours and minutes
-    splittime = Time.split(':')
-    hour = splittime[0]
-    minute = splittime[1]
-
-    # Generate date in local format
-    LocalTime = f"{day}-{month}-{year} {hour}:{minute}"
+    LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
 
     if row:
       Origin = await OriginHelper.GetOrigin(message)
@@ -100,7 +82,7 @@ async def OnAddCancelReaction(message, bot, UserID):
     CancelRun = None
 
     while not CancelRun:
-      await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalTime} in the {GuildName} server (Y/N)?")
+      await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
       try:
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
@@ -129,9 +111,9 @@ async def OnAddCancelReaction(message, bot, UserID):
 
       try:
         if CancelNotifications:
-          await message.channel.send(f"{CancelNotifications}\n{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalTime}.")
+          await message.channel.send(f"{CancelNotifications}\n{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalDate}.")
         elif not CancelNotifications:
-          await message.channel.send(f"{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalTime}.")
+          await message.channel.send(f"{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalDate}.")
 
         conn.commit()
         await message.delete()
@@ -610,25 +592,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
     Creator = row[2]
     Date = row[3]
     CreatorDisplay = await UserHelper.GetDisplayName(message, UserID, bot)
-
-    # Split date into date and time values
-    splitdate = Date.split(' ')
-    Date = splitdate[0]
-    Time = splitdate[1]
-
-    # Split date into day, month and year values
-    splitdate = Date.split('-')
-    day = splitdate[2]
-    month = splitdate[1]
-    year = splitdate[0]
-
-    # Split time into hours and minutes
-    splittime = Time.split(':')
-    hour = splittime[0]
-    minute = splittime[1]
-
-    # Generate date in local format
-    LocalTime = f"{day}-{month}-{year} {hour}:{minute}"
+    LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
 
     if row:
       if UserID != Creator:
@@ -636,7 +600,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
         conn.close()
         return
 
-      await DMHelper.DMUserByID(bot, UserID, f"Please provide the new description for {RaidName} on {LocalTime}")
+      await DMHelper.DMUserByID(bot, UserID, f"Please provide the new description for {RaidName} on {LocalDate}")
       try:
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       except asyncio.TimeoutError:
@@ -649,7 +613,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
         NewDescription = response.content
 
         while not EditDescription:
-          await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalTime} (Y/N)?")
+          await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalDate} (Y/N)?")
           try:
             response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
             if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
@@ -668,7 +632,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
           try:
             c.execute("UPDATE Raids set Name = (?) WHERE ID = (?)", (NewDescription, RaidID,))
             conn.commit()
-            await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalTime} from {RaidName} to {NewDescription}.")
+            await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalDate} from {RaidName} to {NewDescription}.")
             UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
             await message.edit(content=UpdatedMessage)
             conn.close()

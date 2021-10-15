@@ -10,6 +10,7 @@ from Helpers import DMHelper
 from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 from Helpers import ReservesHelper
+from Helpers import DateTimeFormatHelper
 from Commands import Withdraw
 from Commands import ChangeRole
 
@@ -58,17 +59,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     RaidID = row[0]
     Description = row[1]
     Date = row[2]
-    SplitDate = Date.split(' ')
-    Date = SplitDate[0]
-    Time = SplitDate[1]
-
-    # Split date into day, month and year values
-    splitdate = Date.split('-')
-    day = splitdate[2]
-    month = splitdate[1]
-    year = splitdate[0]
-
-    LocalDate = f"{day}-{month}-{year} {Time}"
+    LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
     Origin = row[3]
     Organizer = row[4]
     NrOfPlayersRequired = row[5]

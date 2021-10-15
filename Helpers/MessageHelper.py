@@ -3,6 +3,7 @@ from Helpers import RaidIDHelper
 from Helpers import DMHelper
 from Helpers import RoleIconHelper
 from Helpers import UserHelper
+from Helpers import DateTimeFormatHelper
 
 async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
   try:
@@ -39,25 +40,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
         NrOfHealersRequired = row[7]
         NrOfhealersSignedUp = row[8]
         Date = row[9]
-
-        # Split date into date and time values
-        splitdate = Date.split(' ')
-        Date = splitdate[0]
-        Time = splitdate[1]
-
-        # Split date into day, month and year values
-        splitdate = Date.split('-')
-        day = splitdate[2]
-        month = splitdate[1]
-        year = splitdate[0]
-
-        # Split time into hours and minutes
-        splittime = Time.split(':')
-        hour = splittime[0]
-        minute = splittime[1]
-
-        # Generate date in sqlite format
-        LocalTime = f"{day}-{month}-{year} {hour}:{minute}"
+        LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
 
         try:
           OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
@@ -68,7 +51,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
 
         if OrganizerName:
           # Generate message
-          UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
+          UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
         return UpdatedMessage
     except ValueError:
       await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to retrieve run {RaidID}")
