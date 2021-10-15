@@ -432,7 +432,7 @@ async def OnAddRallyReaction(message, bot, UserID):
           conn.close()
           await DMHelper.DMUserByID(bot, UserID, "There is nobody else in the crew to rally.")
           return
-      elif RaidMembers:
+      if RaidMembers:
         RallyNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
         if RallyCount < 3:
           try:
@@ -524,10 +524,6 @@ async def OnMemberReaction(message, bot, UserID):
           return
       conn.close()
       return Message
-    else:
-      await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}.")
-      conn.close()
-      return
 
     # Close the connection
     conn.close()

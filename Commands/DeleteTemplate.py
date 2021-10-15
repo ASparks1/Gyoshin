@@ -51,7 +51,7 @@ async def DeleteTemplate(message, bot):
         if not row:
           await DMHelper.DMUserByID(bot, UserID, "Please enter a valid template name.")
           continue
-        elif row:
+        if row:
           ValidTemplateName = 'yes'
           try:
             CanDelete = None

@@ -131,7 +131,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
         await Withdraw.WithdrawFromRaid(message, bot, UserID)
         conn.close()
         return
-      elif CanWithdraw == "no":
+      if CanWithdraw == "no":
         conn.close()
         return
 
@@ -158,7 +158,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
         await ChangeRole.ChangeRole(message, bot, RoleName, UserID)
         conn.close()
         return
-      elif CanChangeRole == "no":
+      if CanChangeRole == "no":
         conn.close()
         return
 
@@ -181,7 +181,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
                 conn.close()
                 return
-              elif WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
+              if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
@@ -203,7 +203,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
               await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
               conn.close()
               return
-            elif TankReserveResponse.content == "N" or TankReserveResponse.content == "n" or TankReserveResponse.content == "No" or TankReserveResponse.content == "no":
+            if TankReserveResponse.content == "N" or TankReserveResponse.content == "n" or TankReserveResponse.content == "No" or TankReserveResponse.content == "no":
               TankReserveResponse = "no"
               conn.close()
               return
@@ -237,7 +237,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
                 conn.close()
                 return
-              elif WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
+              if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
@@ -259,7 +259,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
               await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
               conn.close()
               return
-            elif DPSReserveResponse.content == "N" or DPSReserveResponse.content == "n" or DPSReserveResponse.content == "No" or DPSReserveResponse.content == "no":
+            if DPSReserveResponse.content == "N" or DPSReserveResponse.content == "n" or DPSReserveResponse.content == "No" or DPSReserveResponse.content == "no":
               DPSReserveResponse = "no"
               conn.close()
               return
@@ -295,7 +295,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
                 conn.close()
                 return
-              elif WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
+              if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
@@ -317,7 +317,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
               await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
               conn.close()
               return
-            elif HealerReserveResponse.content == "N" or HealerReserveResponse.content == "n" or HealerReserveResponse.content == "No" or HealerReserveResponse.content == "no":
+            if HealerReserveResponse.content == "N" or HealerReserveResponse.content == "n" or HealerReserveResponse.content == "No" or HealerReserveResponse.content == "no":
               HealerReserveResponse = "no"
               conn.close()
               return

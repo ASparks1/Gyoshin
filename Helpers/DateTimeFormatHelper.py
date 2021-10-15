@@ -76,9 +76,3 @@ async def SqliteToLocal(message, datetime):
     if isdatevalid:
       localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
       return localdatetime
-    else:
-      # Throw error if date is not valid
-      await DMHelper.DMUser(message, "Invalid date and time detected, please beware you cannot search on dates in the past")
-  else:
-    # Throw error when received date format is invalid
-    await DMHelper.DMUser(message, "Invalid date and time detected, please beware you cannot search on dates in the past")
