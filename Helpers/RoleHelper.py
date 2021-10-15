@@ -11,7 +11,6 @@ async def GetRoleName(RoleID):
   except:
     conn.close()
   return RoleName
-  
 
 async def GetRoleID(RoleName):
   # Open connection to DB
@@ -21,6 +20,6 @@ async def GetRoleID(RoleName):
   try:
     c.execute("SELECT ID FROM Roles WHERE Name = (?)", (RoleName,))
     RoleID = c.fetchone()[0]
-  except: 
+  except:
     conn.close()
   return RoleID

@@ -12,10 +12,10 @@ from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
 
 async def ListRunsOnDate(message, bot):
-    
+
   # Get Origin
   Origin = await OriginHelper.GetOrigin(message)
-  
+
   if not Origin:
     return
 
@@ -46,7 +46,7 @@ async def ListRunsOnDate(message, bot):
     # Check if date is not in the past
     try:
       current_date = datetime.utcnow().strftime("%Y-%m-%d")
-      if (sqlitedate < current_date):
+      if sqlitedate < current_date:
         await DMHelper.DMUser(message, "It's not possible to search on dates in the past")
         conn.close()
         # Delete message that contains command
@@ -62,7 +62,7 @@ async def ListRunsOnDate(message, bot):
       DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
       HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
     except:
-      await DMHelper.DMUser(message,"Something went wrong retrieving role icons")
+      await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
       conn.close()
       return
 
@@ -74,7 +74,7 @@ async def ListRunsOnDate(message, bot):
       await DMHelper.DMUser(message, "Run not found")
       conn.close()
       return
-  
+
     # Delete message that contains command
     await message.delete()
 
@@ -85,7 +85,7 @@ async def ListRunsOnDate(message, bot):
       await message.channel.send(f"The following runs are planned on {date}:\n")
 
       for row in rows:
-        
+
         # Data type conversions so variables can be used in message
         try:
           ID = row[0]
@@ -102,7 +102,7 @@ async def ListRunsOnDate(message, bot):
           SplitDate = str.split(Date, ' ')
           Date = SplitDate[0]
           Time = SplitDate[1]
-          
+   
           # Split date into day, month and year values
           splitdate = Date.split('-')
           day = splitdate[2]
@@ -118,12 +118,12 @@ async def ListRunsOnDate(message, bot):
             await DMHelper.DMUser(message, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
             conn.close()
             return
-            
+    
         except:
           await DMHelper.DMUser(message, "Unable to convert variables")
           conn.close()
           return
-        
+
         if OrganizerName:
           await message.channel.send(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}",components=[[Button(style=ButtonStyle.blue, label="Tank", custom_id="tank_btn"),Button(style=ButtonStyle.red, label="DPS", custom_id="dps_btn"),Button(style=ButtonStyle.green, label="Healer", custom_id="healer_btn"),Button(style=ButtonStyle.grey, label="Rally", custom_id="rally_btn")],[Button(style=ButtonStyle.grey, label="Members", custom_id="members_btn"),Button(style=ButtonStyle.grey, label="Reserves", custom_id="reserves_btn")],[Button(style=ButtonStyle.grey, label="Edit description", custom_id="editdesc_btn"),Button(style=ButtonStyle.grey, label="Reschedule", custom_id="reschedule_btn"),Button(style=ButtonStyle.red, label="Cancel", custom_id="cancel_btn")]])
 
@@ -136,7 +136,7 @@ async def ListRunsOnDate(message, bot):
     await DMHelper.DMUser(message, "Invalid date and time detected please use the dd-mm-yyyy format")
     conn.close()
     return
-  
+
   # Close the connection
-  conn.close()  
+  conn.close()
   return

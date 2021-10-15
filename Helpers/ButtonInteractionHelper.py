@@ -16,28 +16,28 @@ async def OnButtonClick(interaction, bot):
       await Join.JoinRaid(interaction.message, bot, "tank", UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-      return 
+      return
   if interaction.custom_id == "dps_btn":
     try:
       await interaction.respond(type=6)
       await Join.JoinRaid(interaction.message, bot, "dps", UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-      return 
+      return
   if interaction.custom_id == "healer_btn":
     try:
       await interaction.respond(type=6)
       await Join.JoinRaid(interaction.message, bot, "healer", UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-      return 
+      return
   if interaction.custom_id == "rally_btn":
     try:
       await interaction.respond(type=6)
       await ReactionHelper.OnAddRallyReaction(interaction.message, bot, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-      return 
+      return
   if interaction.custom_id == "members_btn":
     try:
       Message = await ReactionHelper.OnMemberReaction(interaction.message, bot, UserID)
@@ -64,7 +64,7 @@ async def OnButtonClick(interaction, bot):
       await ReactionHelper.OnAddRescheduleReaction(interaction.message, bot, UserID, Origin)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-      return 
+      return
   if interaction.custom_id == "cancel_btn":
     try:
       await interaction.respond(type=6)

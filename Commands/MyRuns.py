@@ -15,7 +15,7 @@ async def ListMyRuns(message, bot):
 
   # Get user id
   UserID = message.author.id
-  
+
   if not UserID:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting user information")
     return
@@ -26,7 +26,6 @@ async def ListMyRuns(message, bot):
     HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
-    conn.close()
     return
 
   # Open connection to DB
@@ -50,19 +49,19 @@ async def ListMyRuns(message, bot):
     return
 
   rows = c.fetchmany(5)
-    
+ 
   if not rows:
     await DMHelper.DMUserByID(bot, UserID, "You have no upcoming runs")
     conn.close()
     return
-    
+
   if rows:
     # Start with an empty message
     Message = None
     # await DMHelper.DMUserByID(bot, UserID, f"You have signed up for the following runs:\n")
 
     for row in rows:
-        
+
       # Data type conversions so variables can be used in message
       try:
         ID = row[0]
@@ -80,23 +79,23 @@ async def ListMyRuns(message, bot):
         SplitDate = str.split(Date, ' ')
         Date = SplitDate[0]
         Time = SplitDate[1]
-          
+
         # Split date into day, month and year values
         splitdate = Date.split('-')
         day = splitdate[2]
         month = splitdate[1]
         year = splitdate[0]
-  
+
         # Generate date in sqlite format
         LocalTime = f"{day}-{month}-{year} {Time}"
 
         try:
           guild = bot.get_guild(Origin)
           # Get member object by discord user id
-          member_obj = await guild.fetch_member(UserID)
+          member_obj = await guild.fetch_member(OrganizerUserID)
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving this users display name, perhaps they have left the server")
-  
+
         try:
           if member_obj:
             OrganizerName = member_obj.display_name
@@ -108,18 +107,18 @@ async def ListMyRuns(message, bot):
         await DMHelper.DMUser(message, "Unable to convert variables")
         conn.close()
         return
-        
+
       if OrganizerName:
         # Post upcoming runs to DM
         RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
         if not Message:
           Message = f"You have signed up for the following runs:\n{RunMessage}"
         elif Message:
-          RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"  
+          RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
           Message = f"{Message}{RunMessage}"
-          
+
     await DMHelper.DMUser(message, f"{Message}")
-    
+
     # Close the connection
-    conn.close()  
+    conn.close()
     return

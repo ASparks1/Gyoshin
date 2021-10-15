@@ -4,7 +4,7 @@ async def DMUser(message, messagestring):
       await message.author.send(messagestring)
     except:
       return
-  
+
 # Send a DM to a specific user id
 async def DMUserByID(bot, UserID, messagestring):
  try:

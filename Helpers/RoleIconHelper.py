@@ -1,8 +1,8 @@
-async def GetTankIcon(bot, rolename):  
+async def GetTankIcon(bot, rolename):
   tankicon = "<:tank:879629278118027285>"
   return tankicon
 
-async def GetDpsIcon(bot, rolename):  
+async def GetDpsIcon(bot, rolename):
   dpsicon = "<:dps:879629347789627403>"
   return dpsicon
 

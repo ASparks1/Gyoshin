@@ -20,7 +20,7 @@ async def ValidateDateTime(message, day, month, year, hour, minute):
   # Format newly parsed datetime object in the same manner
   try:
     newdatetime = datetime.strftime(newdatetime, "%Y-%m-%d %H:%M")
-  # Throw error when formatting fails  
+  # Throw error when formatting fails
   except:
     await DMHelper.DMUser(message, "Unable to format given date")
 

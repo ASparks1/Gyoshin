@@ -20,7 +20,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-  
+
   # Check if the run exists and if the user is a member
   try:
     c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
@@ -47,23 +47,23 @@ async def ChangeRole(message, bot, RoleName, UserID):
     day = splitdate[2]
     month = splitdate[1]
     year = splitdate[0]
-    
+
     LocalDate = f"{day}-{month}-{year} {Time}"
 
     OldRoleName = await RoleHelper.GetRoleName(OldRoleID)
     NewRoleID = await RoleHelper.GetRoleID(RoleName)
-    
+
     DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
   except:
     await DMHelper.DMUserByID(bot, UserID, f"Run {RaidID} or role {RoleName} not found")
     conn.close()
     return
 
-  if (OldRoleID != NewRoleID):
+  if OldRoleID != NewRoleID:
     try:
       # Create an empty message variable first
       UpdatedMessage = None
-      
+
       # Set column name to update for old role
       if OldRoleName == 'tank':
         OldRoleSignedUpColumn = 'NrOfTanksSignedUp'
@@ -71,7 +71,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
         OldRoleSignedUpColumn = 'NrOfDpsSignedUp'
       elif OldRoleName == 'healer':
         OldRoleSignedUpColumn = 'NrOfHealersSignedUp'
-      
+
       # Set column name to update for new role
       if RoleName == 'tank':
         NewRoleSignedUpColumn = 'NrOfTanksSignedUp'
@@ -79,7 +79,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
         NewRoleSignedUpColumn = 'NrOfDpsSignedUp'
       elif RoleName == 'healer':
         NewRoleSignedUpColumn = 'NrOfHealersSignedUp'
-      
+
       # Change role
       try:
         c.execute("UPDATE Raids set (?) = (?) - 1, (?) = (?) + 1 WHERE ID = (?) AND Origin = (?)", (OldRoleSignedUpColumn, OldRoleSignedUpColumn, NewRoleSignedUpColumn, NewRoleSignedUpColumn, RaidID, Origin,))
@@ -91,7 +91,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
-      
+
       try:
         if UpdatedMessage:
           await message.edit(content=UpdatedMessage)
@@ -105,7 +105,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
         conn.close()
         return
-     
+
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong changing your role")
       conn.close()

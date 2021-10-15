@@ -6,7 +6,7 @@ from Helpers import DMHelper
 # Expected input format is DD-MM-YYYY HH:MM
 async def LocalToSqlite(message, datetime):
 
-  # Regular expression pattern to use in order to check if date was received in dd-mm-yyyy hh:mm format 
+  # Regular expression pattern to use in order to check if date was received in dd-mm-yyyy hh:mm format
   pattern = re.compile(r'((\d{2})-(\d{2})-(\d{4})) (\d{2}):(\d{2})')
 
   # Compare the date and time that was received to the pattern
@@ -45,12 +45,12 @@ async def LocalToSqlite(message, datetime):
 # Expected input format is YYYY-MM-DD HH:MM
 async def SqliteToLocal(message, datetime):
 
-  # Regular expression pattern to use in order to check if date was received in yyyy-mm-dd hh:mm format 
+  # Regular expression pattern to use in order to check if date was received in yyyy-mm-dd hh:mm format
   pattern = re.compile(r'((\d{4})-(\d{2})-(\d{2})) (\d{2}):(\d{2})')
 
   # Compare the date and time that was received to the pattern
   match = pattern.match(datetime)
-  
+
   if match:
 
     # Split date into date and time values
@@ -74,11 +74,11 @@ async def SqliteToLocal(message, datetime):
 
     # Return local time if date is valid
     if isdatevalid == True:
-      localdatetime = f"{day}-{month}-{year} {hour}:{minute}"        
+      localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
       return localdatetime
     else:
       # Throw error if date is not valid
       await DMHelper.DMUser(message, "Invalid date and time detected, please beware you cannot search on dates in the past")
   else:
-    # Throw error when received date format is invalid    
+    # Throw error when received date format is invalid
     await DMHelper.DMUser(message, "Invalid date and time detected, please beware you cannot search on dates in the past")

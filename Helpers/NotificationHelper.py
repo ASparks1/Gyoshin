@@ -7,7 +7,7 @@ async def NotifyRaidMembers(message, raidmembers):
   try:
     # Start with an empty message
     Message = None
-      
+ 
     for member in raidmembers:
       # Generate notification format
       Notification = f"<@!{member[0]}> "
@@ -18,7 +18,7 @@ async def NotifyRaidMembers(message, raidmembers):
     return Message
   except:
     await DMHelper.DMUser(message, "Something went wrong tagging one of the users.")
-    return   
+    return
 
 # Helper function to tag a single user
 async def NotifyUser(message, userid):

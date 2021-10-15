@@ -10,7 +10,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the run information.")
     return
-    
+
   try:
     TankIcon = await RoleIconHelper.GetTankIcon(bot, 'Tank')
     DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
@@ -18,29 +18,28 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
-    
+
   if RaidID:
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
-    
+
     try:
-      c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-      
+      c.execute("SELECT Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+
       row = c.fetchone()
-      
+
       if row:
-        ID = row[0]
-        Name = row[1]
-        OrganizerUserID = row[2]
-        Status = row[3]
-        NrOfTanksRequired = row[4]
-        NrOfTanksSignedUp = row[5]
-        NrOfDpsRequired = row[6]
-        NrOfDpsSignedUp = row[7]
-        NrOfHealersRequired = row[8]
-        NrOfhealersSignedUp = row[9]
-        Date = row[10]
-      
+        Name = row[0]
+        OrganizerUserID = row[1]
+        Status = row[2]
+        NrOfTanksRequired = row[3]
+        NrOfTanksSignedUp = row[4]
+        NrOfDpsRequired = row[5]
+        NrOfDpsSignedUp = row[6]
+        NrOfHealersRequired = row[7]
+        NrOfhealersSignedUp = row[8]
+        Date = row[9]
+
         # Split date into date and time values
         splitdate = Date.split(' ')
         Date = splitdate[0]
@@ -66,9 +65,9 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
           conn.close()
           return
-        
+
         if OrganizerName:
-          # Generate message     
+          # Generate message
           UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalTime}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
         return UpdatedMessage
     except:
