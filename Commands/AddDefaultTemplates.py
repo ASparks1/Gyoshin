@@ -14,7 +14,6 @@ async def AddDefaultTemplates(message):
 
     CreatorID = message.author.id
     c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('alliance', (?), (?), 24, 3, 15, 6)", (Origin, CreatorID,))
-    
 
     c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('raid', (?), (?), 8, 2, 4, 2)", (Origin, CreatorID,))
 

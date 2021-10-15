@@ -24,7 +24,7 @@ async def OnMemberLeaveOrRemove(member):
       conn.commit()
 
     # Find all the runs this user has signed up for and is not the organizer
-    c.execute("Select R.ID, R.Status, R.NrOfPlayersSignedUp, R.NrOfTanksSignedUp, R.NrOfDpsSignedUp, R.NrOfHealersSignedUp, RM.ID, RM.RoleID FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE OrganizerUserID != (?) AND UserID = (?) AND Origin = (?)", (UserID, UserID, Origin,))
+    c.execute("Select R.ID, R.Status, R.NrOfPlayersSignedUp, RM.ID, RM.RoleID FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE OrganizerUserID != (?) AND UserID = (?) AND Origin = (?)", (UserID, UserID, Origin,))
     rows = c.fetchall()
 
     if rows:
@@ -33,11 +33,8 @@ async def OnMemberLeaveOrRemove(member):
         RaidID = row[0]
         Status = row[1]
         NrOfPlayersSignedUp = row[2]
-        NrOfTanksSignedUp = row[3]
-        NrOfDpsSignedUp = row[4]
-        NrOfHealersSignedUp = row[5]
-        RaidMemberID = row[6]
-        RoleID = row[7]
+        RaidMemberID = row[3]
+        RoleID = row[4]
 
 	    # Delete run if the status is canceled or the number of players signed up is just 1
         if NrOfPlayersSignedUp == 1:

@@ -58,9 +58,9 @@ async def ListRunsOnDate(message, bot):
       return
 
     try:
-      TankIcon = await RoleIconHelper.GetTankIcon(bot, 'Tank')
-      DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
-      HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
+      TankIcon = await RoleIconHelper.GetTankIcon()
+      DpsIcon = await RoleIconHelper.GetDpsIcon()
+      HealerIcon = await RoleIconHelper.GetHealerIcon()
     except:
       await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
       conn.close()

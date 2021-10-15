@@ -89,7 +89,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       conn.close()
       return
 
-    # Get users 
+    # Get users
     try:
       user = await bot.fetch_user(int(UserID))
       GuildName = await OriginHelper.GetName(message)
@@ -475,9 +475,9 @@ async def OnMemberReaction(message, bot, UserID):
 
   # Get role icons
   try:
-    TankIcon = await RoleIconHelper.GetTankIcon(bot, 'Tank')
-    DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
-    HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
+    TankIcon = await RoleIconHelper.GetTankIcon()
+    DpsIcon = await RoleIconHelper.GetDpsIcon()
+    HealerIcon = await RoleIconHelper.GetHealerIcon()
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
@@ -516,11 +516,11 @@ async def OnMemberReaction(message, bot, UserID):
             conn.close()
 
           if RoleName == 'tank':
-            RoleIcon = await RoleIconHelper.GetTankIcon(bot, RoleName)
+            RoleIcon = await RoleIconHelper.GetTankIcon()
           elif RoleName == 'dps':
-            RoleIcon = await RoleIconHelper.GetDpsIcon(bot, RoleName)
+            RoleIcon = await RoleIconHelper.GetDpsIcon()
           elif RoleName == 'healer':
-            RoleIcon = await RoleIconHelper.GetHealerIcon(bot, RoleName)
+            RoleIcon = await RoleIconHelper.GetHealerIcon()
 
           # Place run member information into channel
           if not Message:
@@ -549,9 +549,9 @@ async def OnReservesReaction(message, bot, UserID):
 
   # Get role icons
   try:
-    TankIcon = await RoleIconHelper.GetTankIcon(bot, 'Tank')
-    DpsIcon = await RoleIconHelper.GetDpsIcon(bot, 'Dps')
-    HealerIcon = await RoleIconHelper.GetHealerIcon(bot, 'Healer')
+    TankIcon = await RoleIconHelper.GetTankIcon()
+    DpsIcon = await RoleIconHelper.GetDpsIcon()
+    HealerIcon = await RoleIconHelper.GetHealerIcon()
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
@@ -590,11 +590,11 @@ async def OnReservesReaction(message, bot, UserID):
             conn.close()
 
           if RoleName == 'tank':
-            RoleIcon = await RoleIconHelper.GetTankIcon(bot, RoleName)
+            RoleIcon = await RoleIconHelper.GetTankIcon()
           elif RoleName == 'dps':
-            RoleIcon = await RoleIconHelper.GetDpsIcon(bot, RoleName)
+            RoleIcon = await RoleIconHelper.GetDpsIcon()
           elif RoleName == 'healer':
-            RoleIcon = await RoleIconHelper.GetHealerIcon(bot, RoleName)
+            RoleIcon = await RoleIconHelper.GetHealerIcon()
 
           # Place run member information into channel
           if not Message:
