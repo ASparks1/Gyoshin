@@ -63,6 +63,6 @@ async def OnMemberLeaveOrRemove(member):
       print(f"No data found to clean up for user {UserID}")
       conn.close()
 
-  except:
+  except ValueError:
     print("Something went wrong deleting old data")
     return

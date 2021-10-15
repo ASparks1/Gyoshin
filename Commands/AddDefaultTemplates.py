@@ -24,6 +24,6 @@ async def AddDefaultTemplates(message):
     conn.commit()
     await DMHelper.DMUser(message, "Default templates added")
     conn.close()
-  except:
+  except ValueError:
     await DMHelper.DMUser(message, "Something went wrong trying to insert default templates")
     conn.close()

@@ -52,7 +52,7 @@ async def ListRunsOnDate(message, bot):
         # Delete message that contains command
         await message.delete()
         return
-    except:
+    except ValueError:
       await DMHelper.DMUser(message, "Unable to convert date from local to sqlite format")
       conn.close()
       return
@@ -61,7 +61,7 @@ async def ListRunsOnDate(message, bot):
       TankIcon = await RoleIconHelper.GetTankIcon()
       DpsIcon = await RoleIconHelper.GetDpsIcon()
       HealerIcon = await RoleIconHelper.GetHealerIcon()
-    except:
+    except ValueError:
       await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
       conn.close()
       return
@@ -70,7 +70,7 @@ async def ListRunsOnDate(message, bot):
     try:
       ChannelID = message.channel.id
       c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE Date like (?) AND Origin = (?) AND Status != 'Cancelled' AND ChannelID = (?) ORDER BY Date ASC, ID ASC", (sqlitedate+'%', Origin, ChannelID))
-    except:
+    except ValueError:
       await DMHelper.DMUser(message, "Run not found")
       conn.close()
       return
@@ -114,12 +114,12 @@ async def ListRunsOnDate(message, bot):
 
           try:
             OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
-          except:
+          except ValueError:
             await DMHelper.DMUser(message, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
             conn.close()
             return
 
-        except:
+        except IndexError:
           await DMHelper.DMUser(message, "Unable to convert variables")
           conn.close()
           return

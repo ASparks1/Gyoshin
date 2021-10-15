@@ -10,6 +10,6 @@ async def GetRaidIDFromMessage(message):
     # Obtain the run number from the first line of the message
     RaidID = int(messagelines[0].partition(splitword)[2])
     return RaidID
-  except:
+  except ValueError:
     await DMHelper.DMUser(message, "Something went wrong obtaining the run number.")
     return

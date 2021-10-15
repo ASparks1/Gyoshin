@@ -23,7 +23,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
   # Role verification
   try:
     RoleID = await RoleHelper.GetRoleID(RoleName)
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles to see available roles.")
     return
 
@@ -42,14 +42,14 @@ async def JoinRaid(message, bot, RoleName, UserID):
   #Collect required information from raid, number of players and roles, and if already formed or cancelled.
   try:
     c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong when searching for this run.")
     conn.close()
     return
 
   try:
     row = c.fetchone()
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}.")
     conn.close()
     return
@@ -80,7 +80,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     NrOfHealersRequired = row[11]
     NrOfHealersSignedUp = row[12]
     Status = row[13]
-  except:
+  except IndexError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving run information.")
     conn.close()
     return
@@ -103,7 +103,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     try:
       RoleIDSignedUpAs = usercheck[1]
       RoleNameSignedUpAs = await RoleHelper.GetRoleName(RoleIDSignedUpAs)
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining role information")
       conn.close()
       return
@@ -217,7 +217,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
       else:
         try:
           c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-        except:
+        except ValueError:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
           conn.close()
           return
@@ -274,7 +274,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
         return
       try:
         c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-      except:
+      except ValueError:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
         conn.close()
         return
@@ -330,7 +330,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
       else:
         try:
           c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
-        except:
+        except ValueError:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
           conn.close()
           return
@@ -351,7 +351,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
       await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
       UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
       await message.edit(content=UpdatedMessage)
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
       conn.close()
 
@@ -374,15 +374,15 @@ async def JoinRaid(message, bot, RoleName, UserID):
             await message.edit(content=UpdatedMessage)
             NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, Organizer)
             await message.channel.send(f"{NotifyOrganizerMessage}\nYour crew for {Description} on {LocalDate} has been assembled!")
-          except:
+          except ValueError:
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
             conn.close()
             return
-        except:
+        except ValueError:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating party status to formed.")
           conn.close()
           return
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
       conn.close()
       return

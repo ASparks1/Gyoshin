@@ -58,7 +58,7 @@ async def DismissMember(message, client):
     RaidName = row[1]
     Date = row[2]
     Date = await DateTimeFormatHelper.SqliteToLocal(message, Date)
-  except:
+  except IndexError:
     await DMHelper.DMUser(message, f"Run {RaidID} not found or you are not the organizer of this run, only the organizer is allowed to dismiss members.")
     conn.close()
     return
@@ -71,7 +71,7 @@ async def DismissMember(message, client):
       RaidMemberID = row[0]
       RoleID = row[1]
       RoleName = await RoleHelper.GetRoleName(RoleID)
-    except:
+    except IndexError:
       await DMHelper.DMUser(message, "Something went wrong checking if the provided member is part of this run")
       conn.close()
       return
@@ -79,7 +79,7 @@ async def DismissMember(message, client):
   if RaidMemberID:
     try:
       c.execute("DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
-    except:
+    except ValueError:
       await DMHelper.DMUser(message, "Something went wrong removing this member from the run")
       conn.close()
       return
@@ -94,7 +94,7 @@ async def DismissMember(message, client):
 
     try:
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, (?) = (?) - 1, Status = 'Forming' WHERE ID = (?)", (ColumnToUpdate, RaidID,))
-    except:
+    except ValueError:
       await DMHelper.DMUser(message, "Something went wrong updating the number of signed up players")
       conn.close()
       return
@@ -102,7 +102,7 @@ async def DismissMember(message, client):
       conn.commit()
       await message.channel.send(f"{UserName} has been dismissed from the run {RaidName} on {Date}")
       conn.close()
-    except:
+    except ValueError:
       conn.close()
       await DMHelper.DMUser(message, "Something went wrong dismissing a member from this run")
       return

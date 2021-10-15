@@ -15,14 +15,14 @@ async def DeleteOldRaidData():
     current_date = datetime.utcnow().strptime(current_date, "%Y-%m-%d %H:%M")
     yesterday = current_date - timedelta(days=1)
     yesterday = datetime.strftime(yesterday, "%Y-%m-%d %H:%M")
-  except:
+  except TypeError:
     print("Something went wrong converting dates")
     return
 
   # Store query results
   try:
     c.execute("SELECT ID FROM Raids WHERE Date <= (?)", (yesterday,))
-  except:
+  except ValueError:
     print("Something went wrong checking for old raids")
     return
 
@@ -36,7 +36,7 @@ async def DeleteOldRaidData():
         c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (ID,))
         print(f"Cleaning up raidreserves data for run {ID}")
         conn.commit()
-      except:
+      except ValueError:
         print("Something went wrong deleting raidreserves")
         conn.close()
         return
@@ -45,7 +45,7 @@ async def DeleteOldRaidData():
         c.execute("DELETE FROM RaidMembers WHERE RaidID = (?)", (ID,))
         print(f"Cleaning up raidmember data for run {ID}")
         conn.commit()
-      except:
+      except ValueError:
         print("Something went wrong deleting raidmembers")
         conn.close()
         return
@@ -53,7 +53,7 @@ async def DeleteOldRaidData():
         c.execute("DELETE FROM Raids WHERE ID = (?)", (ID,))
         print(f"Cleaning up raid data for run {ID}")
         conn.commit()
-      except:
+      except ValueError:
         print("Something went wrong deleting raids")
         conn.close()
         return

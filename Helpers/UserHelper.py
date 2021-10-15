@@ -15,13 +15,13 @@ async def GetDisplayName(message, userid, bot):
   # Get member object by discord user id
   try:
     member_obj = await guild.fetch_member(userid)
-  except:
+  except ValueError:
     await DMHelper.DMUser(message, "Something went wrong retrieving this users display name, perhaps they have left the server")
   try:
     if member_obj:
       display_name = member_obj.display_name
       return display_name
-  except:
+  except ValueError:
     await DMHelper.DMUser(message, "Something went wrong retrieving the users' display name")
     return
 

@@ -74,7 +74,7 @@ async def OnAddCancelReaction(message, bot, UserID):
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, Creator))
       UserIDs = c.fetchall()
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
       conn.close()
       return
@@ -84,14 +84,14 @@ async def OnAddCancelReaction(message, bot, UserID):
         c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator))
         RaidMembers = c.fetchall()
         CancelNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
-    except:
+    except ValueError:
       await DMHelper.DMUser(message, "Something went wrong retrieving raid members")
       conn.close()
       return
 
     try:
       GuildName = await OriginHelper.GetName(message)
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
       conn.close()
       return
@@ -122,7 +122,7 @@ async def OnAddCancelReaction(message, bot, UserID):
 
       try:
         OrganizerDisplayName = await UserHelper.GetDisplayName(message, Creator, bot)
-      except:
+      except ValueError:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the organizers' display name")
         conn.close()
         return
@@ -137,14 +137,14 @@ async def OnAddCancelReaction(message, bot, UserID):
         await message.delete()
         conn.close()
         return
-      except:
+      except ValueError:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong cancelling the run")
         conn.close()
         return
     elif CancelRun == "no":
         conn.close()
         return
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if this run still exists perhaps this run has been cancelled.")
     conn.close()
     return
@@ -163,7 +163,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
   try:
     user = await bot.fetch_user(int(UserID))
     username = user.display_name
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
     conn.close()
     return
@@ -192,14 +192,14 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
         conn.close()
         return
 
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run")
       conn.close()
       return
 
     try:
       GuildName = await OriginHelper.GetName(message)
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the server information")
       conn.close()
       return
@@ -231,7 +231,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
         try:
           NewDate = response.content
           sqlitenewdate = await DateTimeFormatHelper.LocalToSqlite(message, NewDate)
-        except:
+        except ValueError:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong formatting the new date and time")
           conn.close()
           return
@@ -264,7 +264,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
             try:
               c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, UserID,))
               UserIDs = c.fetchall()
-            except:
+            except ValueError:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
               conn.close()
               return
@@ -276,7 +276,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
 
                 if RaidMembers:
                   RescheduleNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
-            except:
+            except ValueError:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers")
               conn.close()
               return
@@ -285,7 +285,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
             try:
               c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
               c.execute("DELETE FROM RaidReserves WHERE RaidID = (?) AND Origin = (?)", (RaidID, Origin))
-            except:
+            except ValueError:
               conn.close()
               return
 
@@ -293,7 +293,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
             try:
               c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?) AND Origin = (?)", (RaidID, UserID, Origin,))
               row = c.fetchone()
-            except:
+            except ValueError:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the role of the organizer")
               conn.close()
               return
@@ -322,7 +322,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
               try:
                 c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 1, 0, 0, RaidID,))
                 conn.commit()
-              except:
+              except ValueError:
                 await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and tanks")
                 conn.close()
                 return
@@ -331,7 +331,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
               try:
                 c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 1, 0, RaidID,))
                 conn.commit()
-              except:
+              except ValueError:
                 await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and dps")
                 conn.close()
                 return
@@ -340,7 +340,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
               try:
                 c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 0, 1, RaidID,))
                 conn.commit()
-              except:
+              except ValueError:
                 await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and healers")
                 conn.close()
                 return
@@ -357,7 +357,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
               await message.delete()
               conn.close()
               return
-            except:
+            except ValueError:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong rescheduling the run")
               conn.close()
               return
@@ -370,7 +370,7 @@ async def OnAddRallyReaction(message, bot, UserID):
 
     if not RaidID:
       return
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the run number.")
   # Obtain server ID
   Origin = await OriginHelper.GetOrigin(message)
@@ -388,7 +388,7 @@ async def OnAddRallyReaction(message, bot, UserID):
     row = c.fetchone()
     RaidID = row[0]
     DateTime = row[1]
-  except:
+  except IndexError:
     await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}.")
     conn.close()
     return
@@ -401,7 +401,7 @@ async def OnAddRallyReaction(message, bot, UserID):
       await DMHelper.DMUserByID(bot, UserID, f"Only members of run {RaidID} are allowed to rally the crew.")
       conn.close()
       return
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, f"Only members of run {RaidID} are allowed to rally the crew.")
     conn.close()
     return
@@ -412,7 +412,7 @@ async def OnAddRallyReaction(message, bot, UserID):
     now = datetime.utcnow()
     DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M")
     TimeDifference = DateTime - now
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
     conn.close()
     return
@@ -437,14 +437,14 @@ async def OnAddRallyReaction(message, bot, UserID):
         if RallyCount < 3:
           try:
             c.execute("UPDATE Raids SET RallyCount = RallyCount + 1 WHERE ID = (?)", (RaidID,))
-          except:
+          except ValueError:
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the rally count.")
             conn.close()
             return
 
           try:
             TimeTillRun = TimeDifference.seconds // 60
-          except:
+          except ValueError:
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong calculating the time.")
             conn.close()
             return
@@ -458,7 +458,7 @@ async def OnAddRallyReaction(message, bot, UserID):
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the crew members.")
         conn.close()
         return
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong with retrieving the names of the crew.")
       conn.close()
       return
@@ -479,7 +479,7 @@ async def OnMemberReaction(message, bot, UserID):
     # Execute query to retrieve all raidmembers
     try:
       c.execute("SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve raidmembers")
       conn.close()
       return
@@ -518,7 +518,7 @@ async def OnMemberReaction(message, bot, UserID):
           elif Message:
             MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
             Message = f"{Message}{MemberRoleMessage}"
-        except:
+        except ValueError:
           await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
           conn.close()
           return
@@ -540,7 +540,7 @@ async def OnReservesReaction(message, bot, UserID):
     # Execute query to retrieve all reserves
     try:
       c.execute("SELECT UserID, RoleID FROM RaidReserves WHERE RaidID = (?) ORDER BY RoleID, ID", (RaidID,))
-    except:
+    except ValueError:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve raidmembers")
       conn.close()
       return
@@ -579,7 +579,7 @@ async def OnReservesReaction(message, bot, UserID):
           elif Message:
             MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
             Message = f"{Message}{MemberRoleMessage}"
-        except:
+        except ValueError:
           await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
           conn.close()
           return
@@ -673,11 +673,11 @@ async def OnAddEditDescReaction(message, bot, UserID):
             await message.edit(content=UpdatedMessage)
             conn.close()
             return
-          except:
+          except ValueError:
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the description of this run 1")
             conn.close()
             return
-  except:
+  except ValueError:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the description of this run 2")
     conn.close()
     return
