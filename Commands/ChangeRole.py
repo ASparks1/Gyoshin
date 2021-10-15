@@ -44,7 +44,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
     conn.close()
     return
 
-  if (OldRoleID != NewRoleID):
+  if OldRoleID is not NewRoleID:
     try:
       # Create an empty message variable first
       UpdatedMessage = None
