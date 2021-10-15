@@ -45,7 +45,6 @@ async def ChangeRole(message, bot, RoleName, UserID):
     return
 
     if (OldRoleID != NewRoleID):
-    try:
       # Create an empty message variable first
       UpdatedMessage = None
       # Change from tank to dps
@@ -109,11 +108,6 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
         conn.close()
         return
-     
-    except:
-      await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
-      conn.close()
-      return
   else:
     await DMHelper.DMUserByID(bot, UserID, f"You cannot change to the same role you already signed up as")
     conn.close()
