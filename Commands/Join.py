@@ -207,7 +207,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
               TankReserveResponse = "no"
               conn.close()
               return
-            
+
             await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
             continue
           except asyncio.TimeoutError:
@@ -241,9 +241,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
-              else:
-                await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-                continue
+
+              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+              continue
             except asyncio.TimeoutError:
               conn.close()
               await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
@@ -263,7 +263,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
               DPSReserveResponse = "no"
               conn.close()
               return
-            
+
             await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
             continue
           except asyncio.TimeoutError:
@@ -298,7 +298,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
                 WithdrawFromReserveResponse = "no"
                 conn.close()
                 return
-              
+
               await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
               continue
             except asyncio.TimeoutError:
@@ -320,7 +320,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
               HealerReserveResponse = "no"
               conn.close()
               return
-            
+
             await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
             continue
           except asyncio.TimeoutError:
