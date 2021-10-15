@@ -80,7 +80,7 @@ async def AddRunInDM(message, bot):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong saving the date & time")
       return
 
-  await Templates.GetTemplates(message, bot)
+  await Templates.GetTemplates(message)
 
   # Check if there are templates for this server
   conn = sqlite3.connect('RaidPlanner.db')
