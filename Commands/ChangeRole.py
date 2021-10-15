@@ -108,8 +108,8 @@ async def ChangeRole(message, bot, RoleName, UserID):
         await DMHelper.DMUserByID(bot, UserID, f"Something went wrong changing your role")
         conn.close()
         return
-  else:
-    await DMHelper.DMUserByID(bot, UserID, f"You cannot change to the same role you already signed up as")
-    conn.close()
-    return
+    else:
+      await DMHelper.DMUserByID(bot, UserID, f"You cannot change to the same role you already signed up as")
+      conn.close()
+      return
   return
