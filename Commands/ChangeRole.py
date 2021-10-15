@@ -82,7 +82,7 @@ async def ChangeRole(message, bot, RoleName, UserID):
       
       # Change role
       try:
-        c.execute(f"UPDATE Raids set {OldRoleSignedUpColumn} = {OldRoleSignedUpColumn} - 1, {NewRoleSignedUpColumn} = {NewRoleSignedUpColumn} + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("UPDATE Raids set (?) = (?) - 1, (?) = (?) + 1 WHERE ID = (?) AND Origin = (?)", (OldRoleSignedUpColumn, OldRoleSignedUpColumn, NewRoleSignedUpColumn, NewRoleSignedUpColumn, RaidID, Origin,))
         c.execute("UPDATE RaidMembers set RoleID = (?) WHERE ID = (?) AND Origin = (?)", (NewRoleID, RaidMemberID, Origin,))
         await message.channel.send(f"{DisplayName} has changed role from {OldRoleName} to {RoleName} for {RaidName} on {LocalDate}")
         conn.commit()

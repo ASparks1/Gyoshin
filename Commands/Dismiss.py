@@ -95,7 +95,7 @@ async def DismissMember(message, client):
       ColumnToUpdate = 'NrOfHealersSignedUp'
   
     try:        
-      c.execute(f"Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, {ColumnToUpdate} = {ColumnToUpdate} - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
+      c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, (?) = (?) - 1, Status = 'Forming' WHERE ID = (?)", (ColumnToUpdate, RaidID,))
     except:
       await DMHelper.DMUser(message, "Something went wrong updating the number of signed up players")
       conn.close()

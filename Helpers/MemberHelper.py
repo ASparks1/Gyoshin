@@ -57,7 +57,7 @@ async def OnMemberLeaveOrRemove(member):
           # Delete raidmember record first
           c.execute("DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
           # Update run with new information
-          c.execute(f"UPDATE Raids SET {ColumnToUpdate} = {ColumnToUpdate} - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+          c.execute("UPDATE Raids SET (?) = (?) - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?) AND Origin = (?)", (ColumnToUpdate, ColumnToUpdate, RaidID, Origin,))
 
       # Commit changes and close the connection
       conn.commit()
