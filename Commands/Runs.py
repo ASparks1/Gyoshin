@@ -102,7 +102,7 @@ async def ListRunsOnDate(message, bot):
           SplitDate = str.split(Date, ' ')
           Date = SplitDate[0]
           Time = SplitDate[1]
-   
+
           # Split date into day, month and year values
           splitdate = Date.split('-')
           day = splitdate[2]
@@ -118,7 +118,7 @@ async def ListRunsOnDate(message, bot):
             await DMHelper.DMUser(message, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
             conn.close()
             return
-    
+
         except:
           await DMHelper.DMUser(message, "Unable to convert variables")
           conn.close()

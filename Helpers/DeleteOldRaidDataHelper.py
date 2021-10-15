@@ -18,7 +18,7 @@ async def DeleteOldRaidData():
   except:
     print("Something went wrong converting dates")
     return
-    
+
   # Store query results
   try:
     c.execute("SELECT ID FROM Raids WHERE Date <= (?)", (yesterday,))

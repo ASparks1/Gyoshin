@@ -6,7 +6,7 @@ from Helpers import DMHelper
 async def GetTemplates(message, bot):
   # Get server ID
   Origin = await OriginHelper.GetOrigin(message)
-  
+
   if not Origin:
     return
 
@@ -22,7 +22,7 @@ async def GetTemplates(message, bot):
   except:
     await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
     return
-  
+
   # Execute query
   try:
     c.execute("SELECT Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Origin = (?)", (Origin,))
@@ -32,20 +32,20 @@ async def GetTemplates(message, bot):
     return
 
   # Store query results
-  rows = c.fetchall()    
+  rows = c.fetchall()
 
   if not rows:
     await DMHelper.DMUser(message, "No templates found")
     conn.close()
     return
-  
+
   # Start with an empty message
-  Message = None    
+  Message = None
 
   # Go through all rows found and post a message in channel for each one
   for row in rows:
 
-    try:        
+    try:
       Name = row[0]
       NrOfPlayers = row[1]
       NrOfTanks = row[2]
@@ -55,7 +55,7 @@ async def GetTemplates(message, bot):
       await DMHelper.DMUser(message, "Unable to convert variables")
       conn.close()
       return
-  
+
     if not Message:
         Message = "The following templates are available on this server:\n"
         TemplateMessage = f"Name: {Name}\nNumber of players: {NrOfPlayers}\n{TankIcon} {NrOfTanks} {DpsIcon} {NrOfDps} {HealerIcon} {NrOfHealers}"
@@ -63,7 +63,7 @@ async def GetTemplates(message, bot):
     elif Message:
         TemplateMessage = f"Name: {Name}\nNumber of players: {NrOfPlayers}\n{TankIcon} {NrOfTanks} {DpsIcon} {NrOfDps} {HealerIcon} {NrOfHealers}"
         Message = f"{Message}{TemplateMessage}\n"
-    
+
   await DMHelper.DMUser(message, f"{Message}")
     # Post message to channel
     # await DMHelper.DMUser(message, f"Name: {Name}\nNumber of players: {NrOfPlayers}\n{TankIcon} {NrOfTanks} {DpsIcon} {NrOfDps} {HealerIcon} {NrOfHealers}")

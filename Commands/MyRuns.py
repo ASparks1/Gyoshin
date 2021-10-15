@@ -49,7 +49,7 @@ async def ListMyRuns(message, bot):
     return
 
   rows = c.fetchmany(5)
- 
+
   if not rows:
     await DMHelper.DMUserByID(bot, UserID, "You have no upcoming runs")
     conn.close()

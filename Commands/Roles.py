@@ -6,14 +6,14 @@ async def ListRoles(message):
 
   # Get server ID
   Origin = await OriginHelper.GetOrigin(message)
-  
+
   if not Origin:
     return
 
   # Open connection to the database
   conn = sqlite3.connect('RaidPlanner.db')
-  c = conn.cursor()  
-    
+  c = conn.cursor()
+
   # Execute query
   try:
     c.execute("SELECT Name FROM Roles ORDER BY Name ASC")
@@ -29,15 +29,15 @@ async def ListRoles(message):
     await DMHelper.DMUser(message, "No roles found")
     conn.close()
     return
-  
+
   # Start with an empty message
   Message = None
-  
+
   # Go through all rows found and post a message in channel for each one
   for row in rows:
 
     # Data type conversion so values can be used in message
-    try:        
+    try:
       Name = row[0]
       RolesMessage = (f"{Name}")
 

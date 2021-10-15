@@ -79,7 +79,7 @@ async def AddRunInDM(message, bot):
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong saving the date & time")
       return
-  
+
   await Templates.GetTemplates(message, bot)
 
   # Check if there are templates for this server
@@ -106,7 +106,7 @@ async def AddRunInDM(message, bot):
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of 'yes' or 'no'.")
   else:
     UsingTemplate = "no"
-    
+
   # Code for obtaining template information from database if user is using a template
   if UsingTemplate == 'yes':
     template_completion = False

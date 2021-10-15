@@ -19,8 +19,6 @@ from Commands import MyRuns
 from Helpers import DeleteOldRaidDataHelper
 from Helpers import ButtonInteractionHelper
 from Helpers import MemberHelper
-from Scripts import MakeDatabase
-from Scripts import InsertMasterData
 
 # Enable privileged gateway intents as described on
 # https://discordpy.readthedocs.io/en/latest/intents.html
@@ -70,15 +68,15 @@ async def roles(ctx):
 async def addrun(ctx):
   await AddRun.AddRunInDM(ctx.message, bot)
 
-@bot.command(name='adddefaulttemplates', aliases=['Adddefaulttemplates','AddDefaultTemplates'])
+@bot.command(name='adddefaulttemplates', aliases=['Adddefaulttemplates', 'AddDefaultTemplates'])
 async def adddefaulttemplates(ctx):
   await AddDefaultTemplates.AddDefaultTemplates(ctx.message)
 
-@bot.command(name='addtemplate', aliases=['Addtemplate','AddTemplate'])
+@bot.command(name='addtemplate', aliases=['Addtemplate', 'AddTemplate'])
 async def addtemplate(ctx):
   await AddTemplate.AddTemplate(ctx.message, bot)
 
-@bot.command(name='deletetemplate', aliases=['Deletetemplate','DeleteTemplate'])
+@bot.command(name='deletetemplate', aliases=['Deletetemplate', 'DeleteTemplate'])
 async def deletetemplate(ctx):
   await DeleteTemplate.DeleteTemplate(ctx.message, bot)
 
@@ -86,17 +84,9 @@ async def deletetemplate(ctx):
 async def dismiss(ctx):
   await Dismiss.DismissMember(ctx.message, bot)
 
-@bot.command(name='myruns', aliases=['Myruns','MyRuns'])
+@bot.command(name='myruns', aliases=['Myruns', 'MyRuns'])
 async def myruns(ctx):
   await MyRuns.ListMyRuns(ctx.message, bot)
-
-@bot.command(name='makedatabase', aliases=['Makedatabase','MakeDatabase'])
-async def makedatabase(ctx):
-  await MakeDatabase.MakeDatabase(ctx.message)
-
-@bot.command(name='insertmasterdata', aliases=['Insertmasterdata','InsertMasterdata'])
-async def insertmasterdata(ctx):
-  await InsertMasterData.InsertMasterData(ctx.message)
 
 # Message events
 # Do nothing if the message is from the bot

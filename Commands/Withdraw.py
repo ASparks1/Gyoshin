@@ -36,7 +36,7 @@ async def WithdrawFromRaid(message, bot, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if you're already signed up to this run")
     conn.close()
     return
-    
+
   row = c.fetchone()
 
   if row:
@@ -55,7 +55,7 @@ async def WithdrawFromRaid(message, bot, UserID):
     day = splitdate[2]
     month = splitdate[1]
     year = splitdate[0]
-    
+
     LocalDate = f"{day}-{month}-{year} {Time}"
     OrganizerID = row[6]
     UserName = await UserHelper.GetDisplayName(message, UserID, bot)
@@ -64,7 +64,7 @@ async def WithdrawFromRaid(message, bot, UserID):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the display name of a raid member")
       conn.close()
       return
-    
+
     # Check if the user calling the command is also the organizer
     if OrganizerID == UserID:
       await DMHelper.DMUserByID(bot, UserID, "You cannot withdraw from this run because you're the organizer, please use the cancel button instead")
@@ -76,7 +76,7 @@ async def WithdrawFromRaid(message, bot, UserID):
 
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
-      try:        
+      try:
         c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
       except:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
@@ -117,7 +117,7 @@ async def WithdrawFromRaid(message, bot, UserID):
 
       # Delete the raid if there is nobody signed up anymore
       if not rows:
-        
+
         c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         try:
           conn.commit()
@@ -142,11 +142,11 @@ async def WithdrawFromRaid(message, bot, UserID):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to withdraw you from this run")
       conn.close()
       return
-    
+
   else:
     await DMHelper.DMUser(message, "Unable to withdraw because you are not a member of this run")
     conn.close()
     return
-  
+
   conn.close()
   return
