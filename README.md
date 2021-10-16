@@ -8,6 +8,8 @@ Currently supports:
 * Rescheduling runs
 * Editing the run name
 * Use of templates
+* Creating templates
+* Deleting templates
 * Joining runs
 * Withdrawing from runs
 * Changing role for a run you signed up to
