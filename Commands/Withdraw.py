@@ -122,7 +122,7 @@ async def WithdrawFromRaid(message, bot, UserID):
         try:
           conn.commit()
           await message.channel.send(f"{UserName} has withdrawn from the run {RaidName} on {LocalDate}")
-          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+          UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
           await message.edit(content=UpdatedMessage)
           conn.close()
         except:

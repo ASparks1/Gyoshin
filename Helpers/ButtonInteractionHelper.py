@@ -5,7 +5,6 @@ from Commands import Join
 async def OnButtonClick(interaction, bot):
   try:
     UserID = interaction.user.id
-    Origin = interaction.guild_id
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving server information.")
     return

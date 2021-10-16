@@ -578,7 +578,6 @@ async def OnAddEditDescReaction(message, bot, UserID):
       return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-    Origin = await OriginHelper.GetOrigin(message)
 
     if not RaidID:
       await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
