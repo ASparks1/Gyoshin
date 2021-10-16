@@ -5,7 +5,7 @@ from Helpers import RoleIconHelper
 from Helpers import UserHelper
 from Helpers import DateTimeFormatHelper
 
-async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
+async def UpdateRaidInfoMessage(message, bot, UserID):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:

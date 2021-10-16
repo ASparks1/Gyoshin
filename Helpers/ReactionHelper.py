@@ -131,7 +131,7 @@ async def OnAddCancelReaction(message, bot, UserID):
     conn.close()
     return
 
-async def OnAddRescheduleReaction(message, bot, UserID, Origin):
+async def OnAddRescheduleReaction(message, bot, UserID):
   global RescheduleNotifications
   RescheduleNotifications = None
   conn = sqlite3.connect('RaidPlanner.db')
@@ -633,7 +633,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
             c.execute("UPDATE Raids set Name = (?) WHERE ID = (?)", (NewDescription, RaidID,))
             conn.commit()
             await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalDate} from {RaidName} to {NewDescription}.")
-            UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+            UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
             await message.edit(content=UpdatedMessage)
             conn.close()
             return

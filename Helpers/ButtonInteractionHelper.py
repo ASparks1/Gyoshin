@@ -61,7 +61,7 @@ async def OnButtonClick(interaction, bot):
   if interaction.custom_id == "reschedule_btn":
     try:
       await interaction.respond(type=6)
-      await ReactionHelper.OnAddRescheduleReaction(interaction.message, bot, UserID, Origin)
+      await ReactionHelper.OnAddRescheduleReaction(interaction.message, bot, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return
