@@ -43,7 +43,7 @@ async def OnButtonClick(interaction, bot):
       if Message:
         await interaction.respond(type=4, content=f"{Message}")
       elif not Message:
-        await interaction.respond(content="No reserves have signed up for this run")
+        await interaction.respond(content="No message was returned")
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return

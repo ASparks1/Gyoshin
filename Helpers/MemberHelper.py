@@ -1,6 +1,9 @@
 import sqlite3
 import discord
+from Helpers import DMHelper
 from Helpers import RoleHelper
+from Helpers import RoleIconHelper
+from Helpers import UserHelper
 
 # Helper function to clean up a users' data when they get kicked from or leave the server
 async def OnMemberLeaveOrRemove(member):
@@ -65,3 +68,51 @@ async def OnMemberLeaveOrRemove(member):
   except:
     print("Something went wrong deleting old data")
     return
+
+# Helper function to list raid members or reserves
+async def ListMembers(bot, message, Type, RaidID):
+  # Start with an empty message
+  Message = None
+  conn = sqlite3.connect('RaidPlanner.db')
+  c = conn.cursor()
+  if Type == 'Members':
+    c.execute("SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
+    rows = c.fetchall()
+  elif Type == 'Reserves':
+    c.execute("SELECT UserID, RoleID FROM RaidReserves WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
+    rows = c.fetchall()
+
+  for row in rows:
+    try:
+      UserID = row[0]
+      RoleID = row[1]
+      RoleName = await RoleHelper.GetRoleName(RoleID)
+      UserName = await UserHelper.GetDisplayName(message, UserID, bot)
+      if not RoleName:
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the role name for one of the members")
+        conn.close()
+        return
+
+      if not UserName:
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
+        conn.close()
+
+      if RoleName == 'tank':
+        RoleIcon = await RoleIconHelper.GetTankIcon()
+      elif RoleName == 'dps':
+        RoleIcon = await RoleIconHelper.GetDpsIcon()
+      elif RoleName == 'healer':
+        RoleIcon = await RoleIconHelper.GetHealerIcon()
+
+      if not Message:
+        MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
+        Message = f"{MemberRoleMessage}"
+      elif Message:
+        MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
+        Message = f"{Message}{MemberRoleMessage}"
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
+      conn.close()
+      return
+  conn.close()
+  return Message

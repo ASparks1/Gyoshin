@@ -14,6 +14,7 @@ from Helpers import RaidIDHelper
 from Helpers import RoleHelper
 from Helpers import RoleIconHelper
 from Helpers import MessageHelper
+from Helpers import MemberHelper
 
 async def OnAddCancelReaction(message, bot, UserID):
   global CancelNotifications
@@ -388,7 +389,6 @@ async def OnAddRallyReaction(message, bot, UserID):
     conn.close()
     return
 
-
   #check that the set time is within the next hour
   try:
     now = datetime.utcnow()
@@ -453,120 +453,16 @@ async def OnAddRallyReaction(message, bot, UserID):
 async def OnMemberReaction(message, bot, UserID):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
 
-  if RaidID:
-    # Open connection to DB
-    conn = sqlite3.connect('RaidPlanner.db')
-    c = conn.cursor()
-
-    # Execute query to retrieve all raidmembers
-    try:
-      c.execute("SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve raidmembers")
-      conn.close()
-      return
-
-    rows = c.fetchall()
-    if rows:
-      # Start with an empty message
-      Message = None
-      for row in rows:
-      # Data type conversions so variables can be used in message
-        try:
-          UserID = row[0]
-          RoleID = row[1]
-          RoleName = await RoleHelper.GetRoleName(RoleID)
-          UserName = await UserHelper.GetDisplayName(message, UserID, bot)
-          if not RoleName:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the role name for one of the members")
-            conn.close()
-            return
-
-          if not UserName:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
-            conn.close()
-
-          if RoleName == 'tank':
-            RoleIcon = await RoleIconHelper.GetTankIcon()
-          elif RoleName == 'dps':
-            RoleIcon = await RoleIconHelper.GetDpsIcon()
-          elif RoleName == 'healer':
-            RoleIcon = await RoleIconHelper.GetHealerIcon()
-
-          # Place run member information into channel
-          if not Message:
-            MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
-            Message = f"{MemberRoleMessage}"
-          elif Message:
-            MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
-            Message = f"{Message}{MemberRoleMessage}"
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
-          conn.close()
-          return
-      conn.close()
-      return Message
-
-    # Close the connection
-    conn.close()
+  if RaidID:    
+    Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID)
     return Message
 
 async def OnReservesReaction(message, bot, UserID):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
 
   if RaidID:
-    # Open connection to DB
-    conn = sqlite3.connect('RaidPlanner.db')
-    c = conn.cursor()
-
-    # Execute query to retrieve all reserves
-    try:
-      c.execute("SELECT UserID, RoleID FROM RaidReserves WHERE RaidID = (?) ORDER BY RoleID, ID", (RaidID,))
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve raidmembers")
-      conn.close()
-      return
-
-    rows = c.fetchall()
-    if rows:
-      # Start with an empty message
-      Message = None
-      for row in rows:
-      # Data type conversions so variables can be used in message
-        try:
-          UserID = row[0]
-          RoleID = row[1]
-          RoleName = await RoleHelper.GetRoleName(RoleID)
-          UserName = await UserHelper.GetDisplayName(message, UserID, bot)
-          if not RoleName:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the role name for one of the members")
-            conn.close()
-            return
-
-          if not UserName:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the display name for one of the members, perhaps they have left the server")
-            conn.close()
-
-          if RoleName == 'tank':
-            RoleIcon = await RoleIconHelper.GetTankIcon()
-          elif RoleName == 'dps':
-            RoleIcon = await RoleIconHelper.GetDpsIcon()
-          elif RoleName == 'healer':
-            RoleIcon = await RoleIconHelper.GetHealerIcon()
-
-          # Place run member information into channel
-          if not Message:
-            MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
-            Message = f"{MemberRoleMessage}"
-          elif Message:
-            MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
-            Message = f"{Message}{MemberRoleMessage}"
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
-          conn.close()
-          return
-      conn.close()
-      return Message
+    Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID)
+    return Message
 
 async def OnAddEditDescReaction(message, bot, UserID):
   conn = sqlite3.connect('RaidPlanner.db')
