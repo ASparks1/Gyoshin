@@ -48,12 +48,12 @@ async def OnButtonClick(interaction, bot):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return
   if interaction.custom_id == "reserves_btn":
-    #try:
-    Message = await ReactionHelper.OnReservesReaction(interaction.message, bot)
-    if Message:
-      await interaction.respond(type=4, content=f"{Message}")
-    elif not Message:
-      await interaction.respond(type=4, content="No reserves have signed up for this run")
+    try:
+      Message = await ReactionHelper.OnReservesReaction(interaction.message, bot)
+      if Message:
+        await interaction.respond(type=4, content=f"{Message}")
+      elif not Message:
+        await interaction.respond(type=4, content="No reserves have signed up for this run")
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return
