@@ -25,7 +25,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID, Origin):
     c = conn.cursor()
 
     try:
-      c.execute("SELECT Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+      c.execute("SELECT Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?)", (RaidID,))
 
       row = c.fetchone()
 

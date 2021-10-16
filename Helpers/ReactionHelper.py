@@ -54,7 +54,7 @@ async def OnAddCancelReaction(message, bot, UserID):
 
       # See if there are other members other than the leader, and send notifications to all
     try:
-      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, Creator))
+      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator,))
       UserIDs = c.fetchall()
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
@@ -244,7 +244,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
           if RescheduleRun == "yes":
             # Check if there are members signed up besides the organizer
             try:
-              c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID != (?)", (RaidID, Origin, UserID,))
+              c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
               UserIDs = c.fetchall()
             except:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
@@ -253,7 +253,7 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
 
             try:
               if UserIDs:
-                c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
+                c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
                 RaidMembers = c.fetchall()
 
                 if RaidMembers:
@@ -265,15 +265,15 @@ async def OnAddRescheduleReaction(message, bot, UserID, Origin):
 
             # Delete all raidmembers that are not the creator of the raid and reserves
             try:
-              c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?) AND Origin = (?)", (RaidID, UserID, Origin,))
-              c.execute("DELETE FROM RaidReserves WHERE RaidID = (?) AND Origin = (?)", (RaidID, Origin))
+              c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
+              c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
             except:
               conn.close()
               return
 
             # Get role of the Creator
             try:
-              c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?) AND Origin = (?)", (RaidID, UserID, Origin,))
+              c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
               row = c.fetchone()
             except:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the role of the organizer")
@@ -366,7 +366,7 @@ async def OnAddRallyReaction(message, bot, UserID):
 
   # Find party through name and date for discord channel
   try:
-    c.execute("SELECT ID, Date FROM Raids WHERE ID = (?) and Origin = (?)", (RaidID, Origin,))
+    c.execute("SELECT ID, Date FROM Raids WHERE ID = (?)", (RaidID,))
     row = c.fetchone()
     RaidID = row[0]
     DateTime = row[1]

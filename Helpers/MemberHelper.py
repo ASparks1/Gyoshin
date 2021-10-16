@@ -19,7 +19,7 @@ async def OnMemberLeaveOrRemove(member):
 
     if rows:
       RaidID = rows[0]
-      c.execute("DELETE FROM Raids WHERE RaidID = (?) AND Origin = (?)", (RaidID, Origin,))
+      c.execute("DELETE FROM Raids WHERE RaidID = (?)", (RaidID,))
       c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
       conn.commit()
 
@@ -38,23 +38,22 @@ async def OnMemberLeaveOrRemove(member):
 
 	    # Delete run if the status is canceled or the number of players signed up is just 1
         if NrOfPlayersSignedUp == 1:
-          c.execute("DELETE FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+          c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         if Status == "Cancelled":
-          c.execute("DELETE FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+          c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         elif Status == "Formed" or "Forming":
           # First obtain the role this user was signed up as
           RoleName = await RoleHelper.GetRoleName(RoleID)
           # Set the column name to be updated according to the role
           if RoleName == "tank":
-            ColumnToUpdate = 'NrOfTanksSignedUp'
+            c.execute("UPDATE Raids SET NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
           elif RoleName == "dps":
-            ColumnToUpdate = 'NrOfDpsSignedUp'
+            c.execute("UPDATE Raids SET NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
           elif RoleName == "healer":
-            ColumnToUpdate = 'NrOfHealersSignedUp'
+            c.execute("UPDATE Raids SET NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
           # Delete raidmember record first
-          c.execute("DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
+          c.execute("DELETE FROM RaidMembers WHERE ID = (?)", (RaidMemberID,))
           # Update run with new information
-          c.execute("UPDATE Raids SET (?) = (?) - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?) AND Origin = (?)", (ColumnToUpdate, ColumnToUpdate, RaidID, Origin,))
 
       # Commit changes and close the connection
       conn.commit()

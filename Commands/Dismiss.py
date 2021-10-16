@@ -20,15 +20,6 @@ async def DismissMember(message, client):
   # Get display name of user on the server
   UserName = await UserHelper.GetDisplayName(message, UserID, client)
 
-  # Get Discord server id
-  Origin = await OriginHelper.GetOrigin(message)
-
-  if not Origin:
-    await DMHelper.DMUser(message, "An error occurred trying to resolve the server ID")
-    # Delete message that contains command
-    await message.delete()
-    return
-
   # Get user ID of the person who entered the commands
   Creator = message.author.id
 
@@ -52,7 +43,7 @@ async def DismissMember(message, client):
 
   # Search if raid exists and check if the user who entered the command is the organizer
   try:
-    c.execute("SELECT ID, Name, Date FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+    c.execute("SELECT ID, Name, Date FROM Raids WHERE ID = (?)", (RaidID,))
     row = c.fetchone()
     RaidID = row[0]
     RaidName = row[1]
@@ -66,7 +57,7 @@ async def DismissMember(message, client):
   if RaidID:
     # Check if the user is part of this run
     try:
-      c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) AND Origin = (?) AND UserID = (?)", (RaidID, Origin, UserID,))
+      c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
       row = c.fetchone()
       RaidMemberID = row[0]
       RoleID = row[1]
@@ -78,22 +69,20 @@ async def DismissMember(message, client):
 
   if RaidMemberID:
     try:
-      c.execute("DELETE FROM RaidMembers WHERE ID = (?) AND Origin = (?)", (RaidMemberID, Origin,))
+      c.execute("DELETE FROM RaidMembers WHERE ID = (?)", (RaidMemberID,))
     except:
       await DMHelper.DMUser(message, "Something went wrong removing this member from the run")
       conn.close()
       return
 
     # Update Raids table based on role retrieved
-    if RoleName == 'tank':
-      ColumnToUpdate = 'NrOfTanksSignedUp'
-    elif RoleName == 'dps':
-      ColumnToUpdate = 'NrOfDpsSignedUp'
-    elif RoleName == 'healer':
-      ColumnToUpdate = 'NrOfHealersSignedUp'
-
     try:
-      c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, (?) = (?) - 1, Status = 'Forming' WHERE ID = (?)", (ColumnToUpdate, RaidID,))
+      if RoleName == 'tank':
+        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
+      elif RoleName == 'dps':
+        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
+      elif RoleName == 'healer':
+        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
     except:
       await DMHelper.DMUser(message, "Something went wrong updating the number of signed up players")
       conn.close()

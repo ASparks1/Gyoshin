@@ -42,7 +42,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
   #Collect required information from raid, number of players and roles, and if already formed or cancelled.
   try:
-    c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+    c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?)", (RaidID,))
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong when searching for this run.")
     conn.close()
@@ -207,7 +207,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
             return
       else:
         try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
           conn.close()
@@ -264,7 +264,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
         conn.close()
         return
       try:
-        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
       except:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
         conn.close()
@@ -320,7 +320,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
             return
       else:
         try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
           conn.close()
@@ -333,7 +333,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     # Insert user into raid members for raidID
     try:
       # Delete user from reserves
-      c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?) AND Origin = (?)", (RaidID, UserID, Origin))
+      c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
       # Add user to run
       c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
       conn.commit()
@@ -348,7 +348,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
     # Check if party is now full and can be set to "Formed"
     try:
-      c.execute("SELECT NrOfPlayersRequired, NrOfPlayersSignedUp FROM Raids  WHERE ID = (?) AND Origin = (?)", (RaidID, Origin,))
+      c.execute("SELECT NrOfPlayersRequired, NrOfPlayersSignedUp FROM Raids  WHERE ID = (?)", (RaidID,))
       row = c.fetchone()
 
       if row:
@@ -357,7 +357,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
       if NrOfPlayersRequired == NrOfPlayersSignedUp:
         try:
-          c.execute("UPDATE Raids SET Status = 'Formed' WHERE ID = (?) and Origin = (?)", (RaidID, Origin))
+          c.execute("UPDATE Raids SET Status = 'Formed' WHERE ID = (?)", (RaidID,))
           try:
             conn.commit()
             conn.close()
