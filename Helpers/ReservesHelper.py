@@ -36,11 +36,6 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
 
 # Helper function to check reserves
 async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID):
-  # Set rolename to plural in case of tank and healer for correct grammar in message
-  if RoleName == 'tank':
-    RoleName == 'tanks'
-  elif RoleName == 'healer':
-    RoleName == 'healers'
 
   # Checks for waiting for dm replies
   def DMCheck(dm_message):
