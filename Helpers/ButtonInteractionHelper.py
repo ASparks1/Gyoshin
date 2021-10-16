@@ -39,7 +39,7 @@ async def OnButtonClick(interaction, bot):
       return
   if interaction.custom_id == "members_btn":
     try:
-      Message = await ReactionHelper.OnMemberReaction(interaction.message, bot, UserID)
+      Message = await ReactionHelper.OnMemberReaction(interaction.message, bot)
       if Message:
         await interaction.respond(type=4, content=f"{Message}")
       elif not Message:
@@ -49,7 +49,7 @@ async def OnButtonClick(interaction, bot):
       return
   if interaction.custom_id == "reserves_btn":
     try:
-      Message = await ReactionHelper.OnReservesReaction(interaction.message, bot, UserID)
+      Message = await ReactionHelper.OnReservesReaction(interaction.message, bot)
       if Message:
         await interaction.respond(type=4, content=f"{Message}")
       elif not Message:
