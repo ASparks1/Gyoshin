@@ -340,7 +340,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
       JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
       await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
-      UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+      UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       await message.edit(content=UpdatedMessage)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
@@ -361,7 +361,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
           try:
             conn.commit()
             conn.close()
-            UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID, Origin)
+            UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
             await message.edit(content=UpdatedMessage)
             NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, Organizer)
             await message.channel.send(f"{NotifyOrganizerMessage}\nYour crew for {Description} on {LocalDate} has been assembled!")
