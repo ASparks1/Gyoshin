@@ -161,7 +161,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
         await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
         conn.close()
         return
-      if NrOfTanksSignedup < NrOfTanksRequired:
+      if NrOfTanksSignedUp < NrOfTanksRequired:
         try:
           c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
         except:
