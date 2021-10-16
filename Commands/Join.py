@@ -158,54 +158,10 @@ async def JoinRaid(message, bot, RoleName, UserID):
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
       if NrOfTanksSignedUp == NrOfTanksRequired:
-        # Check if user is already signed up as a reserve
-        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
-        row = c.fetchone()
-        if row:
-          await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
-          WithdrawFromReserves = None
-          while not WithdrawFromReserves:
-            try:
-              WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-              if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
-                WithdrawFromReserveResponse = "yes"
-                await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
-                conn.close()
-                return
-              if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
-                WithdrawFromReserveResponse = "no"
-                conn.close()
-                return
-
-              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-              continue
-            except asyncio.TimeoutError:
-              conn.close()
-              await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
-              return
-
-        await DMHelper.DMUserByID(bot, UserID, "This run already has the required number of tanks, would you like to be put on the reserve list? (Y/N).")
-        TankReserve = None
-        while not TankReserve:
-          try:
-            TankReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-            if TankReserveResponse.content == "Y" or TankReserveResponse.content == "y" or TankReserveResponse.content == "Yes" or TankReserveResponse.content == "yes":
-              TankReserveResponse = "yes"
-              await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
-              conn.close()
-              return
-            if TankReserveResponse.content == "N" or TankReserveResponse.content == "n" or TankReserveResponse.content == "No" or TankReserveResponse.content == "no":
-              TankReserveResponse = "no"
-              conn.close()
-              return
-
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-          except asyncio.TimeoutError:
-            conn.close()
-            await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
-            return
-      else:
+        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
+        conn.close()
+        return
+      if NrOfTanksSignedup < NrOfTanksRequired:
         try:
           c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
         except:
@@ -214,111 +170,22 @@ async def JoinRaid(message, bot, RoleName, UserID):
           return
     elif RoleName == 'dps':
       if NrOfDpsSignedUp == NrOfDpsRequired:
-        # Check if user is already signed up as a reserve
-        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
-        row = c.fetchone()
-        if row:
-          await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
-          WithdrawFromReserves = None
-          while not WithdrawFromReserves:
-            try:
-              WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-              if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
-                WithdrawFromReserveResponse = "yes"
-                await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
-                conn.close()
-                return
-              if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
-                WithdrawFromReserveResponse = "no"
-                conn.close()
-                return
-
-              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-              continue
-            except asyncio.TimeoutError:
-              conn.close()
-              await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
-              return
-
-        await DMHelper.DMUserByID(bot, UserID, "This run already has the required number of dps, would you like to be put on the reserve list? (Y/N).")
-        DPSReserve = None
-        while not DPSReserve:
-          try:
-            DPSReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-            if DPSReserveResponse.content == "Y" or DPSReserveResponse.content == "y" or DPSReserveResponse.content == "Yes" or DPSReserveResponse.content == "yes":
-              DPSReserveResponse = "yes"
-              await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
-              conn.close()
-              return
-            if DPSReserveResponse.content == "N" or DPSReserveResponse.content == "n" or DPSReserveResponse.content == "No" or DPSReserveResponse.content == "no":
-              DPSReserveResponse = "no"
-              conn.close()
-              return
-
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-          except asyncio.TimeoutError:
-            conn.close()
-            await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
-            return
+        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
         conn.close()
         return
-      try:
-        c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
-      except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
-        conn.close()
-        return
+      if NrOfDpsSignedUp < NrOfDpsRequired:
+        try:
+          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
+        except:
+          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
+          conn.close()
+          return
     elif RoleName == 'healer':
       if NrOfHealersSignedUp == NrOfHealersRequired:
-        # Check if user is already signed up as a reserve
-        c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
-        row = c.fetchone()
-        if row:
-          await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
-          WithdrawFromReserves = None
-          while not WithdrawFromReserves:
-            try:
-              WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-              if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
-                WithdrawFromReserveResponse = "yes"
-                await ReservesHelper.WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
-                conn.close()
-                return
-              if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
-                WithdrawFromReserveResponse = "no"
-                conn.close()
-                return
-
-              await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-              continue
-            except asyncio.TimeoutError:
-              conn.close()
-              await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
-              return
-
-        await DMHelper.DMUserByID(bot, UserID, "This run already has the required number of healers, would you like to be put on the reserve list? (Y/N).")
-        HealerReserve = None
-        while not HealerReserve:
-          try:
-            HealerReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-            if HealerReserveResponse.content == "Y" or HealerReserveResponse.content == "y" or HealerReserveResponse.content == "Yes" or HealerReserveResponse.content == "yes":
-              HealerReserveResponse = "yes"
-              await ReservesHelper.JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
-              conn.close()
-              return
-            if HealerReserveResponse.content == "N" or HealerReserveResponse.content == "n" or HealerReserveResponse.content == "No" or HealerReserveResponse.content == "no":
-              HealerReserveResponse = "no"
-              conn.close()
-              return
-
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-          except asyncio.TimeoutError:
-            conn.close()
-            await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
-            return
-      else:
+        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
+        conn.close()
+        return
+      if NrOfHealersSignedUp < NrOfHealersRequired:
         try:
           c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
         except:
