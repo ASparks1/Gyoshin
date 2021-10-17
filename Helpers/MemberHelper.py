@@ -127,7 +127,7 @@ async def CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID):
     c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
     UserIDs = c.fetchall()
   except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members memberhelper1")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
     conn.close()
     return
 
@@ -145,6 +145,6 @@ async def CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID):
       conn.close()
       return MemberNotifications
   except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers memberhelper2")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers")
     conn.close()
     return
