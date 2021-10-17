@@ -10,7 +10,7 @@ from Helpers import UserHelper
 # Helper function for reschedule command to reduce the amount nested blocks in main function
 async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName):
   conn = sqlite3.connect('RaidPlanner.db')
-  c = conn.cursor()  
+  c = conn.cursor()
   RescheduleRun = None
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
