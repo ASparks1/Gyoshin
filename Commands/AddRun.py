@@ -248,7 +248,7 @@ async def AddRunInDM(message, bot):
 
     # Role verification
     try:
-      RoleID = await RoleHelper.GetRoleID(response.content)
+      RoleID = await RoleHelper.GetRoleID(response.content.lower())
     except:
       await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles in the servers Gyoshin channel to have available roles sent to this DM.")
       continue
@@ -259,24 +259,24 @@ async def AddRunInDM(message, bot):
     NumberOfCurrentHealers = 0
 
     try:
-      if response.content == "tank":
+      if response.content.lower() == "tank":
         if NrOfTanks <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of tank, number of tanks must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
           NumberOfCurrentTanks = 1
-          RoleName = response.content
-      elif response.content == "dps":
+          RoleName = response.content.lower()
+      elif response.content.lower() == "dps":
         if NrOfDps <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of dps, number of dps must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
           NumberOfCurrentDps = 1
-          RoleName = response.content
-      elif response.content == "healer":
+          RoleName = response.content.lower()
+      elif response.content.lower() == "healer":
         if NrOfHealers <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of healer, number of healers must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
           NumberOfCurrentHealers = 1
-          RoleName = response.content
+          RoleName = response.content.lower()
       else:
         pass
     except:
