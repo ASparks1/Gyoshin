@@ -245,22 +245,9 @@ async def OnAddRescheduleReaction(message, bot, UserID):
           if RescheduleRun == "yes":
             # Check if there are members signed up besides the organizer
             try:
-              c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
-              UserIDs = c.fetchall()
+              RescheduleNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)
             except:
               await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
-              conn.close()
-              return
-
-            try:
-              if UserIDs:
-                c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
-                RaidMembers = c.fetchall()
-
-                if RaidMembers:
-                  RescheduleNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
-            except:
-              await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers")
               conn.close()
               return
 
@@ -335,7 +322,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
               if RescheduleNotifications:
                 await message.channel.send(f"{RescheduleNotifications}\n{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}, if you were signed up to this run please sign up again on the new date if you can.")
               elif not RescheduleNotifications:
-                await message.channel.send(f"{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}, if you were signed up to this run please sign up again on the new date if you can.")
+                await message.channel.send(f"{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}.")
 
               await message.delete()
               conn.close()

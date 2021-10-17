@@ -4,6 +4,7 @@ from Helpers import DMHelper
 from Helpers import RoleHelper
 from Helpers import RoleIconHelper
 from Helpers import UserHelper
+from Helpers import NotificationHelper
 
 # Helper function to clean up a users' data when they get kicked from or leave the server
 async def OnMemberLeaveOrRemove(member):
@@ -116,3 +117,34 @@ async def ListMembers(bot, message, Type, RaidID):
       return
   conn.close()
   return Message
+
+# Helper function to check if there are members signed up besides the organizer and generate notifications (used in cancel and reschedule functionality)
+async def CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID):
+  conn = sqlite3.connect('RaidPlanner.db')
+  c = conn.cursor()
+
+  try:
+    c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
+    UserIDs = c.fetchall()
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members memberhelper1")
+    conn.close()
+    return
+
+  try:
+    if not UserIDs:
+      conn.close()
+      return
+
+    if UserIDs:
+      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
+      RaidMembers = c.fetchall()
+
+    if RaidMembers:
+      MemberNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
+      conn.close()
+      return MemberNotifications
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers memberhelper2")
+    conn.close()
+    return
