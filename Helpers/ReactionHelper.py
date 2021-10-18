@@ -27,7 +27,6 @@ async def OnAddCancelReaction(message, bot, UserID):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
-  Origin = await OriginHelper.GetOrigin(message)
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if not RaidID:
     await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
@@ -89,12 +88,12 @@ async def OnAddCancelReaction(message, bot, UserID):
       return
 
   if CancelRun == "yes":
-    await CancelHelper.CancelRun(bot, message, Creator, RaidID, UserID, RaidName, LocalDate)
+    await CancelHelper.CancelRun(bot, message, Creator, UserID, RaidID, RaidName, LocalDate)
     conn.close()
     return
-  elif CancelRun == "no":
-      conn.close()
-      return
+  if CancelRun == "no":
+    conn.close()
+    return
 
 async def OnAddRescheduleReaction(message, bot, UserID):
   global RescheduleNotifications
