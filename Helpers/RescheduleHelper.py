@@ -9,8 +9,6 @@ from Helpers import UserHelper
 
 # Helper function for reschedule command confirm question section
 async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName):
-  conn = sqlite3.connect('RaidPlanner.db')
-  c = conn.cursor()
   RescheduleRun = None
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
@@ -22,18 +20,15 @@ async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, 
       if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
         RescheduleRun = "yes"
         await Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate)
-        conn.close()
-        return RescheduleRun
-      elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+        return
+      if response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
         RescheduleRun = "no"
-        conn.close()
-        return RescheduleRun
+        return
       else:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of yes or no.")
         continue
     except asyncio.TimeoutError:
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
-      conn.close()
       return
 
 # Helper function for rescheduling the run
