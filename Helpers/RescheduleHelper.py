@@ -38,86 +38,87 @@ async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, 
 
 # Helper function for rescheduling the run
 async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate):
-  if RescheduleRun == "yes":
+  conn = sqlite3.connect('RaidPlanner.db')
+  c = conn.cursor()
+  try:
+    RescheduleNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)
+  except:
+   await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
+   conn.close()
+   return
+
+  try:
+    c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
+    c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
+  except:
+    conn.close()
+    return
+
+  try:
+    c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
+    row = c.fetchone()
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the role of the organizer")
+    conn.close()
+    return
+
+  if not row:
+    await DMHelper.DMUserByID(bot, UserID, "Unable to find role of the creator of this run")
+    conn.close()
+    return
+
+  RoleID = row[0]
+  if not RoleID:
+    await DMHelper.DMUserByID(bot, UserID, "Unable to retrieve role id")
+    conn.close()
+    return
+
+  RoleName = await RoleHelper.GetRoleName(RoleID)
+  if not RoleName:
+    await DMHelper.DMUserByID(bot, UserID, "Unable to resolve role name")
+    conn.close()
+    return
+
+  if RoleName == 'tank':
     try:
-      RescheduleNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)
-    except:
-     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
-     conn.close()
-     return
-
-    try:
-      c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
-      c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
-    except:
-      conn.close()
-      return
-
-    try:
-      c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
-      row = c.fetchone()
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the role of the organizer")
-      conn.close()
-      return
-
-    if not row:
-      await DMHelper.DMUserByID(bot, UserID, "Unable to find role of the creator of this run")
-      conn.close()
-      return
-
-    RoleID = row[0]
-    if not RoleID:
-      await DMHelper.DMUserByID(bot, UserID, "Unable to retrieve role id")
-      conn.close()
-      return
-
-    RoleName = await RoleHelper.GetRoleName(RoleID)
-    if not RoleName:
-      await DMHelper.DMUserByID(bot, UserID, "Unable to resolve role name")
-      conn.close()
-      return
-
-    if RoleName == 'tank':
-      try:
-        c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 1, 0, 0, RaidID,))
-        conn.commit()
-      except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and tanks")
-        conn.close()
-        return
-
-    if RoleName == 'dps':
-      try:
-        c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 1, 0, RaidID,))
-        conn.commit()
-      except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and dps")
-        conn.close()
-        return
-
-    if RoleName == 'healer':
-      try:
-        c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 0, 1, RaidID,))
-        conn.commit()
-      except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and healers")
-        conn.close()
-        return
-
-    try:
+      c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 1, 0, 0, RaidID,))
       conn.commit()
-      UserName = await UserHelper.GetDisplayName(message, UserID, bot)
-
-      if RescheduleNotifications:
-        await message.channel.send(f"{RescheduleNotifications}\n{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}, if you were signed up to this run please sign up again on the new date if you can.")
-      elif not RescheduleNotifications:
-        await message.channel.send(f"{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}.")
-
-      await message.delete()
-      conn.close()
-      return
     except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong rescheduling the run")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and tanks")
       conn.close()
       return
+
+  if RoleName == 'dps':
+    try:
+      c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 1, 0, RaidID,))
+      conn.commit()
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and dps")
+      conn.close()
+      return
+
+  if RoleName == 'healer':
+    try:
+      c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 0, 0, 1, RaidID,))
+      conn.commit()
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of players and healers")
+      conn.close()
+      return
+
+  try:
+    conn.commit()
+    UserName = await UserHelper.GetDisplayName(message, UserID, bot)
+
+    if RescheduleNotifications:
+      await message.channel.send(f"{RescheduleNotifications}\n{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}, if you were signed up to this run please sign up again on the new date if you can.")
+    elif not RescheduleNotifications:
+      await message.channel.send(f"{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}.")
+
+    await message.delete()
+    conn.close()
+    return
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong rescheduling the run")
+    conn.close()
+    return
