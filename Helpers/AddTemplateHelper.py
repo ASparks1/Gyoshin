@@ -104,4 +104,3 @@ async def NrOfPlayersAndConfirmSection(bot, message, Origin, UserID, TemplateNam
     await DMHelper.DMUserByID(bot, UserID, "The total amount of players required doesn't match the provided number of tanks, dps and healers provided.")
     conn.close()
     return
-

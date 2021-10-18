@@ -47,4 +47,3 @@ async def AddTemplate(message, bot):
   await AddTemplateHelper.NrOfPlayersAndConfirmSection(bot, message, Origin, UserID, TemplateName)
   conn.close()
   return
-
