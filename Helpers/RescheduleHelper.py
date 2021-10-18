@@ -37,7 +37,7 @@ async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, 
       return
 
 # Helper function for rescheduling the run
-async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate)
+async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate):
   if RescheduleRun == "yes":
     try:
       RescheduleNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)
