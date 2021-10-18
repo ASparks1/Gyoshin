@@ -16,6 +16,7 @@ from Helpers import RoleIconHelper
 from Helpers import MessageHelper
 from Helpers import MemberHelper
 from Helpers import RescheduleHelper
+from Helpers import CancelHelper
 
 async def OnAddCancelReaction(message, bot, UserID):
   global CancelNotifications
@@ -23,107 +24,77 @@ async def OnAddCancelReaction(message, bot, UserID):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  try:
-    def DMCheck(dm_message):
-      return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
+  def DMCheck(dm_message):
+    return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
-    RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-    if not RaidID:
-      await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
-      conn.close()
-      return
-    c.execute("SELECT OrganizerUserID, Name, Date FROM Raids WHERE ID = (?)", (RaidID,))
-    row = c.fetchone()
-    Creator = row[0]
-    RaidName = row[1]
-    Date = row[2]
-    LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
-
-    if row:
-      Origin = await OriginHelper.GetOrigin(message)
-      if not Origin:
-        return
-
-      if UserID != Creator:
-        await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to cancel the run")
-        conn.close()
-        return
-
-    try:
-      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator,))
-      UserIDs = c.fetchall()
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
-      conn.close()
-      return
-
-    try:
-      if UserIDs:
-        c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator))
-        RaidMembers = c.fetchall()
-        CancelNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
-    except:
-      await DMHelper.DMUser(message, "Something went wrong retrieving raid members")
-      conn.close()
-      return
-
-    try:
-      GuildName = await OriginHelper.GetName(message)
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
-      conn.close()
-      return
-
-    CancelRun = None
-    while not CancelRun:
-      await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
-      try:
-        response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-        if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
-          CancelRun = "yes"
-        elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
-          CancelRun = "no"
-        else:
-          await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with Y/N")
-          continue
-      except asyncio.TimeoutError:
-        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
-        conn.close()
-        return
-
-    if CancelRun == "yes":
-      c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
-      c.execute("DELETE FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
-      c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
-
-      try:
-        OrganizerDisplayName = await UserHelper.GetDisplayName(message, Creator, bot)
-      except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the organizers' display name")
-        conn.close()
-        return
-
-      try:
-        if CancelNotifications:
-          await message.channel.send(f"{CancelNotifications}\n{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalDate}.")
-        elif not CancelNotifications:
-          await message.channel.send(f"{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalDate}.")
-
-        conn.commit()
-        await message.delete()
-        conn.close()
-        return
-      except:
-        await DMHelper.DMUserByID(bot, UserID, "Something went wrong cancelling the run")
-        conn.close()
-        return
-    elif CancelRun == "no":
-        conn.close()
-        return
-  except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if this run still exists perhaps this run has been cancelled.")
+  Origin = await OriginHelper.GetOrigin(message)
+  RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
+  if not RaidID:
+    await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
     conn.close()
     return
+  c.execute("SELECT OrganizerUserID, Name, Date FROM Raids WHERE ID = (?)", (RaidID,))
+  row = c.fetchone()
+  Creator = row[0]
+  RaidName = row[1]
+  Date = row[2]
+  LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
+
+  if row:
+    if UserID != Creator:
+      await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to cancel the run")
+      conn.close()
+      return
+
+  try:
+    c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator,))
+    UserIDs = c.fetchall()
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
+    conn.close()
+    return
+
+  try:
+    if UserIDs:
+      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator))
+      RaidMembers = c.fetchall()
+      CancelNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
+  except:
+    await DMHelper.DMUser(message, "Something went wrong retrieving raid members")
+    conn.close()
+    return
+
+  try:
+    GuildName = await OriginHelper.GetName(message)
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
+    conn.close()
+    return
+
+  CancelRun = None
+  while not CancelRun:
+    await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
+    try:
+      response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
+      if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+        CancelRun = "yes"
+      elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+        CancelRun = "no"
+      else:
+        await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with Y/N")
+        continue
+    except asyncio.TimeoutError:
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to cancel this run.")
+      conn.close()
+      return
+
+  if CancelRun == "yes":
+    await CancelHelper.CancelRun(bot, message, Creator, RaidID, UserID, RaidName, LocalDate)
+    conn.close()
+    return
+  elif CancelRun == "no":
+      conn.close()
+      return
 
 async def OnAddRescheduleReaction(message, bot, UserID):
   global RescheduleNotifications

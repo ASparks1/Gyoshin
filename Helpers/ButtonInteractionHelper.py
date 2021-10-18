@@ -69,8 +69,8 @@ async def OnButtonClick(interaction, bot):
       await interaction.respond(type=6)
       await ReactionHelper.OnAddCancelReaction(interaction.message, bot, UserID)
     except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-      return
+     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
+     return
   if interaction.custom_id == "editdesc_btn":
     try:
       await interaction.respond(type=6)
