@@ -7,8 +7,8 @@ from Helpers import MemberHelper
 from Helpers import RoleHelper
 from Helpers import UserHelper
 
-# Helper function for reschedule command to reduce the amount nested blocks in main function
-async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName):
+# Helper function for reschedule command confirm question section
+async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   RescheduleRun = None
@@ -21,8 +21,13 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
         RescheduleRun = "yes"
+        await Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate)
+        conn.close()
+        return RescheduleRun
       elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
         RescheduleRun = "no"
+        conn.close()
+        return RescheduleRun
       else:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of yes or no.")
         continue
@@ -31,6 +36,8 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
       conn.close()
       return
 
+# Helper function for rescheduling the run
+async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate)
   if RescheduleRun == "yes":
     try:
       RescheduleNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)

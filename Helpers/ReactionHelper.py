@@ -205,7 +205,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
           continue
 
         if sqlitenewdate >= current_date:
-          await RescheduleHelper.Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName)
+          await RescheduleHelper.RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName)
           conn.close()
           return
 
