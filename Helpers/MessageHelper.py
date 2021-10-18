@@ -50,7 +50,6 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
           return
 
         if OrganizerName:
-          # Generate message
           UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
         return UpdatedMessage
     except:

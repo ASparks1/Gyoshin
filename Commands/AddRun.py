@@ -21,7 +21,6 @@ async def AddRunInDM(message, bot):
   RoleName = None
   UsingTemplate = None
 
-  #Obtain origin of server of original !addrun command and display name of user for channel, and name for DM
   try:
     Origin = await OriginHelper.GetOrigin(message)
     GuildName = await OriginHelper.GetName(message)
@@ -32,11 +31,9 @@ async def AddRunInDM(message, bot):
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
-  # Checks for waiting for dm replies
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
-  # Ask user for description of planned party/rum, and wait for input
   await DMHelper.DMUserByID(bot, UserID, f"Hi {CreatorDisplay}, let's get you forming your crew in {GuildName}.\nFirst, give me a brief description for your crew, e.g. 'Friday Night Alliance Raid'.\n")
   try:
     response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -46,7 +43,6 @@ async def AddRunInDM(message, bot):
 
   Name = response.content
 
-  # obtaining and checking datetime
   while not DateTime:
     try:
       await DMHelper.DMUserByID(bot, UserID, "Now, please tell me the date and time of your run in the format of 'dd-mm-yyyy hh:mm'.")
@@ -55,7 +51,6 @@ async def AddRunInDM(message, bot):
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
       return
 
-    #DateTime verification
     pattern = re.compile(r'((\d{2})-(\d{2})-(\d{4})) (\d{2}):(\d{2})')
     match = pattern.match(response.content)
 
@@ -63,7 +58,6 @@ async def AddRunInDM(message, bot):
       await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
       continue
 
-    # Sent datetime to function to format for SQL
     try:
       sqldatetime = await DateTimeFormatHelper.LocalToSqlite(message, response.content)
 
@@ -82,7 +76,6 @@ async def AddRunInDM(message, bot):
 
   await Templates.GetTemplates(message)
 
-  # Check if there are templates for this server
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
@@ -107,7 +100,6 @@ async def AddRunInDM(message, bot):
   else:
     UsingTemplate = "no"
 
-  # Code for obtaining template information from database if user is using a template
   if UsingTemplate == 'yes':
     template_completion = False
     while not template_completion:
@@ -121,7 +113,6 @@ async def AddRunInDM(message, bot):
 
       Template = response.content
 
-      # Find Template and store values into rows
       try:
         c.execute("SELECT NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Name = (?) and Origin = (?)", (Template, Origin))
         row = c.fetchone()
@@ -146,7 +137,6 @@ async def AddRunInDM(message, bot):
 
       template_completion = True
 
-  # Code for if user is not using a template
   else:
     variable_completion = False
     while not variable_completion:
@@ -155,7 +145,6 @@ async def AddRunInDM(message, bot):
       HealerLoop = False
       DpsLoop = False
 
-      # Obtaining and checking NrOfPlayers
       while not PlayerLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of players for your crew? Please enter a number greater than 0.")
@@ -174,10 +163,8 @@ async def AddRunInDM(message, bot):
           await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater than 0.")
           continue
 
-        # Change of variable to exit the loop
         PlayerLoop = True
 
-      # Obtaining and checking number of tanks
       while not TankLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of tanks for your crew? Please enter a number equal or greater than 0.")
@@ -191,10 +178,8 @@ async def AddRunInDM(message, bot):
           await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
           return
 
-        # Change of variable to exit the loop
         TankLoop = True
 
-      # Obtaining and checking number of healers
       while not HealerLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of healers for your crew? Please enter a number equal or greater than 0.")
@@ -209,10 +194,8 @@ async def AddRunInDM(message, bot):
           conn.close()
           return
 
-        # Change of variable to exit the loop
         HealerLoop = True
 
-      # Obtaining and checking number of dps
       while not DpsLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of dps for your crew? Please enter a number equal or greater than 0.")
@@ -227,10 +210,8 @@ async def AddRunInDM(message, bot):
           conn.close()
           return
 
-        # Change of variable to exit the loop
         DpsLoop = True
 
-      #Ensure the number of players equals the sum of each role
       if NrOfPlayers != NrOfTanks + NrOfDps + NrOfHealers:
         await DMHelper.DMUserByID(bot, UserID, "Please ensure the total of each role equals the total number of players required.")
         continue
@@ -246,14 +227,12 @@ async def AddRunInDM(message, bot):
       conn.close()
       return
 
-    # Role verification
     try:
       RoleID = await RoleHelper.GetRoleID(response.content.lower())
     except:
       await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles in the servers Gyoshin channel to have available roles sent to this DM.")
       continue
 
-    # Creating variables for number of players in role, making one for role creator has chosen
     NumberOfCurrentTanks = 0
     NumberOfCurrentDps = 0
     NumberOfCurrentHealers = 0
@@ -284,7 +263,6 @@ async def AddRunInDM(message, bot):
       conn.close()
       return
 
-  #Check if organizer is creating a run for themselves, set status to Formed if sowhile not RoleName:
   if NrOfPlayers == 1:
     Status = "Formed"
   else:
@@ -307,7 +285,6 @@ async def AddRunInDM(message, bot):
     else:
       continue
 
-  # 2.3 Check if there's already a raid with the same origin + name for set datetime
   try:
     c.execute("SELECT Name FROM Raids WHERE Origin = (?) and Name = (?) and Date = (?)", (Origin, Name, sqldatetime))
 
@@ -321,7 +298,6 @@ async def AddRunInDM(message, bot):
     conn.close()
     return
 
-  # 2.4 Create query to insert raid into database
   try:
     c.execute("INSERT INTO Raids (Name, Origin, Date, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status, ChannelID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (Name, Origin, sqldatetime, UserID, NrOfPlayers, 1, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID))
   except:
@@ -329,10 +305,8 @@ async def AddRunInDM(message, bot):
     conn.close()
     return
 
-  # Saving unique Raid ID to insert into next table
   RaidID = c.lastrowid
 
-  #Create joining data for raid members with join on Raid ID
   try:
     c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
   except:
@@ -340,7 +314,6 @@ async def AddRunInDM(message, bot):
     conn.close()
     return
 
-  # Get role icons
   try:
     TankIcon = await RoleIconHelper.GetTankIcon()
     DpsIcon = await RoleIconHelper.GetDpsIcon()
@@ -350,7 +323,6 @@ async def AddRunInDM(message, bot):
     conn.close()
     return
 
-  # 3 Post message to channel saying the raid is being formed
   try:
     conn.commit()
     message = await message.channel.send(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}",components=[[Button(style=ButtonStyle.blue, label="Tank", custom_id="tank_btn"),Button(style=ButtonStyle.red, label="DPS", custom_id="dps_btn"),Button(style=ButtonStyle.green, label="Healer", custom_id="healer_btn"),Button(style=ButtonStyle.grey, label="Rally", custom_id="rally_btn")],[Button(style=ButtonStyle.grey, label="Members", custom_id="members_btn"),Button(style=ButtonStyle.grey, label="Reserves", custom_id="reserves_btn")],[Button(style=ButtonStyle.grey, label="Edit description", custom_id="editdesc_btn"),Button(style=ButtonStyle.grey, label="Reschedule", custom_id="reschedule_btn"),Button(style=ButtonStyle.red, label="Cancel", custom_id="cancel_btn")]])

@@ -32,7 +32,6 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
       return
 
   if RescheduleRun == "yes":
-    # Check if there are members signed up besides the organizer
     try:
       RescheduleNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)
     except:
@@ -40,7 +39,6 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
      conn.close()
      return
 
-    # Delete all raidmembers that are not the creator of the raid and reserves
     try:
       c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
       c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
@@ -48,7 +46,6 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
       conn.close()
       return
 
-    # Get role of the Creator
     try:
       c.execute("SELECT RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
       row = c.fetchone()
@@ -76,7 +73,6 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
       conn.close()
       return
 
-    # Update Raids table
     if RoleName == 'tank':
       try:
         c.execute("Update Raids SET Date = (?), NrOfPlayersSignedUp = (?), NrOfTanksSignedUp = (?), NrOfDpsSignedUp = (?), NrOfHealersSignedUp = (?), Status = 'Forming' WHERE ID = (?)", (sqlitenewdate, 1, 1, 0, 0, RaidID,))

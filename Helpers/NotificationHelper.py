@@ -5,11 +5,9 @@ from Helpers import OriginHelper
 # Helper function to tag a list of users
 async def NotifyRaidMembers(message, raidmembers):
   try:
-    # Start with an empty message
     Message = None
 
     for member in raidmembers:
-      # Generate notification format
       Notification = f"<@!{member[0]}> "
       if not Message:
         Message = f"{Notification}"

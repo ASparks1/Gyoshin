@@ -23,9 +23,7 @@ async def OnAddCancelReaction(message, bot, UserID):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Check if run still exists
   try:
-    # Checks for waiting for dm replies
     def DMCheck(dm_message):
       return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
@@ -48,13 +46,11 @@ async def OnAddCancelReaction(message, bot, UserID):
       if not Origin:
         return
 
-      # Check that the user attempting to cancel the party is the party leader
       if UserID != Creator:
         await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to cancel the run")
         conn.close()
         return
 
-      # See if there are other members other than the leader, and send notifications to all
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator,))
       UserIDs = c.fetchall()
@@ -80,9 +76,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       conn.close()
       return
 
-    # Ask user to confirm the cancellation of the run
     CancelRun = None
-
     while not CancelRun:
       await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
       try:
@@ -139,11 +133,9 @@ async def OnAddRescheduleReaction(message, bot, UserID):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Checks for waiting for dm replies
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
-  # Get users' display name
   try:
     user = await bot.fetch_user(int(UserID))
     username = user.display_name
@@ -152,15 +144,12 @@ async def OnAddRescheduleReaction(message, bot, UserID):
     conn.close()
     return
 
-  # Check if run still exists
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
   if not RaidID:
     await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
     conn.close()
     return
 
-  # If run exists
   if RaidID:
     try:
       c.execute("SELECT Name, Date, OrganizerUserID FROM Raids WHERE ID = (?) AND NOT Status = 'Cancelled'", (RaidID,))
@@ -188,9 +177,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
       conn.close()
       return
 
-    # Get current datetime
     current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-
     await DMHelper.DMUserByID(bot, UserID, f"Hi {username}, please provide me the date to which you want to reschedule the run {RaidName} in the {GuildName} server in the dd-mm-yyyy hh:mm format.")
 
     if OldDate >= current_date:
@@ -203,7 +190,6 @@ async def OnAddRescheduleReaction(message, bot, UserID):
           conn.close()
           return None
 
-        # DateTime verification
         pattern = re.compile(r'((\d{2})-(\d{2})-(\d{4})) (\d{2}):(\d{2})')
         match = pattern.match(response.content)
 
@@ -211,7 +197,6 @@ async def OnAddRescheduleReaction(message, bot, UserID):
           await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
           continue
 
-        # Send datetime to function to format for SQL
         try:
           NewDate = response.content
           sqlitenewdate = await DateTimeFormatHelper.LocalToSqlite(message, NewDate)
@@ -239,17 +224,14 @@ async def OnAddRallyReaction(message, bot, UserID):
       return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the run number.")
-  # Obtain server ID
-  Origin = await OriginHelper.GetOrigin(message)
 
+  Origin = await OriginHelper.GetOrigin(message)
   if not Origin:
     return
 
-  # Open database connection
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Find party through name and date for discord channel
   try:
     c.execute("SELECT ID, Date FROM Raids WHERE ID = (?)", (RaidID,))
     row = c.fetchone()
@@ -260,7 +242,6 @@ async def OnAddRallyReaction(message, bot, UserID):
     conn.close()
     return
 
-  # Check to see if user is a member of party.
   try:
     c.execute("SELECT ID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
     row = c.fetchone()
@@ -273,7 +254,6 @@ async def OnAddRallyReaction(message, bot, UserID):
     conn.close()
     return
 
-  #check that the set time is within the next hour
   try:
     now = datetime.utcnow()
     DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M")
@@ -284,7 +264,6 @@ async def OnAddRallyReaction(message, bot, UserID):
     return
 
   if TimeDifference > timedelta(0) < timedelta(hours=2):
-    #Complete Notifications
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
       RaidMembers = c.fetchall()
@@ -353,7 +332,6 @@ async def OnAddEditDescReaction(message, bot, UserID):
   c = conn.cursor()
 
   try:
-    # Checks for waiting for dm replies
     def DMCheck(dm_message):
       return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 

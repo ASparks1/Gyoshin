@@ -3,8 +3,6 @@ from Helpers import DMHelper
 
 # Helper function to get discord user name of the poster
 async def GetDisplayName(message, userid, bot):
-
-  # Get server ID
   Origin = await OriginHelper.GetOrigin(message)
   guild = bot.get_guild(Origin)
 
@@ -12,7 +10,6 @@ async def GetDisplayName(message, userid, bot):
     await DMHelper.DMUser(message, "Something went wrong retrieving the server ID")
     return
 
-  # Get member object by discord user id
   try:
     member_obj = await guild.fetch_member(userid)
   except:

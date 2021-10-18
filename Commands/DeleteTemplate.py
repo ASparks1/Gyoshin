@@ -6,7 +6,6 @@ from Helpers import DMHelper
 from discord import ChannelType
 
 async def DeleteTemplate(message, bot):
-  #Obtain origin of server of original !addrun command and display name of user for channel, and name for DM
   try:
     Origin = await OriginHelper.GetOrigin(message)
     UserID = message.author.id
@@ -15,11 +14,9 @@ async def DeleteTemplate(message, bot):
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
-  # Checks for waiting for dm replies
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
-  # Check if this user has created templates on the server
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("SELECT Name FROM Templates WHERE CreatorUserID = (?) AND Origin = (?)", (UserID, Origin,))

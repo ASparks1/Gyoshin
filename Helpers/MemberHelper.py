@@ -13,11 +13,9 @@ async def OnMemberLeaveOrRemove(member):
     Origin = member.guild.id
     print("User {UserID} has left the server {Origin}, checking if they have data that needs to be cleaned up now!")
 
-    # Open database connection
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
 
-    # Delete all raids where this user is the organizer
     c.execute("SELECT ID FROM Raids WHERE UserOrganizerID = (?) AND Origin = (?)", (UserID, Origin,))
     rows = c.fetchall()
 
@@ -27,7 +25,6 @@ async def OnMemberLeaveOrRemove(member):
       c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
       conn.commit()
 
-    # Find all the runs this user has signed up for and is not the organizer
     c.execute("Select R.ID, R.Status, R.NrOfPlayersSignedUp, RM.ID, RM.RoleID FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE OrganizerUserID != (?) AND UserID = (?) AND Origin = (?)", (UserID, UserID, Origin,))
     rows = c.fetchall()
 
@@ -40,26 +37,20 @@ async def OnMemberLeaveOrRemove(member):
         RaidMemberID = row[3]
         RoleID = row[4]
 
-	    # Delete run if the status is canceled or the number of players signed up is just 1
         if NrOfPlayersSignedUp == 1:
           c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         if Status == "Cancelled":
           c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         elif Status == "Formed" or "Forming":
-          # First obtain the role this user was signed up as
           RoleName = await RoleHelper.GetRoleName(RoleID)
-          # Set the column name to be updated according to the role
           if RoleName == "tank":
             c.execute("UPDATE Raids SET NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
           elif RoleName == "dps":
             c.execute("UPDATE Raids SET NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
           elif RoleName == "healer":
             c.execute("UPDATE Raids SET NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
-          # Delete raidmember record first
           c.execute("DELETE FROM RaidMembers WHERE ID = (?)", (RaidMemberID,))
-          # Update run with new information
 
-      # Commit changes and close the connection
       conn.commit()
       conn.close()
     else:
@@ -72,7 +63,6 @@ async def OnMemberLeaveOrRemove(member):
 
 # Helper function to list raid members or reserves
 async def ListMembers(bot, message, Type, RaidID):
-  # Start with an empty message
   Message = None
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()

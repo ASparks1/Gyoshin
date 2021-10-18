@@ -6,7 +6,6 @@ from Helpers import DMHelper
 from discord import ChannelType
 
 async def AddTemplate(message, bot):
-  #Obtain origin of server of original !addrun command and display name of user for channel, and name for DM
   try:
     Origin = await OriginHelper.GetOrigin(message)
     UserID = message.author.id
@@ -17,11 +16,9 @@ async def AddTemplate(message, bot):
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
-  # Checks for waiting for dm replies
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
-  # Ask user for description of planned party/run, and wait for input
   await DMHelper.DMUserByID(bot, UserID, f"Hi {CreatorDisplay}, let's create a template in the {GuildName} server.\nFirst, give me the name of your template, please beware that spaces are not allowed in template names.\n")
   try:
     response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -31,7 +28,6 @@ async def AddTemplate(message, bot):
 
   TemplateName = response.content
 
-  # Check if there already is a template with this name
   if TemplateName:
     try:
       conn = sqlite3.connect('RaidPlanner.db')
@@ -48,7 +44,6 @@ async def AddTemplate(message, bot):
       conn.close()
       return
 
-  # Create empty var for while loop until a valid number of players has been entered
   NrOfPlayers = None
 
   while not NrOfPlayers:
@@ -65,7 +60,6 @@ async def AddTemplate(message, bot):
       conn.close()
       return
 
-  # Create empty var for while loop until a valid number of tanks has been entered
   NrOfTanks = None
 
   while not NrOfTanks:
@@ -82,7 +76,6 @@ async def AddTemplate(message, bot):
       conn.close()
       return
 
-  # Create empty var for while loop until a valid number of dps has been entered
   NrOfDps = None
 
   while not NrOfDps:
@@ -99,7 +92,6 @@ async def AddTemplate(message, bot):
       conn.close()
       return
 
-  # Create empty var for while loop until a valid number of dps has been entered
   NrOfHealers = None
 
   while not NrOfHealers:
@@ -116,7 +108,6 @@ async def AddTemplate(message, bot):
       conn.close()
       return
 
-  # Check if the role numbers match the total numbers
   if NrOfPlayers == NrOfTanks + NrOfDps + NrOfHealers:
     await DMHelper.DMUserByID(bot, UserID, f"**Summary:**\nTemplate name: {TemplateName}\nNumber of players: {NrOfPlayers}\nNumber of tanks: {NrOfTanks}\nNumber of dps: {NrOfDps}\nNumber of healers{NrOfHealers}\nIs this correct (Y/N)?")
     try:

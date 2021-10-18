@@ -15,7 +15,6 @@ async def WithdrawFromRaid(message, bot, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong.")
     return
 
-  # Get Origin
   Origin = await OriginHelper.GetOrigin(message)
 
   if not Origin:
@@ -26,11 +25,9 @@ async def WithdrawFromRaid(message, bot, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving your user ID")
     return
 
-  # Open connection to DB
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Execute query to see if user is already signed up to raid
   try:
     c.execute("SELECT R.ID as RaidID, R.Name, RM.ID as RaidMemberID, RM.UserID, RM.RoleID, R.Date, R.OrganizerUserID, R.NrOfPlayersSignedUp, R.NrOfTanksSignedUp, R.NrOfDpsSignedUp, R.NrOfHealersSignedUp FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE R.ID = (?) AND R.Origin = (?) AND RM.UserID = (?)", (RaidID, Origin, UserID,))
   except:
@@ -56,16 +53,13 @@ async def WithdrawFromRaid(message, bot, UserID):
       conn.close()
       return
 
-    # Check if the user calling the command is also the organizer
     if OrganizerID == UserID:
       await DMHelper.DMUserByID(bot, UserID, "You cannot withdraw from this run because you're the organizer, please use the cancel button instead")
       conn.close()
       return
 
-    # Get role name
     RoleName = await RoleHelper.GetRoleName(RoleID)
 
-    # Update Raids table based on role retrieved
     if RoleName == 'tank':
       try:
         c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
@@ -92,7 +86,6 @@ async def WithdrawFromRaid(message, bot, UserID):
       conn.close()
       return
 
-    # Delete RaidMembers child record
     try:
       c.execute("DELETE FROM RaidMembers WHERE ID = (?)", (RaidMemberID,))
       conn.commit()
@@ -101,14 +94,11 @@ async def WithdrawFromRaid(message, bot, UserID):
       conn.close()
       return
 
-    # Check if there are still members signed up
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
       rows = c.fetchall()
 
-      # Delete the raid if there is nobody signed up anymore
       if not rows:
-
         c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         try:
           conn.commit()

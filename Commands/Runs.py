@@ -13,8 +13,6 @@ from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
 
 async def ListRunsOnDate(message, bot):
-
-  # Get Origin
   Origin = await OriginHelper.GetOrigin(message)
 
   if not Origin:
@@ -24,19 +22,15 @@ async def ListRunsOnDate(message, bot):
     await DMHelper.DMUser(message, "Incomplete command received, please provide the date as well")
     return
 
-  # Open connection to DB
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # split message input
   splitmessage = str.split(message.content, ' ')
   date = splitmessage[1]
 
-  # Check if date provided matches dd-mm-yyyy format
   pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
   match = pattern.match(date)
 
-  # Convert to sqlite date format
   if match:
     splitdate = str.split(date, '-')
     day = splitdate[0]
@@ -44,13 +38,11 @@ async def ListRunsOnDate(message, bot):
     year = splitdate[2]
     sqlitedate = f"{year}-{month}-{day}"
 
-    # Check if date is not in the past
     try:
       current_date = datetime.utcnow().strftime("%Y-%m-%d")
       if sqlitedate < current_date:
         await DMHelper.DMUser(message, "It's not possible to search on dates in the past")
         conn.close()
-        # Delete message that contains command
         await message.delete()
         return
     except:
@@ -67,7 +59,6 @@ async def ListRunsOnDate(message, bot):
       conn.close()
       return
 
-    # Execute query
     try:
       ChannelID = message.channel.id
       c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE Date like (?) AND Origin = (?) AND Status != 'Cancelled' AND ChannelID = (?) ORDER BY Date ASC, ID ASC", (sqlitedate+'%', Origin, ChannelID))
@@ -76,18 +67,13 @@ async def ListRunsOnDate(message, bot):
       conn.close()
       return
 
-    # Delete message that contains command
     await message.delete()
-
     rows = c.fetchall()
 
     if rows:
-      # Header message
       await message.channel.send(f"The following runs are planned on {date}:\n")
 
       for row in rows:
-
-        # Data type conversions so variables can be used in message
         try:
           ID = row[0]
           Name = row[1]
@@ -127,6 +113,5 @@ async def ListRunsOnDate(message, bot):
     conn.close()
     return
 
-  # Close the connection
   conn.close()
   return

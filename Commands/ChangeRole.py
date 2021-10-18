@@ -15,13 +15,11 @@ async def ChangeRole(message, bot, RoleName, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining run information")
     return
 
-  # Get discord server ID
   Origin = await OriginHelper.GetOrigin(message)
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Check if the run exists and if the user is a member
   try:
     c.execute("SELECT RM.RoleID, RM.ID, R.ID, R.NrOfTanksRequired, R.NrOfTanksSignedUp, R.NrOfDpsRequired, R.NrOfDpsSignedUp, R.NrOfHealersRequired, R.NrOfHealersSignedUp, R.Name, R.Date FROM RaidMembers RM JOIN Raids R ON R.ID = RM.RaidID WHERE RM.Origin = (?) AND R.ID = (?) AND RM.UserID = (?)", (Origin, RaidID, UserID,))
     row = c.fetchone()
@@ -43,7 +41,6 @@ async def ChangeRole(message, bot, RoleName, UserID):
     DisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
 
     if OldRoleID != NewRoleID:
-      # Create an empty message variable first
       UpdatedMessage = None
       # Change from tank to dps
       if OldRoleName == 'tank' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:

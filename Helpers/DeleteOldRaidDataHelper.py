@@ -4,12 +4,9 @@ from datetime import timedelta
 
 # Helper function to automatically delete old raid data in order to keep database size limited
 async def DeleteOldRaidData():
-
-  # Open connection to the database
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Get current date and time
   try:
     current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
     current_date = datetime.utcnow().strptime(current_date, "%Y-%m-%d %H:%M")
@@ -19,7 +16,6 @@ async def DeleteOldRaidData():
     print("Something went wrong converting dates")
     return
 
-  # Store query results
   try:
     c.execute("SELECT ID FROM Raids WHERE Date <= (?)", (yesterday,))
   except:
@@ -28,7 +24,6 @@ async def DeleteOldRaidData():
 
   rows = c.fetchall()
 
-  # Check if there are results
   if rows:
     for row in rows:
       try:

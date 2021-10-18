@@ -21,14 +21,12 @@ async def JoinRaid(message, bot, RoleName, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong.")
     return
 
-  # Role verification
   try:
     RoleID = await RoleHelper.GetRoleID(RoleName)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles to see available roles.")
     return
 
-  # Obtain origin and userID, for inputs to database
   Origin = await OriginHelper.GetOrigin(message)
   GuildName = await OriginHelper.GetName(message)
 
@@ -36,11 +34,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the user or server ID.")
     return
 
-  # Open database connection
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  #Collect required information from raid, number of players and roles, and if already formed or cancelled.
   try:
     c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?)", (RaidID,))
   except:
@@ -86,7 +82,6 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
   usercheck = c.fetchone()
 
-  # Checks for waiting for dm replies
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
@@ -197,11 +192,8 @@ async def JoinRaid(message, bot, RoleName, UserID):
       conn.close()
       return
 
-    # Insert user into raid members for raidID
     try:
-      # Delete user from reserves
       c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
-      # Add user to run
       c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
       conn.commit()
 
@@ -213,7 +205,6 @@ async def JoinRaid(message, bot, RoleName, UserID):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
       conn.close()
 
-    # Check if party is now full and can be set to "Formed"
     try:
       c.execute("SELECT NrOfPlayersRequired, NrOfPlayersSignedUp FROM Raids  WHERE ID = (?)", (RaidID,))
       row = c.fetchone()

@@ -36,17 +36,14 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
 
 # Helper function to check reserves
 async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID):
-
-  # Checks for waiting for dm replies
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-
-  # Check if user is already signed up as a reserve
   c.execute("SELECT ID FROM RaidReserves WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID))
   row = c.fetchone()
+
   if row:
     await DMHelper.DMUserByID(bot, UserID, "You're already on the reserves list for this run would you like to withdraw from the reserves? (Y/N).")
     WithdrawFromReserve = None

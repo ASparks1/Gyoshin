@@ -1,6 +1,6 @@
 from Helpers import DMHelper
 
-#Helper function to retrieve discord server ID
+# Helper function to retrieve discord server ID
 async def GetOrigin(message):
     try:
       origin = message.guild.id
@@ -8,6 +8,7 @@ async def GetOrigin(message):
     except:
       await DMHelper.DMUser(message, "Something went wrong resolving the server ID, please make sure you're calling the command from a channel in the server and not in a DM")
 
+# Helper function to retrieve the server name
 async def GetName(message):
   try:
     GuildName = message.guild.name

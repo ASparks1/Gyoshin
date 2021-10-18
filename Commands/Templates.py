@@ -4,17 +4,14 @@ from Helpers import RoleIconHelper
 from Helpers import DMHelper
 
 async def GetTemplates(message):
-  # Get server ID
   Origin = await OriginHelper.GetOrigin(message)
 
   if not Origin:
     return
 
-  # Open connection to the database
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Get role icons
   try:
     TankIcon = await RoleIconHelper.GetTankIcon()
     DpsIcon = await RoleIconHelper.GetDpsIcon()
@@ -23,7 +20,6 @@ async def GetTemplates(message):
     await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
     return
 
-  # Execute query
   try:
     c.execute("SELECT Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Origin = (?)", (Origin,))
   except:
@@ -31,7 +27,6 @@ async def GetTemplates(message):
     conn.close()
     return
 
-  # Store query results
   rows = c.fetchall()
 
   if not rows:
@@ -39,12 +34,8 @@ async def GetTemplates(message):
     conn.close()
     return
 
-  # Start with an empty message
   Message = None
-
-  # Go through all rows found and post a message in channel for each one
   for row in rows:
-
     try:
       Name = row[0]
       NrOfPlayers = row[1]
@@ -65,10 +56,5 @@ async def GetTemplates(message):
         Message = f"{Message}{TemplateMessage}\n"
 
   await DMHelper.DMUser(message, f"{Message}")
-    # Post message to channel
-    # await DMHelper.DMUser(message, f"Name: {Name}\nNumber of players: {NrOfPlayers}\n{TankIcon} {NrOfTanks} {DpsIcon} {NrOfDps} {HealerIcon} {NrOfHealers}")
-    # conn.close()
-
-  # Close the connection to the database
   conn.close()
   return

@@ -1,7 +1,6 @@
 import sqlite3
 
 async def GetRoleName(RoleID):
-  # Open connection to DB
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
@@ -13,7 +12,6 @@ async def GetRoleName(RoleID):
   return RoleName
 
 async def GetRoleID(RoleName):
-  # Open connection to DB
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 

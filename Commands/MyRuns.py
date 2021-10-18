@@ -13,8 +13,6 @@ from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
 
 async def ListMyRuns(message, bot):
-
-  # Get user id
   UserID = message.author.id
 
   if not UserID:
@@ -29,11 +27,9 @@ async def ListMyRuns(message, bot):
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
 
-  # Open connection to DB
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Get current date
   try:
     current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
   except:
@@ -41,7 +37,6 @@ async def ListMyRuns(message, bot):
     conn.close()
     return
 
-  # Execute query
   try:
     c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidMembers WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
   except:
@@ -57,13 +52,10 @@ async def ListMyRuns(message, bot):
     return
 
   if rows:
-    # Start with an empty message
     Message = None
-    # await DMHelper.DMUserByID(bot, UserID, f"You have signed up for the following runs:\n")
 
     for row in rows:
 
-      # Data type conversions so variables can be used in message
       try:
         ID = row[0]
         Name = row[1]
@@ -81,7 +73,6 @@ async def ListMyRuns(message, bot):
 
         try:
           guild = bot.get_guild(Origin)
-          # Get member object by discord user id
           member_obj = await guild.fetch_member(OrganizerUserID)
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving this users display name, perhaps they have left the server")
@@ -99,7 +90,6 @@ async def ListMyRuns(message, bot):
         return
 
       if OrganizerName:
-        # Post upcoming runs to DM
         RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
         if not Message:
           Message = f"You have signed up for the following runs:\n{RunMessage}"
@@ -108,7 +98,5 @@ async def ListMyRuns(message, bot):
           Message = f"{Message}{RunMessage}"
 
     await DMHelper.DMUser(message, f"{Message}")
-
-    # Close the connection
     conn.close()
     return
