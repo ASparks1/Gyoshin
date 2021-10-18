@@ -24,9 +24,8 @@ async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, 
       if response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
         RescheduleRun = "no"
         return
-      else:
-        await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of yes or no.")
-        continue
+      await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of yes or no.")
+      continue
     except asyncio.TimeoutError:
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
       return
