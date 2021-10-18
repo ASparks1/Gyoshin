@@ -151,7 +151,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
     JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
-      if NrOfTanksSignedUp == NrOfTanksRequired:
+      if NrOfTanksSignedUp == NrOfTanksRequired and NrOfTanksRequired > 0:
         await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
         conn.close()
         return
@@ -163,7 +163,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
           conn.close()
           return
     elif RoleName == 'dps':
-      if NrOfDpsSignedUp == NrOfDpsRequired:
+      if NrOfDpsSignedUp == NrOfDpsRequired and NrOfDpsRequired > 0:
         await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
         conn.close()
         return
@@ -175,7 +175,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
           conn.close()
           return
     elif RoleName == 'healer':
-      if NrOfHealersSignedUp == NrOfHealersRequired:
+      if NrOfHealersSignedUp == NrOfHealersRequired and NrOfHealersRequired > 0:
         await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
         conn.close()
         return
