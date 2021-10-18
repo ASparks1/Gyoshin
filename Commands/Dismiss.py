@@ -6,10 +6,7 @@ from Helpers import RoleHelper
 from Helpers import DMHelper
 
 async def DismissMember(message, client):
-
   commands = message.content.split()
-
-  # Get Index values for commands
   try:
     RaidID = commands[1]
     UserID = message.mentions[0].id
@@ -17,10 +14,7 @@ async def DismissMember(message, client):
     await DMHelper.DMUser(message, "Something went wrong processing the run number or user to dismiss")
     return
 
-  # Get display name of user on the server
   UserName = await UserHelper.GetDisplayName(message, UserID, client)
-
-  # Get user ID of the person who entered the commands
   Creator = message.author.id
 
   if not Creator:
@@ -31,17 +25,14 @@ async def DismissMember(message, client):
 
   if UserID == Creator:
         await DMHelper.DMUser(message, "You cannot dismiss yourself as the organizer of this run")
-        # Delete message that contains command
         await message.delete()
         return
 
-  # Delete message that contains the command
   await message.delete()
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  # Search if raid exists and check if the user who entered the command is the organizer
   try:
     c.execute("SELECT ID, Name, Date FROM Raids WHERE ID = (?)", (RaidID,))
     row = c.fetchone()
@@ -55,7 +46,6 @@ async def DismissMember(message, client):
     return
 
   if RaidID:
-    # Check if the user is part of this run
     try:
       c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
       row = c.fetchone()
@@ -75,7 +65,6 @@ async def DismissMember(message, client):
       conn.close()
       return
 
-    # Update Raids table based on role retrieved
     try:
       if RoleName == 'tank':
         c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))

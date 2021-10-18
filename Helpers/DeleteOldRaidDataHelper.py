@@ -23,7 +23,6 @@ async def DeleteOldRaidData():
     return
 
   rows = c.fetchall()
-
   if rows:
     for row in rows:
       try:

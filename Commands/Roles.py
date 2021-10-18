@@ -4,7 +4,6 @@ from Helpers import OriginHelper
 
 async def ListRoles(message):
   Origin = await OriginHelper.GetOrigin(message)
-
   if not Origin:
     return
 
@@ -19,19 +18,16 @@ async def ListRoles(message):
     return
 
   rows = c.fetchall()
-
   if not rows:
     await DMHelper.DMUser(message, "No roles found")
     conn.close()
     return
 
   Message = None
-
   for row in rows:
     try:
       Name = row[0]
       RolesMessage = (f"{Name}")
-
       if not Message:
         Message = f"The following roles are available:\n{RolesMessage}"
       elif Message:

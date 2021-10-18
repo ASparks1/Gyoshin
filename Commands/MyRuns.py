@@ -14,7 +14,6 @@ from Helpers import ButtonInteractionHelper
 
 async def ListMyRuns(message, bot):
   UserID = message.author.id
-
   if not UserID:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting user information")
     return
@@ -45,7 +44,6 @@ async def ListMyRuns(message, bot):
     return
 
   rows = c.fetchmany(5)
-
   if not rows:
     await DMHelper.DMUserByID(bot, UserID, "You have no upcoming runs")
     conn.close()
@@ -53,9 +51,7 @@ async def ListMyRuns(message, bot):
 
   if rows:
     Message = None
-
     for row in rows:
-
       try:
         ID = row[0]
         Name = row[1]
@@ -70,13 +66,11 @@ async def ListMyRuns(message, bot):
         Date = row[10]
         Origin = row[11]
         LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
-
         try:
           guild = bot.get_guild(Origin)
           member_obj = await guild.fetch_member(OrganizerUserID)
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving this users display name, perhaps they have left the server")
-
         try:
           if member_obj:
             OrganizerName = member_obj.display_name

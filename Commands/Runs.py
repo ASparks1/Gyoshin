@@ -14,7 +14,6 @@ from Helpers import ButtonInteractionHelper
 
 async def ListRunsOnDate(message, bot):
   Origin = await OriginHelper.GetOrigin(message)
-
   if not Origin:
     return
 
@@ -24,10 +23,8 @@ async def ListRunsOnDate(message, bot):
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-
   splitmessage = str.split(message.content, ' ')
   date = splitmessage[1]
-
   pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
   match = pattern.match(date)
 
@@ -69,7 +66,6 @@ async def ListRunsOnDate(message, bot):
 
     await message.delete()
     rows = c.fetchall()
-
     if rows:
       await message.channel.send(f"The following runs are planned on {date}:\n")
 
@@ -87,7 +83,6 @@ async def ListRunsOnDate(message, bot):
           NrOfhealersSignedUp = row[9]
           Date = row[10]
           LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
-
           try:
             OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
           except:
@@ -107,7 +102,6 @@ async def ListRunsOnDate(message, bot):
        await message.channel.send(f"No runs found on {date}")
        conn.close()
        return
-
   else:
     await DMHelper.DMUser(message, "Invalid date and time detected please use the dd-mm-yyyy format")
     conn.close()

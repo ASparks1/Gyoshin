@@ -5,7 +5,6 @@ from Helpers import DMHelper
 async def GetDisplayName(message, userid, bot):
   Origin = await OriginHelper.GetOrigin(message)
   guild = bot.get_guild(Origin)
-
   if not Origin:
     await DMHelper.DMUser(message, "Something went wrong retrieving the server ID")
     return

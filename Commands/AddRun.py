@@ -16,7 +16,6 @@ from Commands import Templates
 
 
 async def AddRunInDM(message, bot):
-
   DateTime = None
   RoleName = None
   UsingTemplate = None
@@ -53,14 +52,12 @@ async def AddRunInDM(message, bot):
 
     pattern = re.compile(r'((\d{2})-(\d{2})-(\d{4})) (\d{2}):(\d{2})')
     match = pattern.match(response.content)
-
     if not match:
       await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
       continue
 
     try:
       sqldatetime = await DateTimeFormatHelper.LocalToSqlite(message, response.content)
-
       if not sqldatetime:
         await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
         continue
@@ -78,10 +75,8 @@ async def AddRunInDM(message, bot):
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-
   c.execute("SELECT ID FROM Templates WHERE Origin = (?)", (Origin,))
   row = c.fetchone()
-
   if row:
     while not UsingTemplate:
       try:
@@ -99,7 +94,6 @@ async def AddRunInDM(message, bot):
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of 'yes' or 'no'.")
   else:
     UsingTemplate = "no"
-
   if UsingTemplate == 'yes':
     template_completion = False
     while not template_completion:
@@ -112,11 +106,9 @@ async def AddRunInDM(message, bot):
         return
 
       Template = response.content
-
       try:
         c.execute("SELECT NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Name = (?) and Origin = (?)", (Template, Origin))
         row = c.fetchone()
-
         if not row:
           await DMHelper.DMUserByID(bot, UserID, f"I could not find the template {Template} on this server, please ensure name is correct.")
           continue
@@ -136,7 +128,6 @@ async def AddRunInDM(message, bot):
         continue
 
       template_completion = True
-
   else:
     variable_completion = False
     while not variable_completion:
@@ -164,7 +155,6 @@ async def AddRunInDM(message, bot):
           continue
 
         PlayerLoop = True
-
       while not TankLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of tanks for your crew? Please enter a number equal or greater than 0.")
@@ -179,7 +169,6 @@ async def AddRunInDM(message, bot):
           return
 
         TankLoop = True
-
       while not HealerLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of healers for your crew? Please enter a number equal or greater than 0.")
@@ -195,7 +184,6 @@ async def AddRunInDM(message, bot):
           return
 
         HealerLoop = True
-
       while not DpsLoop:
         try:
           await DMHelper.DMUserByID(bot, UserID, "What is the total number of dps for your crew? Please enter a number equal or greater than 0.")
@@ -211,13 +199,11 @@ async def AddRunInDM(message, bot):
           return
 
         DpsLoop = True
-
       if NrOfPlayers != NrOfTanks + NrOfDps + NrOfHealers:
         await DMHelper.DMUserByID(bot, UserID, "Please ensure the total of each role equals the total number of players required.")
         continue
 
       variable_completion = True
-
   while not RoleName:
     try:
       await DMHelper.DMUserByID(bot, UserID, "Next, which role (tank/dps/healer) do you intend to play as within the crew?")
@@ -236,7 +222,6 @@ async def AddRunInDM(message, bot):
     NumberOfCurrentTanks = 0
     NumberOfCurrentDps = 0
     NumberOfCurrentHealers = 0
-
     try:
       if response.content.lower() == "tank":
         if NrOfTanks <= 0:
@@ -287,7 +272,6 @@ async def AddRunInDM(message, bot):
 
   try:
     c.execute("SELECT Name FROM Raids WHERE Origin = (?) and Name = (?) and Date = (?)", (Origin, Name, sqldatetime))
-
     row = c.fetchone()
   except:
     conn.close()

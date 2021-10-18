@@ -6,7 +6,6 @@ from Helpers import OriginHelper
 async def NotifyRaidMembers(message, raidmembers):
   try:
     Message = None
-
     for member in raidmembers:
       Notification = f"<@!{member[0]}> "
       if not Message:

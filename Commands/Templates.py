@@ -5,7 +5,6 @@ from Helpers import DMHelper
 
 async def GetTemplates(message):
   Origin = await OriginHelper.GetOrigin(message)
-
   if not Origin:
     return
 
@@ -28,7 +27,6 @@ async def GetTemplates(message):
     return
 
   rows = c.fetchall()
-
   if not rows:
     await DMHelper.DMUser(message, "No templates found")
     conn.close()

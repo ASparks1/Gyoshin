@@ -18,7 +18,6 @@ async def OnMemberLeaveOrRemove(member):
 
     c.execute("SELECT ID FROM Raids WHERE UserOrganizerID = (?) AND Origin = (?)", (UserID, Origin,))
     rows = c.fetchall()
-
     if rows:
       RaidID = rows[0]
       c.execute("DELETE FROM Raids WHERE RaidID = (?)", (RaidID,))
@@ -27,7 +26,6 @@ async def OnMemberLeaveOrRemove(member):
 
     c.execute("Select R.ID, R.Status, R.NrOfPlayersSignedUp, RM.ID, RM.RoleID FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE OrganizerUserID != (?) AND UserID = (?) AND Origin = (?)", (UserID, UserID, Origin,))
     rows = c.fetchall()
-
     if rows:
       print(f"Cleaning up raid data for user {UserID} on server {Origin}")
       for row in rows:

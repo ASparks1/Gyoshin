@@ -23,12 +23,9 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
   if RaidID:
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
-
     try:
       c.execute("SELECT Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE ID = (?)", (RaidID,))
-
       row = c.fetchone()
-
       if row:
         Name = row[0]
         OrganizerUserID = row[1]
@@ -41,7 +38,6 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
         NrOfhealersSignedUp = row[8]
         Date = row[9]
         LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
-
         try:
           OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
         except:

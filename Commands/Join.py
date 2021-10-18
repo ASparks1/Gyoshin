@@ -79,7 +79,6 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
   # Ensure that the user is not trying to join a raid they have already joined
   c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
-
   usercheck = c.fetchone()
 
   def DMCheck(dm_message):

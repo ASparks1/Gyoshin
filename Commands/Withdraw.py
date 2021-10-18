@@ -16,7 +16,6 @@ async def WithdrawFromRaid(message, bot, UserID):
     return
 
   Origin = await OriginHelper.GetOrigin(message)
-
   if not Origin:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the server ID")
     return
@@ -36,7 +35,6 @@ async def WithdrawFromRaid(message, bot, UserID):
     return
 
   row = c.fetchone()
-
   if row:
     RaidID = row[0]
     RaidName = row[1]
@@ -59,7 +57,6 @@ async def WithdrawFromRaid(message, bot, UserID):
       return
 
     RoleName = await RoleHelper.GetRoleName(RoleID)
-
     if RoleName == 'tank':
       try:
         c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
@@ -97,7 +94,6 @@ async def WithdrawFromRaid(message, bot, UserID):
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
       rows = c.fetchall()
-
       if not rows:
         c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         try:
@@ -123,7 +119,6 @@ async def WithdrawFromRaid(message, bot, UserID):
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to withdraw you from this run")
       conn.close()
       return
-
   else:
     await DMHelper.DMUser(message, "Unable to withdraw because you are not a member of this run")
     conn.close()

@@ -28,7 +28,6 @@ async def OnAddCancelReaction(message, bot, UserID):
       return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
     if not RaidID:
       await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
       conn.close()
@@ -42,7 +41,6 @@ async def OnAddCancelReaction(message, bot, UserID):
 
     if row:
       Origin = await OriginHelper.GetOrigin(message)
-
       if not Origin:
         return
 
@@ -154,17 +152,14 @@ async def OnAddRescheduleReaction(message, bot, UserID):
     try:
       c.execute("SELECT Name, Date, OrganizerUserID FROM Raids WHERE ID = (?) AND NOT Status = 'Cancelled'", (RaidID,))
       row = c.fetchone()
-
       RaidName = row[0]
       OldDate = row[1]
       OrganizerUserID = row[2]
       LocalOldDate = await DateTimeFormatHelper.SqliteToLocal(message, OldDate)
-
       if OrganizerUserID != UserID:
         await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to reschedule this run.")
         conn.close()
         return
-
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run")
       conn.close()
@@ -219,7 +214,6 @@ async def OnAddRallyReaction(message, bot, UserID):
   RallyNotifications = None
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
     if not RaidID:
       return
   except:
@@ -267,12 +261,10 @@ async def OnAddRallyReaction(message, bot, UserID):
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID))
       RaidMembers = c.fetchall()
-
       c.execute("SELECT RallyCount, Name FROM Raids WHERE ID = (?)", (RaidID,))
       row = c.fetchone()
       RallyCount = row[0]
       Name = row[1]
-
       if not RaidMembers:
           conn.close()
           await DMHelper.DMUserByID(bot, UserID, "There is nobody else in the crew to rally.")
@@ -315,14 +307,12 @@ async def OnAddRallyReaction(message, bot, UserID):
 
 async def OnMemberReaction(message, bot):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
   if RaidID:
     Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID)
     return Message
 
 async def OnReservesReaction(message, bot):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
   if RaidID:
     Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID)
     return Message
@@ -336,7 +326,6 @@ async def OnAddEditDescReaction(message, bot, UserID):
       return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-
     if not RaidID:
       await DMHelper.DMUserByID(bot, UserID, f"I was not able to find run {RaidID}")
       conn.close()
@@ -350,7 +339,6 @@ async def OnAddEditDescReaction(message, bot, UserID):
     Date = row[3]
     CreatorDisplay = await UserHelper.GetDisplayName(message, UserID, bot)
     LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
-
     if row:
       if UserID != Creator:
         await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to change the description of the run")

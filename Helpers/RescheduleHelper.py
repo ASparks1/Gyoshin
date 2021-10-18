@@ -60,14 +60,12 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
       return
 
     RoleID = row[0]
-
     if not RoleID:
       await DMHelper.DMUserByID(bot, UserID, "Unable to retrieve role id")
       conn.close()
       return
 
     RoleName = await RoleHelper.GetRoleName(RoleID)
-
     if not RoleName:
       await DMHelper.DMUserByID(bot, UserID, "Unable to resolve role name")
       conn.close()

@@ -27,7 +27,6 @@ async def AddTemplate(message, bot):
     return
 
   TemplateName = response.content
-
   if TemplateName:
     try:
       conn = sqlite3.connect('RaidPlanner.db')
@@ -45,7 +44,6 @@ async def AddTemplate(message, bot):
       return
 
   NrOfPlayers = None
-
   while not NrOfPlayers:
     await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of players required next.\n")
     try:
@@ -61,7 +59,6 @@ async def AddTemplate(message, bot):
       return
 
   NrOfTanks = None
-
   while not NrOfTanks:
     await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of tanks required next.\n")
     try:
@@ -77,7 +74,6 @@ async def AddTemplate(message, bot):
       return
 
   NrOfDps = None
-
   while not NrOfDps:
     await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of dps required next.\n")
     try:
@@ -93,7 +89,6 @@ async def AddTemplate(message, bot):
       return
 
   NrOfHealers = None
-
   while not NrOfHealers:
     await DMHelper.DMUserByID(bot, UserID, "Please provide the amount of healers required next.\n")
     try:
