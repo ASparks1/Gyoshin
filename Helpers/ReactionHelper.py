@@ -46,24 +46,6 @@ async def OnAddCancelReaction(message, bot, UserID):
       return
 
   try:
-    c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator,))
-    UserIDs = c.fetchall()
-  except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
-    conn.close()
-    return
-
-  try:
-    if UserIDs:
-      c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, Creator))
-      RaidMembers = c.fetchall()
-      CancelNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
-  except:
-    await DMHelper.DMUser(message, "Something went wrong retrieving raid members")
-    conn.close()
-    return
-
-  try:
     GuildName = await OriginHelper.GetName(message)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")

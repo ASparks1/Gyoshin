@@ -12,7 +12,6 @@ async def CancelRun(bot, message, Creator, UserID, RaidID, RaidName, LocalDate):
   c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
   c.execute("DELETE FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
   c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
-  conn.commit()
 
   try:
     OrganizerDisplayName = await UserHelper.GetDisplayName(message, Creator, bot)
@@ -28,6 +27,7 @@ async def CancelRun(bot, message, Creator, UserID, RaidID, RaidName, LocalDate):
     elif not CancelNotifications:
       await message.channel.send(f"{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalDate}.")
 
+    conn.commit()
     await message.delete()
     conn.close()
     return
