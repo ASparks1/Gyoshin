@@ -274,6 +274,7 @@ async def AddRunInDM(message, bot):
     c.execute("SELECT Name FROM Raids WHERE Origin = (?) and Name = (?) and Date = (?)", (Origin, Name, sqldatetime))
     row = c.fetchone()
   except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining run information")
     conn.close()
     return
 

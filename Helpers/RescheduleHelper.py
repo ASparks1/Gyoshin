@@ -45,6 +45,7 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
     c.execute("DELETE FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
     c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
   except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong deleting raidmembers and reserves")
     conn.close()
     return
 

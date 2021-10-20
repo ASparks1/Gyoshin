@@ -7,6 +7,7 @@ async def GetRoleName(RoleID):
     c.execute("SELECT Name FROM Roles WHERE ID = (?)", (RoleID,))
     RoleName = c.fetchone()[0]
   except:
+    print("Something went wrong retrieving role name")
     conn.close()
   return RoleName
 
@@ -17,5 +18,6 @@ async def GetRoleID(RoleName):
     c.execute("SELECT ID FROM Roles WHERE Name = (?)", (RoleName,))
     RoleID = c.fetchone()[0]
   except:
+    print("Something went wrong retrieving role id")
     conn.close()
   return RoleID
