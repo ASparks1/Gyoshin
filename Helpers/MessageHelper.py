@@ -73,25 +73,25 @@ async def MessageRaidMembers(message, bot, UserID):
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-  
+
   try:
-    c.execute("SELECT OrganizerUserID, Name, Date FROM Raids WHERE ID = (?)",(RaidID,))
+    c.execute("SELECT OrganizerUserID, Name, Date FROM Raids WHERE ID = (?)", (RaidID,))
     row = c.fetchone()
     OrganizerUserID = row[0]
     RaidName = row[1]
     Date = row[2]
     LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
   except:
-    await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to retrieve run information")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve run information")
     conn.close()
     return
 
   if UserID != OrganizerUserID:
-    await DMHelper.DMUserByID(bot, UserID, f"Only the organizer is allowed to send messages to raidmembers")
+    await DMHelper.DMUserByID(bot, UserID, "Only the organizer is allowed to send messages to raidmembers")
     conn.close()
     return
 
-  c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)",(RaidID, UserID,))
+  c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
   rows = c.fetchall()
   if rows:
     try:
@@ -109,14 +109,14 @@ async def MessageRaidMembers(message, bot, UserID):
         MemberID = row[0]
         await DMHelper.DMUserByID(bot, MemberID, MessageToSend)
       except:
-        await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to send the message")
+        await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to send the message")
         conn.close()
         return
-    await DMHelper.DMUserByID(bot, UserID, f"Message sent!")
+    await DMHelper.DMUserByID(bot, UserID, "Message sent!")
     conn.close()
     return
 
   if not rows:
-    await DMHelper.DMUserByID(bot, UserID, f"There are no members to message for this run")
+    await DMHelper.DMUserByID(bot, UserID, "There are no members to message for this run")
     conn.close()
     return
