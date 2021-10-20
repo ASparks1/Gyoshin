@@ -1,5 +1,6 @@
 from Helpers import DMHelper
 from Helpers import ReactionHelper
+from Helpers import MessageHelper
 from Commands import Join
 
 async def OnButtonClick(interaction, bot):
@@ -75,6 +76,13 @@ async def OnButtonClick(interaction, bot):
     try:
       await interaction.respond(type=6)
       await ReactionHelper.OnAddEditDescReaction(interaction.message, bot, UserID)
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
+      return
+  if interaction.custom_id == "messageraidmembers_btn":
+    try:
+      await interaction.respond(type=6)
+      await MessageHelper.MessageRaidMembers(interaction.message, bot, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return
