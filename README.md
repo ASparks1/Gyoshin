@@ -18,3 +18,4 @@ Currently supports:
 * Tagging all members signed up to a run
 * Viewing the list of members and reserves signed up to a run
 * Dismissing members from a run
+* Sending messages to signed up members
