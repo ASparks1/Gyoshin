@@ -39,7 +39,7 @@ async def OnMemberLeaveOrRemove(member):
           c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         if Status == "Cancelled":
           c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
-        elif Status == "Formed" or "Forming":
+        elif Status in("Formed","Forming"):
           RoleName = await RoleHelper.GetRoleName(RoleID)
           if RoleName == "tank":
             c.execute("UPDATE Raids SET NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfPlayersSignedUp = NrOfPlayersSignedUp - 1, Status = 'Forming' WHERE ID = (?)", (RaidID,))
