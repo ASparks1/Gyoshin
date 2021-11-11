@@ -237,9 +237,14 @@ async def OnAddRallyReaction(message, bot, UserID):
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong calculating the time.")
             conn.close()
             return
-          await message.channel.send(f"{RallyNotifications}\nGet ready crew! Only {TimeTillRun} minutes left until you assemble for {Name}!")
-          conn.commit()
-          conn.close()
+          if TimeTillRun < 60:
+            await message.channel.send(f"{RallyNotifications}\nGet ready crew! Only {TimeTillRun} minutes left until you assemble for {Name}!")
+            conn.commit()
+            conn.close()
+          else:
+            await message.channel.send(f"{RallyNotifications}\nIt's time for {Name}!")
+            conn.commit()
+            conn.close()
         else:
           await DMHelper.DMUserByID(bot, UserID, "This crew has been rallied the maximum amount of 3 times already.")
           conn.close()
