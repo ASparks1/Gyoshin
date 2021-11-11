@@ -47,12 +47,12 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
     while not WithdrawFromReserve:
       try:
         WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-        if WithdrawFromReserveResponse.content == "Y" or WithdrawFromReserveResponse.content == "y" or WithdrawFromReserveResponse.content == "Yes" or WithdrawFromReserveResponse.content == "yes":
+        if WithdrawFromReserveResponse.content in("Y","y","Yes","yes"):
           WithdrawFromReserveResponse = "yes"
           await WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
           conn.close()
           return
-        if WithdrawFromReserveResponse.content == "N" or WithdrawFromReserveResponse.content == "n" or WithdrawFromReserveResponse.content == "No" or WithdrawFromReserveResponse.content == "no":
+        if WithdrawFromReserveResponse.content in("N","n","No","no"):
           WithdrawFromReserveResponse = "no"
           conn.close()
           return
@@ -69,12 +69,12 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
     while not Reserve:
       try:
         ReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-        if ReserveResponse.content == "Y" or ReserveResponse.content == "y" or ReserveResponse.content == "Yes" or ReserveResponse.content == "yes":
+        if ReserveResponse.content in("Y","y","Yes","yes"):
           ReserveResponse = "yes"
           await JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
           conn.close()
           return
-        if ReserveResponse.content == "N" or ReserveResponse.content == "n" or ReserveResponse.content == "No" or ReserveResponse.content == "no":
+        if ReserveResponse.content in("N","n","No","no"):
           ReserveResponse = "no"
           conn.close()
           return

@@ -55,13 +55,13 @@ async def DeleteTemplate(message, bot):
             while not CanDelete:
               await DMHelper.DMUserByID(bot, UserID, f"Do you want to delete the template {TemplateName} on the {GuildName} server? (Y/N)")
               response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-              if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+              if response.content in("Y","y","Yes","yes"):
                 CanDelete = 'yes'
                 c.execute("DELETE FROM Templates WHERE Name = (?) AND Origin = (?)", (TemplateName, Origin,))
                 conn.commit()
                 conn.close()
                 await DMHelper.DMUserByID(bot, UserID, "Template succesfully deleted.")
-              elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+              elif response.content in("N","n","No","no"):
                 CanDelete = "no"
                 conn.close()
                 return

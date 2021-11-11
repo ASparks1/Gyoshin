@@ -57,9 +57,9 @@ async def OnAddCancelReaction(message, bot, UserID):
     await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
     try:
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-      if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+      if response.content in("Y","y","Yes","yes"):
         CancelRun = "yes"
-      elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+      elif response.content in("N","n","No","no"):
         CancelRun = "no"
       else:
         await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with Y/N")
@@ -318,9 +318,9 @@ async def OnAddEditDescReaction(message, bot, UserID):
           await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalDate} (Y/N)?")
           try:
             response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-            if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+            if response.content in("Y","y","Yes","yes"):
               EditDescription = "yes"
-            elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+            elif response.content in("N","n","No","no"):
               EditDescription = "no"
             else:
               await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with Y/N")

@@ -100,9 +100,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
         await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to withdraw from this run (Y/N)?")
         try:
           withdrawresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-          if withdrawresponse.content == "Y" or withdrawresponse.content == "y" or withdrawresponse.content == "Yes" or withdrawresponse.content == "yes":
+          if withdrawresponse.content in("Y","y","Yes","yes"):
             CanWithdraw = "yes"
-          elif withdrawresponse.content == "N" or withdrawresponse.content == "n" or withdrawresponse.content == "No" or withdrawresponse.content == "no":
+          elif withdrawresponse.content in("N","n","No","no"):
             CanWithdraw = "no"
           else:
             await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
@@ -127,9 +127,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
         await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to change to {RoleName} for this run (Y/N)?")
         try:
           changeroleresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-          if changeroleresponse.content == "Y" or changeroleresponse.content == "y" or changeroleresponse.content == "Yes" or changeroleresponse.content == "yes":
+          if changeroleresponse.content in("Y","y","Yes","yes"):
             CanChangeRole = "yes"
-          elif changeroleresponse.content == "N" or changeroleresponse.content == "n" or changeroleresponse.content == "No" or changeroleresponse.content == "no":
+          elif changeroleresponse.content in("N","n","No","no"):
             CanChangeRole = "no"
           else:
             await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")

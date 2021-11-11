@@ -17,11 +17,11 @@ async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, 
     await DMHelper.DMUserByID(bot, UserID, f"Do you want to reschedule the run {RaidName} from {LocalOldDate} to {NewDate} in the {GuildName} server (Y/N)?")
     try:
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-      if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+      if response.content in("Y","y","Yes","yes"):
         RescheduleRun = "yes"
         await Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate)
         return
-      if response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+      if response.content in("N","n","No","no"):
         RescheduleRun = "no"
         return
       await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of yes or no.")

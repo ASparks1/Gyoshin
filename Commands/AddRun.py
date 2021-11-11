@@ -86,9 +86,9 @@ async def AddRunInDM(message, bot):
         await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
         return
 
-      if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+      if response.content in("Y","y","Yes","yes"):
         UsingTemplate = "yes"
-      elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+      elif response.content in("N","n","No","no"):
         UsingTemplate = "no"
       else:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of 'yes' or 'no'.")
@@ -261,9 +261,9 @@ async def AddRunInDM(message, bot):
     except asyncio.TimeoutError:
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
 
-    if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+    if response.content in("Y","y","Yes","yes"):
       final_confirmation = True
-    elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+    elif response.content in("N","n","No","no"):
       await DMHelper.DMUserByID(bot, UserID, "Your request to create a crew has been cancelled, please call the command again in the relevant channel if you wish to try again.")
       conn.close()
       return

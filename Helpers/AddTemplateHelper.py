@@ -77,7 +77,7 @@ async def NrOfPlayersAndConfirmSection(bot, message, Origin, UserID, TemplateNam
       CreateTemplate = None
       while not CreateTemplate:
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-        if response.content == "Y" or response.content == "y" or response.content == "Yes" or response.content == "yes":
+        if response.content in("Y","y","Yes","yes"):
           CreateTemplate = "yes"
           try:
             c.execute("INSERT INTO Templates (Origin, CreatorUserID, Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES (?, ?, ?, ?, ?, ?, ?)", (Origin, UserID, TemplateName, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers,))
@@ -89,7 +89,7 @@ async def NrOfPlayersAndConfirmSection(bot, message, Origin, UserID, TemplateNam
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding the template.")
             conn.close()
             return
-        elif response.content == "N" or response.content == "n" or response.content == "No" or response.content == "no":
+        elif response.content in("N","n","No","no"):
           CreateTemplate = "no"
           conn.close()
           return
