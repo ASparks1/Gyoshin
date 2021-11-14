@@ -1,5 +1,6 @@
 import asyncio
 import sqlite3
+from Commands import ChangeRole
 from Commands import Withdraw
 from discord import ChannelType
 from Helpers import DMHelper
