@@ -96,57 +96,11 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
     # Offer to withdraw if user is signed up as this role
     if RoleID == RoleIDSignedUpAs:
-      CanWithdraw = None
-      while not CanWithdraw:
-        await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to withdraw from this run (Y/N)?")
-        try:
-          withdrawresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-          if withdrawresponse.content in("Y","y","Yes","yes"):
-            CanWithdraw = "yes"
-          elif withdrawresponse.content in("N","n","No","no"):
-            CanWithdraw = "no"
-          else:
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-        except asyncio.TimeoutError:
-          conn.close()
-          await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the run.")
-          return
-
-      if CanWithdraw == "yes":
-        await Withdraw.WithdrawFromRaid(message, bot, UserID)
-        conn.close()
-        return
-      if CanWithdraw == "no":
-        conn.close()
-        return
+      await JoinHelper.Withdraw(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs)
 
     # Offer to change role if user is signed up with another role
     elif RoleID != RoleIDSignedUpAs:
-      CanChangeRole = None
-      while not CanChangeRole:
-        await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to change to {RoleName} for this run (Y/N)?")
-        try:
-          changeroleresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-          if changeroleresponse.content in("Y","y","Yes","yes"):
-            CanChangeRole = "yes"
-          elif changeroleresponse.content in("N","n","No","no"):
-            CanChangeRole = "no"
-          else:
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-        except asyncio.TimeoutError:
-          conn.close()
-          await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to change your role for this run.")
-          return
-
-      if CanChangeRole == "yes":
-        await ChangeRole.ChangeRole(message, bot, RoleName, UserID)
-        conn.close()
-        return
-      if CanChangeRole == "no":
-        conn.close()
-        return
+      await JoinHelper.ChangeRole(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs)
 
   if not usercheck:
     JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
