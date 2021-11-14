@@ -130,4 +130,4 @@ async def JoinRaid(message, bot, RoleName, UserID):
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
       conn.close()
-	  return
+      return

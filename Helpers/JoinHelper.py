@@ -62,10 +62,10 @@ async def Withdraw(message, bot, UserID, Description, LocalDate, GuildName, Role
       else:
         await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
         continue
-      except asyncio.TimeoutError:
-        conn.close()
-        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the run.")
-        return
+    except asyncio.TimeoutError:
+      conn.close()
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the run.")
+      return
 
   if CanWithdraw == "yes":
     await Withdraw.WithdrawFromRaid(message, bot, UserID)
@@ -120,7 +120,7 @@ async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, J
   if NrOfTanksSignedUp < NrOfTanksRequired:
     try:
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
-	  return
+      return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
       conn.close()
