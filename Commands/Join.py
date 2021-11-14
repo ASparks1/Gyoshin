@@ -39,7 +39,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
   c = conn.cursor()
 
   try:
-    c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?)", (RaidID,))
+    c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?)", (RaidID,))
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong when searching for this run.")
     conn.close()
@@ -59,15 +59,13 @@ async def JoinRaid(message, bot, RoleName, UserID):
     LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
     Origin = row[3]
     Organizer = row[4]
-    NrOfPlayersRequired = row[5]
-    NrOfPlayersSignedUp = row[6]
-    NrOfTanksRequired = row[7]
-    NrOfTanksSignedUp = row[8]
-    NrOfDpsRequired = row[9]
-    NrOfDpsSignedUp = row[10]
-    NrOfHealersRequired = row[11]
-    NrOfHealersSignedUp = row[12]
-    Status = row[13]
+    NrOfTanksRequired = row[5]
+    NrOfTanksSignedUp = row[6]
+    NrOfDpsRequired = row[7]
+    NrOfDpsSignedUp = row[8]
+    NrOfHealersRequired = row[9]
+    NrOfHealersSignedUp = row[10]
+    Status = row[11]
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving run information.")
     conn.close()
@@ -81,9 +79,6 @@ async def JoinRaid(message, bot, RoleName, UserID):
   # Ensure that the user is not trying to join a raid they have already joined
   c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
   usercheck = c.fetchone()
-
-  def DMCheck(dm_message):
-    return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
   if usercheck:
     try:
