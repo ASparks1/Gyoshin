@@ -1,6 +1,7 @@
 import asyncio
 import sqlite3
 from Commands import Withdraw
+from discord import ChannelType
 from Helpers import DMHelper
 from Helpers import MessageHelper
 from Helpers import NotificationHelper
@@ -43,12 +44,11 @@ async def NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, 
     return
 
 # Helper function to allow a user to withdraw
-async def Withdraw(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs):
+async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
   conn = sqlite3.connect('RaidPlanner.db')
-  c = conn.cursor()
 
   CanWithdraw = None
   while not CanWithdraw:
@@ -76,12 +76,11 @@ async def Withdraw(message, bot, UserID, Description, LocalDate, GuildName, Role
     return
 
 # Helper function to allow a user to change role
-async def ChangeRole(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName):
+async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
   conn = sqlite3.connect('RaidPlanner.db')
-  c = conn.cursor()
 
   CanChangeRole = None
   while not CanChangeRole:
