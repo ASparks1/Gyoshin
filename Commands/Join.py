@@ -202,6 +202,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
       UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       await message.edit(content=UpdatedMessage)
       await JoinHelper.NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
+      conn.close()
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
       conn.close()
