@@ -11,6 +11,7 @@ from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 from Helpers import ReservesHelper
 from Helpers import DateTimeFormatHelper
+from Helpers import JoinHelper
 from Commands import Withdraw
 from Commands import ChangeRole
 
@@ -200,37 +201,8 @@ async def JoinRaid(message, bot, RoleName, UserID):
       await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
       UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       await message.edit(content=UpdatedMessage)
+      await JoinHelper.NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
       conn.close()
-
-    try:
-      c.execute("SELECT NrOfPlayersRequired, NrOfPlayersSignedUp FROM Raids  WHERE ID = (?)", (RaidID,))
-      row = c.fetchone()
-
-      if row:
-        NrOfPlayersRequired = row[0]
-        NrOfPlayersSignedUp = row[1]
-
-      if NrOfPlayersRequired == NrOfPlayersSignedUp:
-        try:
-          c.execute("UPDATE Raids SET Status = 'Formed' WHERE ID = (?)", (RaidID,))
-          try:
-            conn.commit()
-            conn.close()
-            UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
-            await message.edit(content=UpdatedMessage)
-            NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, Organizer)
-            await message.channel.send(f"{NotifyOrganizerMessage}\nYour crew for {Description} on {LocalDate} has been assembled!")
-          except:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
-            conn.close()
-            return
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating party status to formed.")
-          conn.close()
-          return
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
-      conn.close()
-      return
+	  return
