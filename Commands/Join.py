@@ -106,41 +106,11 @@ async def JoinRaid(message, bot, RoleName, UserID):
     JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
-      if NrOfTanksSignedUp == NrOfTanksRequired and NrOfTanksRequired > 0:
-        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
-        conn.close()
-        return
-      if NrOfTanksSignedUp < NrOfTanksRequired:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
-          conn.close()
-          return
+      await JoinHelper.JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
     elif RoleName == 'dps':
-      if NrOfDpsSignedUp == NrOfDpsRequired and NrOfDpsRequired > 0:
-        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
-        conn.close()
-        return
-      if NrOfDpsSignedUp < NrOfDpsRequired:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
-          conn.close()
-          return
+      await JoinHelper.JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
     elif RoleName == 'healer':
-      if NrOfHealersSignedUp == NrOfHealersRequired and NrOfHealersRequired > 0:
-        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
-        conn.close()
-        return
-      if NrOfHealersSignedUp < NrOfHealersRequired:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
-          conn.close()
-          return
+      await JoinHelper.JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
     else:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve the role")
       conn.close()
