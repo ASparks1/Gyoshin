@@ -11,6 +11,7 @@ from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 from Helpers import ReservesHelper
 from Helpers import DateTimeFormatHelper
+from Helpers import JoinHelper
 from Commands import Withdraw
 from Commands import ChangeRole
 
@@ -38,7 +39,7 @@ async def JoinRaid(message, bot, RoleName, UserID):
   c = conn.cursor()
 
   try:
-    c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfPlayersRequired, NrOfPlayersSignedUp, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?)", (RaidID,))
+    c.execute("SELECT ID, Name, Date, Origin, OrganizerUserID, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfHealersSignedUp, Status FROM Raids WHERE ID = (?)", (RaidID,))
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong when searching for this run.")
     conn.close()
@@ -58,15 +59,13 @@ async def JoinRaid(message, bot, RoleName, UserID):
     LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
     Origin = row[3]
     Organizer = row[4]
-    NrOfPlayersRequired = row[5]
-    NrOfPlayersSignedUp = row[6]
-    NrOfTanksRequired = row[7]
-    NrOfTanksSignedUp = row[8]
-    NrOfDpsRequired = row[9]
-    NrOfDpsSignedUp = row[10]
-    NrOfHealersRequired = row[11]
-    NrOfHealersSignedUp = row[12]
-    Status = row[13]
+    NrOfTanksRequired = row[5]
+    NrOfTanksSignedUp = row[6]
+    NrOfDpsRequired = row[7]
+    NrOfDpsSignedUp = row[8]
+    NrOfHealersRequired = row[9]
+    NrOfHealersSignedUp = row[10]
+    Status = row[11]
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving run information.")
     conn.close()
@@ -81,9 +80,6 @@ async def JoinRaid(message, bot, RoleName, UserID):
   c.execute("SELECT ID, RoleID FROM RaidMembers WHERE RaidID = (?) and UserID = (?)", (RaidID, UserID))
   usercheck = c.fetchone()
 
-  def DMCheck(dm_message):
-    return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
-
   if usercheck:
     try:
       RoleIDSignedUpAs = usercheck[1]
@@ -95,97 +91,20 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
     # Offer to withdraw if user is signed up as this role
     if RoleID == RoleIDSignedUpAs:
-      CanWithdraw = None
-      while not CanWithdraw:
-        await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to withdraw from this run (Y/N)?")
-        try:
-          withdrawresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-          if withdrawresponse.content in("Y","y","Yes","yes"):
-            CanWithdraw = "yes"
-          elif withdrawresponse.content in("N","n","No","no"):
-            CanWithdraw = "no"
-          else:
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-        except asyncio.TimeoutError:
-          conn.close()
-          await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the run.")
-          return
-
-      if CanWithdraw == "yes":
-        await Withdraw.WithdrawFromRaid(message, bot, UserID)
-        conn.close()
-        return
-      if CanWithdraw == "no":
-        conn.close()
-        return
-
+      await JoinHelper.WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs)
     # Offer to change role if user is signed up with another role
     elif RoleID != RoleIDSignedUpAs:
-      CanChangeRole = None
-      while not CanChangeRole:
-        await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to change to {RoleName} for this run (Y/N)?")
-        try:
-          changeroleresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
-          if changeroleresponse.content in("Y","y","Yes","yes"):
-            CanChangeRole = "yes"
-          elif changeroleresponse.content in("N","n","No","no"):
-            CanChangeRole = "no"
-          else:
-            await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-            continue
-        except asyncio.TimeoutError:
-          conn.close()
-          await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to change your role for this run.")
-          return
-
-      if CanChangeRole == "yes":
-        await ChangeRole.ChangeRole(message, bot, RoleName, UserID)
-        conn.close()
-        return
-      if CanChangeRole == "no":
-        conn.close()
-        return
+      await JoinHelper.ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName)
 
   if not usercheck:
     JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
-      if NrOfTanksSignedUp == NrOfTanksRequired and NrOfTanksRequired > 0:
-        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
-        conn.close()
-        return
-      if NrOfTanksSignedUp < NrOfTanksRequired:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
-          conn.close()
-          return
+      await JoinHelper.JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
     elif RoleName == 'dps':
-      if NrOfDpsSignedUp == NrOfDpsRequired and NrOfDpsRequired > 0:
-        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
-        conn.close()
-        return
-      if NrOfDpsSignedUp < NrOfDpsRequired:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
-          conn.close()
-          return
+      await JoinHelper.JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
     elif RoleName == 'healer':
-      if NrOfHealersSignedUp == NrOfHealersRequired and NrOfHealersRequired > 0:
-        await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
-        conn.close()
-        return
-      if NrOfHealersSignedUp < NrOfHealersRequired:
-        try:
-          c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
-          conn.close()
-          return
+      await JoinHelper.JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
     else:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve the role")
       conn.close()
@@ -200,37 +119,9 @@ async def JoinRaid(message, bot, RoleName, UserID):
       await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
       UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       await message.edit(content=UpdatedMessage)
+      await JoinHelper.NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
+      conn.close()
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
-      conn.close()
-
-    try:
-      c.execute("SELECT NrOfPlayersRequired, NrOfPlayersSignedUp FROM Raids  WHERE ID = (?)", (RaidID,))
-      row = c.fetchone()
-
-      if row:
-        NrOfPlayersRequired = row[0]
-        NrOfPlayersSignedUp = row[1]
-
-      if NrOfPlayersRequired == NrOfPlayersSignedUp:
-        try:
-          c.execute("UPDATE Raids SET Status = 'Formed' WHERE ID = (?)", (RaidID,))
-          try:
-            conn.commit()
-            conn.close()
-            UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
-            await message.edit(content=UpdatedMessage)
-            NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, Organizer)
-            await message.channel.send(f"{NotifyOrganizerMessage}\nYour crew for {Description} on {LocalDate} has been assembled!")
-          except:
-            await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
-            conn.close()
-            return
-        except:
-          await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating party status to formed.")
-          conn.close()
-          return
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
       conn.close()
       return
