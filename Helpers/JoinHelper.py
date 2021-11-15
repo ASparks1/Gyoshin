@@ -117,6 +117,8 @@ async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, J
   if NrOfTanksSignedUp < NrOfTanksRequired:
     try:
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
+      conn.commit()
+      conn.close()
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
@@ -134,6 +136,8 @@ async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, Joined
   if NrOfDpsSignedUp < NrOfDpsRequired:
     try:
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
+      conn.commit()
+      conn.close()
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
@@ -151,6 +155,8 @@ async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequi
   if NrOfHealersSignedUp < NrOfHealersRequired:
     try:
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
+      conn.commit()
+      conn.close()
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
