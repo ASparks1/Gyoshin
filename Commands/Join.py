@@ -102,28 +102,12 @@ async def JoinRaid(message, bot, RoleName, UserID):
     JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
-      await JoinHelper.JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
+      await JoinHelper.JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer)
     elif RoleName == 'dps':
-      await JoinHelper.JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
+      await JoinHelper.JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer)
     elif RoleName == 'healer':
-      await JoinHelper.JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID)
+      await JoinHelper.JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer)
     else:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve the role")
-      conn.close()
-      return
-
-    try:
-      c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
-      c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
-      conn.commit()
-
-      JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
-      await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
-      UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
-      await message.edit(content=UpdatedMessage)
-      await JoinHelper.NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
-      conn.close()
-    except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
       conn.close()
       return

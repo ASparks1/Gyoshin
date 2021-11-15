@@ -46,11 +46,11 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
       try:
         WithdrawFromReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if WithdrawFromReserveResponse.content in("Y","y","Yes","yes"):
-          WithdrawFromReserveResponse = "yes"
+          WithdrawFromReserve = "yes"
           await WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
           conn.close()
-        if WithdrawFromReserveResponse.content in("N","n","No","no"):
-          WithdrawFromReserveResponse = "no"
+        elif WithdrawFromReserveResponse.content in("N","n","No","no"):
+          WithdrawFromReserve = "no"
           conn.close()
           return
 
@@ -67,13 +67,12 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
       try:
         ReserveResponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if ReserveResponse.content in("Y","y","Yes","yes"):
-          ReserveResponse = "yes"
+          Reserve = "yes"
           await JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
           conn.close()
         if ReserveResponse.content in("N","n","No","no"):
-          ReserveResponse = "no"
+          Reserve = "no"
           conn.close()
-          return
 
         await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
         continue
@@ -81,3 +80,11 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
         conn.close()
         await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
         return
+
+async def DeleteFromReserves(RaidID, UserID):
+  conn = sqlite3.connect('RaidPlanner.db')
+  c = conn.cursor()
+  c.execute("DELETE FROM RaidReserves where RaidID = (?) AND UserID = (?)", (RaidID, UserID,))
+  conn.commit()
+  conn.close()
+  return

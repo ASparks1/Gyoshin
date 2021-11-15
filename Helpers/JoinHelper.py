@@ -7,6 +7,7 @@ from Helpers import DMHelper
 from Helpers import MessageHelper
 from Helpers import NotificationHelper
 from Helpers import ReservesHelper
+from Helpers import UserHelper
 
 # Helper function to notify organizer when all slots have been filled
 async def NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate):
@@ -107,7 +108,7 @@ async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildNa
     return
 
 # Helper function for joining as tank
-async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID):
+async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
@@ -116,9 +117,12 @@ async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, J
     conn.close()
   if NrOfTanksSignedUp < NrOfTanksRequired:
     try:
+      await ReservesHelper.DeleteFromReserves(RaidID, UserID)
+      await JoinUserToRaid(Origin, UserID, RaidID, RoleID)
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
       conn.commit()
       conn.close()
+      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
@@ -126,7 +130,7 @@ async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, J
       return
 
 # Helper function for joining as dps
-async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID):
+async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
@@ -135,9 +139,12 @@ async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, Joined
     conn.close()
   if NrOfDpsSignedUp < NrOfDpsRequired:
     try:
+      await ReservesHelper.DeleteFromReserves(RaidID, UserID)
+      await JoinUserToRaid(Origin, UserID, RaidID, RoleID)
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
       conn.commit()
       conn.close()
+      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
@@ -145,7 +152,7 @@ async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, Joined
       return
 
 # Helper function for joining as healer
-async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID):
+async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
@@ -154,11 +161,35 @@ async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequi
     conn.close()
   if NrOfHealersSignedUp < NrOfHealersRequired:
     try:
+      await ReservesHelper.DeleteFromReserves(RaidID, UserID)
+      await JoinUserToRaid(Origin, UserID, RaidID, RoleID)
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
       conn.commit()
       conn.close()
+      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
       conn.close()
       return
+	  
+async def JoinUserToRaid(Origin, UserID, RaidID, RoleID):
+  conn = sqlite3.connect('RaidPlanner.db')
+  c = conn.cursor()
+  c.execute("INSERT INTO RaidMembers (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
+  conn.commit()
+  conn.close()
+  return
+
+async def UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer):
+  try:
+    JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
+    await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
+    UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
+    await message.edit(content=UpdatedMessage)
+    await JoinHelper.NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
+    conn.close()
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
+    conn.close()
+    return
