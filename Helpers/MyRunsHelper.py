@@ -11,8 +11,9 @@ from Helpers import DateTimeFormatHelper
 from Helpers import ReactionHelper
 from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
+from Helpers import MyRunsHelper
 
-async def ListMyReserveRuns(message, bot):
+async def ListMyRunsHelper(message, bot, RunType):
   UserID = message.author.id
   if not UserID:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting user information")
@@ -37,7 +38,10 @@ async def ListMyReserveRuns(message, bot):
     return
 
   try:
-    c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidReserves WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
+    if RunType == 'MyRuns':
+      c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidMembers WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
+    elif RunType == 'MyReserveRuns':
+      c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date, Origin FROM Raids WHERE ID IN (SELECT RaidID FROM RaidReserves WHERE UserID = (?)) AND Date >= (?) AND Status != 'Cancelled' ORDER BY Date ASC", (UserID, current_date,))
   except:
     await DMHelper.DMUserByID(bot, UserID, "Run not found")
     conn.close()
@@ -45,9 +49,12 @@ async def ListMyReserveRuns(message, bot):
 
   rows = c.fetchmany(5)
   if not rows:
-    await DMHelper.DMUserByID(bot, UserID, "You are not on the reserve list for any upcoming runs")
-    conn.close()
-    return
+    if RunType == 'MyRuns':
+      await DMHelper.DMUserByID(bot, UserID, "You have no upcoming runs")
+      conn.close()
+    elif RunType == 'MyReserveRuns':
+      await DMHelper.DMUserByID(bot, UserID, "You are not on the reserve list for any upcoming runs")
+      conn.close()
 
   if rows:
     Message = None
@@ -86,7 +93,10 @@ async def ListMyReserveRuns(message, bot):
       if OrganizerName:
         RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
         if not Message:
-          Message = f"You are on the reserves list for the following runs:\n{RunMessage}"
+          if RunType == 'MyRuns':
+            Message = f"You have signed up for the following run(s):\n{RunMessage}"
+          elif RunType == 'MyReserveRuns':
+            Message = f"You are on the reserves list for the following run(s):\n{RunMessage}"
         elif Message:
           RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
           Message = f"{Message}{RunMessage}"
