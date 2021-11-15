@@ -172,7 +172,7 @@ async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequi
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
      conn.close()
      return
-	  
+
 async def JoinUserToRaid(Origin, UserID, RaidID, RoleID):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
