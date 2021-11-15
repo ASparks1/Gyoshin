@@ -12,7 +12,6 @@ async def JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDa
     c.execute("INSERT INTO RaidReserves (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a reserve {RoleName}!")
-    return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding you to the reserves")
     conn.close()
@@ -26,7 +25,6 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
     c.execute("DELETE FROM RaidReserves WHERE Origin = (?) AND RaidID = (?) and UserID = (?)", (Origin, RaidID, UserID,))
     conn.commit()
     await message.channel.send(f"{JoinedUserDisplayName} has withdrawn from the reserves for the party {Description} on {LocalDate}!")
-    return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong removing you from the reserves")
     conn.close()
@@ -51,7 +49,6 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
           WithdrawFromReserveResponse = "yes"
           await WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID)
           conn.close()
-          return
         if WithdrawFromReserveResponse.content in("N","n","No","no"):
           WithdrawFromReserveResponse = "no"
           conn.close()
@@ -73,7 +70,6 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
           ReserveResponse = "yes"
           await JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
           conn.close()
-          return
         if ReserveResponse.content in("N","n","No","no"):
           ReserveResponse = "no"
           conn.close()
