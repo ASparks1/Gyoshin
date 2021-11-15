@@ -103,10 +103,13 @@ async def JoinRaid(message, bot, RoleName, UserID):
     # Update Raids table based on role retrieved
     if RoleName == 'tank':
       await JoinHelper.JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer)
+      conn.close()
     elif RoleName == 'dps':
       await JoinHelper.JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer)
+      conn.close()
     elif RoleName == 'healer':
       await JoinHelper.JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequired, JoinedUserDisplayName, Description, LocalDate, Origin, RaidID, RoleName, RoleID, Organizer)
+      conn.close()
     else:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve the role")
       conn.close()
