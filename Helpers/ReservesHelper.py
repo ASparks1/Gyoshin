@@ -52,10 +52,9 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
         elif WithdrawFromReserveResponse.content in("N","n","No","no"):
           WithdrawFromReserve = "no"
           conn.close()
-          return
-
-        await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-        continue
+        else:
+          await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+          continue
       except asyncio.TimeoutError:
         conn.close()
         await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to withdraw from the reserves for this run.")
@@ -70,12 +69,12 @@ async def CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalD
           Reserve = "yes"
           await JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleID, RoleName)
           conn.close()
-        if ReserveResponse.content in("N","n","No","no"):
+        elif ReserveResponse.content in("N","n","No","no"):
           Reserve = "no"
           conn.close()
-
-        await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
-        continue
+        else:
+          await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
+          continue
       except asyncio.TimeoutError:
         conn.close()
         await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again if you still wish to join the reserves for this run.")
