@@ -169,9 +169,9 @@ async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequi
       await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
-      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
-      conn.close()
-      return
+     await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
+     conn.close()
+     return
 	  
 async def JoinUserToRaid(Origin, UserID, RaidID, RoleID):
   conn = sqlite3.connect('RaidPlanner.db')
@@ -187,9 +187,7 @@ async def UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleNa
     await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
     UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
     await message.edit(content=UpdatedMessage)
-    await JoinHelper.NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
-    conn.close()
+    await NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
-    conn.close()
     return
