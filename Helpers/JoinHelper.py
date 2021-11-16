@@ -72,6 +72,7 @@ async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName
   if CanWithdraw == "yes":
     await Withdraw.WithdrawFromRaid(message, bot, UserID)
     conn.close()
+    return
   if CanWithdraw == "no":
     conn.close()
     return
@@ -103,6 +104,7 @@ async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildNa
   if CanChangeRole == "yes":
     await ChangeRole.ChangeRole(message, bot, RoleName, UserID)
     conn.close()
+    return
   if CanChangeRole == "no":
     conn.close()
     return
@@ -115,6 +117,7 @@ async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, J
   if NrOfTanksSignedUp == NrOfTanksRequired and NrOfTanksRequired > 0:
     await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
     conn.close()
+    return
   if NrOfTanksSignedUp < NrOfTanksRequired:
     try:
       await ReservesHelper.DeleteFromReserves(RaidID, UserID)
@@ -137,6 +140,7 @@ async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, Joined
   if NrOfDpsSignedUp == NrOfDpsRequired and NrOfDpsRequired > 0:
     await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
     conn.close()
+    return
   if NrOfDpsSignedUp < NrOfDpsRequired:
     try:
       await ReservesHelper.DeleteFromReserves(RaidID, UserID)
@@ -159,6 +163,7 @@ async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequi
   if NrOfHealersSignedUp == NrOfHealersRequired and NrOfHealersRequired > 0:
     await ReservesHelper.CheckReserves(bot, message, JoinedUserDisplayName, Description, LocalDate, Origin, UserID, RaidID, RoleName, RoleID)
     conn.close()
+    return
   if NrOfHealersSignedUp < NrOfHealersRequired:
     try:
       await ReservesHelper.DeleteFromReserves(RaidID, UserID)
