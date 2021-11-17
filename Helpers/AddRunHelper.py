@@ -132,7 +132,6 @@ async def UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, C
       continue
 
   RoleID = await GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHealers)
-  print(RoleID)
   if RoleID == 1:
     NumberOfCurrentTanks = 1
     NumberOfCurrentDps = 0
