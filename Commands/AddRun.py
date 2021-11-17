@@ -35,7 +35,6 @@ async def AddRunInDM(message, bot):
 
       if NrOfPlayers != NrOfTanks + NrOfDps + NrOfHealers:
         await DMHelper.DMUserByID(bot, UserID, "Please ensure the total of each role equals the total number of players required.")
-        continue
       else:
         ValidNrOfPlayers = "yes"
 
