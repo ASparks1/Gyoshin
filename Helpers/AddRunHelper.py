@@ -86,7 +86,7 @@ async def UseTemplateQuestion(bot, message, UserID, Origin):
         UsingTemplate = "no"
         conn.close()
         return UsingTemplate
-      else:
+      if response.content not in("N","n","No","no","Y","y","Yes","yes"):
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid response of 'yes' or 'no'.")
   else:
     UsingTemplate = "no"
@@ -322,7 +322,7 @@ async def SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, 
     if response.content in("N","n","No","no"):
       Confirm = "no"
       return Confirm
-    else:
+    if response.content not in ("Y","y","Yes","yes","N","n","No","no"):
       continue
 
 # Helper function to create the run
