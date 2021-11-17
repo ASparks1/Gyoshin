@@ -1,7 +1,7 @@
 import sqlite3
 
 # Helper function to change from tank to dps
-async def TankToDPS(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
+async def TankToDPS(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("UPDATE Raids set NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
@@ -12,7 +12,7 @@ async def TankToDPS(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, 
   return
 
 # Helper function to change from tank to healer
-async def TankToHealer(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
+async def TankToHealer(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("UPDATE Raids set NrOfTanksSignedUp = NrOfTanksSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
@@ -23,7 +23,7 @@ async def TankToHealer(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayNam
   return
 
 # Helper function to change from dps to tank
-async def DPSToTank(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
+async def DPSToTank(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("UPDATE Raids set NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
@@ -34,7 +34,7 @@ async def DPSToTank(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, 
   return
 
 # Helper function to change from dps to healer
-async def DPSToHealer(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
+async def DPSToHealer(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("UPDATE Raids set NrOfDpsSignedUp = NrOfDpsSignedUp - 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
@@ -45,7 +45,7 @@ async def DPSToHealer(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName
   return
 
 # Helper function to change from healer to tank
-async def HealerToTank(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
+async def HealerToTank(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
@@ -56,7 +56,7 @@ async def HealerToTank(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayNam
   return
 
 # Helper function to change from healer to dps
-async def HealerToDPS(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
+async def HealerToDPS(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate):
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
   c.execute("UPDATE Raids set NrOfHealersSignedUp = NrOfHealersSignedUp - 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))

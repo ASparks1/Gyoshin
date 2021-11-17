@@ -44,27 +44,27 @@ async def ChangeRole(message, bot, RoleName, UserID):
       UpdatedMessage = None
       # Change from tank to dps
       if OldRoleName == 'tank' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:
-        await ChangeRoleHelper.TankToDPS(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
+        await ChangeRoleHelper.TankToDPS(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       # Change from tank to healer
       elif OldRoleName == 'tank' and RoleName == 'healer' and NrOfHealersSignedUp < NrOfHealersRequired:
-        await ChangeRoleHelper.TankToHealer(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
+        await ChangeRoleHelper.TankToHealer(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       # Change from dps to tank
       elif OldRoleName == 'dps' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
-        await ChangeRoleHelper.DPSToTank(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
+        await ChangeRoleHelper.DPSToTank(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       # Change from dps to healer
       elif OldRoleName == 'dps' and RoleName == 'healer' and NrOfHealersSignedUp < NrOfHealersRequired:
-        await ChangeRoleHelper.DPSToHealer(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
+        await ChangeRoleHelper.DPSToHealer(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       # Change from healer to tank
       elif OldRoleName == 'healer' and RoleName == 'tank' and NrOfTanksSignedUp < NrOfTanksRequired:
-        await ChangeRoleHelper.HealerToTank(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
+        await ChangeRoleHelper.HealerToTank(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
       # Change from healer to dps
       elif OldRoleName == 'healer' and RoleName == 'dps' and NrOfDpsSignedUp < NrOfDpsRequired:
-        await ChangeRoleHelper.HealerToDPS(bot, message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
+        await ChangeRoleHelper.HealerToDPS(message, RaidID, NewRoleID, RaidMemberID, DisplayName, OldRoleName, RoleName, RaidName, LocalDate)
         UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
 
       try:
