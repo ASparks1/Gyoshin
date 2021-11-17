@@ -82,7 +82,7 @@ async def UseTemplateQuestion(bot, message, UserID, Origin):
         UsingTemplate = "yes"
         conn.close()
         return UsingTemplate
-      elif response.content in("N","n","No","no"):
+      if response.content in("N","n","No","no"):
         UsingTemplate = "no"
         conn.close()
         return UsingTemplate
@@ -94,7 +94,7 @@ async def UseTemplateQuestion(bot, message, UserID, Origin):
     return UsingTemplate
 
 # Helper function for using a template
-async def UseTemplateToCreateRun(bot, message, UserID, Origin, GuildName, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime):
+async def UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
@@ -299,16 +299,15 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
 async def GetRunStatusToSet(NrOfPlayers):
   if NrOfPlayers == 1:
     Status = "Formed"
-    return Status
   else:
     Status = "Forming"
-    return Status
+  return Status
 
 # Helper function to summarize and ask for confirmation
 async def SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
-  
+
   Confirm = None
   while not Confirm:
     try:
@@ -320,7 +319,7 @@ async def SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, 
     if response.content in("Y","y","Yes","yes"):
       Confirm = "yes"
       return Confirm
-    elif response.content in("N","n","No","no"):
+    if response.content in("N","n","No","no"):
       Confirm = "no"
       return Confirm
     else:

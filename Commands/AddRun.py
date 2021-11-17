@@ -24,7 +24,7 @@ async def AddRunInDM(message, bot):
   UsingTemplate = await AddRunHelper.UseTemplateQuestion(bot, message, UserID, Origin)
 
   if UsingTemplate == 'yes':
-    await AddRunHelper.UseTemplateToCreateRun(bot, message, UserID, Origin, GuildName, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime)
+    await AddRunHelper.UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime)
   else:
     ValidNrOfPlayers = None
     while not ValidNrOfPlayers:
