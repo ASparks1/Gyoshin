@@ -11,7 +11,6 @@ from Commands import AddTemplate
 from Commands import DeleteTemplate
 from Commands import Runs
 from Commands import Commands
-from Commands import Roles
 from Commands import Dismiss
 from Commands import AddRun
 from Commands import MyRuns
@@ -58,10 +57,6 @@ async def runs(ctx):
 @bot.command(name='commands', aliases=['Commands'])
 async def commands(ctx):
   await Commands.ListCommands(ctx.message, bot)
-
-@bot.command(name='roles', aliases=['Roles'])
-async def roles(ctx):
-  await Roles.ListRoles(ctx.message)
 
 @bot.command(name='addrun', aliases=['Addrun'])
 async def addrun(ctx):
