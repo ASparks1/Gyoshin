@@ -14,12 +14,14 @@ async def DeleteOldRaidData():
     yesterday = datetime.strftime(yesterday, "%Y-%m-%d %H:%M")
   except:
     print("Something went wrong converting dates")
+    conn.close()
     return
 
   try:
     c.execute("SELECT ID FROM Raids WHERE Date <= (?)", (yesterday,))
   except:
     print("Something went wrong checking for old raids")
+    conn.close()
     return
 
   rows = c.fetchall()
