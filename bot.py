@@ -28,7 +28,8 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
-  print("Ready!")
+  guilds = len(bot.guilds)
+  print(f"Ready, I'm active in {guilds} servers!")
   DiscordComponents(bot)
 
   # Nightly job to clean up old data
