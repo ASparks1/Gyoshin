@@ -55,7 +55,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
 
         conn.close()
         return UpdatedMessage
-      else:
+      if not row:
         conn.close()
         return
     except:

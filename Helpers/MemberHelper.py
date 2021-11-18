@@ -54,8 +54,6 @@ async def OnMemberLeaveOrRemove(member):
     else:
       print(f"No data found to clean up for user {UserID}")
       conn.close()
-
-    conn.close
   except:
     print("Something went wrong deleting old data")
     conn.close()
@@ -137,7 +135,7 @@ async def CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID):
       MemberNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
       conn.close()
       return MemberNotifications
-    else:
+    if not RaidMembers:
       conn.close()
       return
   except:
