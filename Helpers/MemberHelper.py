@@ -55,8 +55,10 @@ async def OnMemberLeaveOrRemove(member):
       print(f"No data found to clean up for user {UserID}")
       conn.close()
 
+    conn.close
   except:
     print("Something went wrong deleting old data")
+    conn.close()
     return
 
 # Helper function to list raid members or reserves
@@ -127,11 +129,17 @@ async def CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID):
     if UserIDs:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?) AND UserID != (?)", (RaidID, UserID,))
       RaidMembers = c.fetchall()
+    else:
+      conn.close()
+      return
 
     if RaidMembers:
       MemberNotifications = await NotificationHelper.NotifyRaidMembers(message, RaidMembers)
       conn.close()
       return MemberNotifications
+    else:
+      conn.close()
+      return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers")
     conn.close()

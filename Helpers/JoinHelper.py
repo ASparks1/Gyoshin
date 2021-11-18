@@ -40,6 +40,9 @@ async def NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, 
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating party status to formed.")
         conn.close()
         return
+    else:
+      conn.close()
+      return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
     conn.close()

@@ -145,6 +145,7 @@ async def UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, C
     NumberOfCurrentTanks = 0
     NumberOfCurrentDps = 0
 
+  conn.close()
   Status = await GetRunStatusToSet(NrOfPlayers)
   Confirm = await SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
 

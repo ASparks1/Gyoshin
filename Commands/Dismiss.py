@@ -56,6 +56,9 @@ async def DismissMember(message, client):
       await DMHelper.DMUser(message, "Something went wrong checking if the provided member is part of this run")
       conn.close()
       return
+  else:
+    conn.close()
+    return
 
   if RaidMemberID:
     try:
@@ -84,3 +87,6 @@ async def DismissMember(message, client):
       conn.close()
       await DMHelper.DMUser(message, "Something went wrong dismissing a member from this run")
       return
+  else:
+    conn.close()
+    return

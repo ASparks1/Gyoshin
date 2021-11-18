@@ -55,6 +55,9 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
 
         conn.close()
         return UpdatedMessage
+      else:
+        conn.close()
+        return
     except:
       await DMHelper.DMUserByID(bot, UserID, f"Something went wrong trying to retrieve run {RaidID}")
       conn.close()

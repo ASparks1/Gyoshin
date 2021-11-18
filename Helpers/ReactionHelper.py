@@ -160,6 +160,9 @@ async def OnAddRescheduleReaction(message, bot, UserID):
           await RescheduleHelper.RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDate, sqlitenewdate, GuildName)
           conn.close()
           return
+    else:
+      conn.close()
+      return
 
 async def OnAddRallyReaction(message, bot, UserID):
   global RallyNotifications
@@ -343,6 +346,9 @@ async def OnAddEditDescReaction(message, bot, UserID):
             await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the description of this run 1")
             conn.close()
             return
+    else:
+      conn.close()
+      return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the description of this run 2")
     conn.close()

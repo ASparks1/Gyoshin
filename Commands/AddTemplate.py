@@ -39,6 +39,8 @@ async def AddTemplate(message, bot):
         await DMHelper.DMUserByID(bot, UserID, f"There already exists a template with the name {TemplateName} on the {GuildName} server")
         conn.close()
         return
+      else:
+        conn.close()
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking if a template with the same name already exists on this server")
       conn.close()
