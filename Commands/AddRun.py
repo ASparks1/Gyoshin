@@ -16,12 +16,24 @@ async def AddRunInDM(message, bot):
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
-  Name = await AddRunHelper.GetRunName(bot, message, UserID, CreatorDisplay, GuildName)
-  DateTime = await AddRunHelper.GetRunDateTime(bot, message, UserID)
-  sqldatetime = await DateTimeFormatHelper.LocalToSqlite(message, DateTime)
-
-  await Templates.GetTemplates(message)
-  UsingTemplate = await AddRunHelper.UseTemplateQuestion(bot, message, UserID, Origin)
+  try:
+    Name = await AddRunHelper.GetRunName(bot, message, UserID, CreatorDisplay, GuildName)
+    if Name:
+      DateTime = await AddRunHelper.GetRunDateTime(bot, message, UserID)
+    else:
+      return
+    if DateTime:
+      sqldatetime = await DateTimeFormatHelper.LocalToSqlite(message, DateTime)
+    else:
+      return
+    if sqldatetime:
+      await Templates.GetTemplates(message)
+      UsingTemplate = await AddRunHelper.UseTemplateQuestion(bot, message, UserID, Origin)
+    else:
+      return
+  except:
+    print("Unable to continue with creating run user did not provide all required information in time")
+    return
 
   if UsingTemplate == 'yes':
     await AddRunHelper.UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime)

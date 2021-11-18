@@ -20,7 +20,6 @@ async def GetRunName(bot, message, UserID, CreatorDisplay, GuildName):
     return Name
   except asyncio.TimeoutError:
     await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
-    return
 
 # Helper function to get users' date time input
 async def GetRunDateTime(bot, message, UserID):
@@ -34,7 +33,6 @@ async def GetRunDateTime(bot, message, UserID):
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
     except asyncio.TimeoutError:
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
-      return
 
     pattern = re.compile(r'((\d{2})-(\d{2})-(\d{4})) (\d{2}):(\d{2})')
     match = pattern.match(response.content)
@@ -76,7 +74,6 @@ async def UseTemplateQuestion(bot, message, UserID, Origin):
       except asyncio.TimeoutError:
         await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
         conn.close()
-        return
 
       if response.content in("Y","y","Yes","yes"):
         UsingTemplate = "yes"
