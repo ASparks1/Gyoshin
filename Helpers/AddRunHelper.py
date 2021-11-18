@@ -186,13 +186,13 @@ async def GetNrOfTanks(bot, message, UserID):
   NrOfTanks = None
   while not NrOfTanks:
     try:
-      await DMHelper.DMUserByID(bot, UserID, "What is the total number of tanks for your crew? Please enter a number greater than 0.")
+      await DMHelper.DMUserByID(bot, UserID, "What is the total number of tanks for your crew? Please enter a number greater than or equal to 0.")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfTanks = int(response.content)
-        if NrOfTanks <= 0:
+        if NrOfTanks < 0:
           NrOfTanks = None
-          await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater than 0.")
+          await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater greater than or equal to 0.")
           continue
       except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
@@ -210,13 +210,13 @@ async def GetNrOfDPS(bot, message, UserID):
   NrOfDPS = None
   while not NrOfDPS:
     try:
-      await DMHelper.DMUserByID(bot, UserID, "What is the total number of dps for your crew? Please enter a number greater than 0.")
+      await DMHelper.DMUserByID(bot, UserID, "What is the total number of dps for your crew? Please enter a number greater than or equal to 0.")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfDPS = int(response.content)
-        if NrOfDPS <= 0:
+        if NrOfDPS < 0:
           NrOfDPS = None
-          await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater than 0.")
+          await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater than or equal to 0.")
           continue
       except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
@@ -234,13 +234,13 @@ async def GetNrOfHealers(bot, message, UserID):
   NrOfHealers = None
   while not NrOfHealers:
     try:
-      await DMHelper.DMUserByID(bot, UserID, "What is the total number of healers for your crew? Please enter a number greater than 0.")
+      await DMHelper.DMUserByID(bot, UserID, "What is the total number of healers for your crew? Please enter a number greater than or equal to 0.")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       try:
         NrOfHealers = int(response.content)
-        if NrOfHealers <= 0:
+        if NrOfHealers < 0:
           NrOfHealers = None
-          await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater than 0.")
+          await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number greater than or equal to 0.")
           continue
       except:
         await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
@@ -272,20 +272,20 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
 
     try:
       if response.content.lower() == "tank":
-        if NrOfTanks <= 0:
-          await DMHelper.DMUserByID(bot, UserID, "You have entered the role of tank, number of tanks must be greater than 0 for you to pick this role. Please pick a different role.")
+        if NrOfTanks < 0:
+          await DMHelper.DMUserByID(bot, UserID, "You have entered the role of tank, number of tanks must be greater or equal to 0 for you to pick this role. Please pick a different role.")
         else:
           RoleName = response.content.lower()
           return RoleID
       elif response.content.lower() == "dps":
-        if NrOfDps <= 0:
-          await DMHelper.DMUserByID(bot, UserID, "You have entered the role of dps, number of dps must be greater than 0 for you to pick this role. Please pick a different role.")
+        if NrOfDps < 0:
+          await DMHelper.DMUserByID(bot, UserID, "You have entered the role of dps, number of dps must be greater or equal to 0 for you to pick this role. Please pick a different role.")
         else:
           RoleName = response.content.lower()
           return RoleID
       elif response.content.lower() == "healer":
-        if NrOfHealers <= 0:
-          await DMHelper.DMUserByID(bot, UserID, "You have entered the role of healer, number of healers must be greater than 0 for you to pick this role. Please pick a different role.")
+        if NrOfHealers < 0:
+          await DMHelper.DMUserByID(bot, UserID, "You have entered the role of healer, number of healers must be greater or equal to 0 for you to pick this role. Please pick a different role.")
         else:
           RoleName = response.content.lower()
           return RoleID
