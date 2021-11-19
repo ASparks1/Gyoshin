@@ -11,12 +11,12 @@ async def OnMemberLeaveOrRemove(member):
   try:
     UserID = member.id
     Origin = member.guild.id
-    print("User {UserID} has left the server {Origin}, checking if they have data that needs to be cleaned up now!")
+    print(f"User {UserID} has left the server {Origin}, checking if they have data that needs to be cleaned up now!")
 
     conn = sqlite3.connect('RaidPlanner.db')
     c = conn.cursor()
 
-    c.execute("SELECT ID FROM Raids WHERE UserOrganizerID = (?) AND Origin = (?)", (UserID, Origin,))
+    c.execute("SELECT ID FROM Raids WHERE OrganizerUserID = (?) AND Origin = (?)", (UserID, Origin,))
     rows = c.fetchall()
     if rows:
       RaidID = rows[0]
@@ -55,7 +55,7 @@ async def OnMemberLeaveOrRemove(member):
       print(f"No data found to clean up for user {UserID}")
       conn.close()
   except:
-    print("Something went wrong deleting old data")
+    print(f"Something went wrong deleting data for user {UserID} in server {Origin}")
     conn.close()
     return
 
