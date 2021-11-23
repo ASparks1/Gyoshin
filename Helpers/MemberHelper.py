@@ -64,6 +64,15 @@ async def ListMembers(bot, message, Type, RaidID):
   Message = None
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
+
+  try:
+    TankIcon = await RoleIconHelper.GetTankIcon()
+    DpsIcon = await RoleIconHelper.GetDpsIcon()
+    HealerIcon = await RoleIconHelper.GetHealerIcon()
+  except:
+    conn.close()
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
+
   if Type == 'Members':
     c.execute("SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
     rows = c.fetchall()
@@ -87,11 +96,11 @@ async def ListMembers(bot, message, Type, RaidID):
         conn.close()
 
       if RoleName == 'tank':
-        RoleIcon = await RoleIconHelper.GetTankIcon()
+        RoleIcon = TankIcon
       elif RoleName == 'dps':
-        RoleIcon = await RoleIconHelper.GetDpsIcon()
+        RoleIcon = DpsIcon
       elif RoleName == 'healer':
-        RoleIcon = await RoleIconHelper.GetHealerIcon()
+        RoleIcon = HealerIcon
 
       if not Message:
         MemberRoleMessage = f"{RoleIcon} - {UserName}\n"
