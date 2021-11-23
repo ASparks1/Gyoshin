@@ -71,7 +71,7 @@ async def ListMembers(bot, message, Type, RaidID):
     HealerIcon = await RoleIconHelper.GetHealerIcon()
   except:
     conn.close()
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
+    print("Something went wrong retrieving role icons")
 
   if Type == 'Members':
     c.execute("SELECT UserID, RoleID FROM RaidMembers WHERE RaidID = (?) ORDER BY RoleID", (RaidID,))
