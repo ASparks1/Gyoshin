@@ -63,7 +63,7 @@ async def NewOrganizer(bot, message, UserID):
     CanPromote = None
     while not CanPromote:
       try:
-        await DMHelper.DMUserByID(bot, UserID, f"Do you want to promote {NewOrganizerDisplayName} to organizer of run {RaidID}? (Y/N)")
+        await DMHelper.DMUserByID(bot, UserID, f"Do you want to appoint {NewOrganizerDisplayName} as the new organizer of run {RaidID}? (Y/N)")
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if response.content in("Y","y","Yes","yes"):
           CanPromote = 'yes'
