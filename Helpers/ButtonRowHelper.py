@@ -1,7 +1,9 @@
 from Helpers import DMHelper
 from Helpers import ReactionHelper
+from Helpers import MemberHelper
 from Helpers import MessageHelper
 from Commands import Join
+from Commands import NewOrganizer
 
 async def FirstRowButtons(interaction, bot, UserID):
   if interaction.custom_id == "tank_btn":
@@ -67,6 +69,13 @@ async def ThirdRowButtons(interaction, bot, UserID):
     try:
       await interaction.respond(type=6)
       await ReactionHelper.OnAddEditDescReaction(interaction.message, bot, UserID)
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
+      return
+  if interaction.custom_id == "neworganizer_btn":
+    try:
+      await interaction.respond(type=6)
+      await NewOrganizer.NewOrganizer(bot, interaction.message, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return

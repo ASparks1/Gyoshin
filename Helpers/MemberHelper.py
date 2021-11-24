@@ -1,6 +1,7 @@
 import sqlite3
 import discord
 from Helpers import DMHelper
+from Helpers import RaidIDHelper
 from Helpers import RoleHelper
 from Helpers import RoleIconHelper
 from Helpers import UserHelper
@@ -149,5 +150,41 @@ async def CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID):
       return
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raidmembers")
+    conn.close()
+    return
+
+# Helper function to list members for organizer
+async def ListMembersForOrganizer(message, bot, UserID):
+  conn = sqlite3.connect('RaidPlanner.db')
+  c = conn.cursor()
+
+  try:
+    RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining run information")
+    return
+
+  try:
+    c.execute("SELECT RM.UserID FROM RaidMembers RM JOIN Raids R on R.ID = RM.RaidID WHERE R.ID = (?) AND R.OrganizerUserID = (?) AND RM.UserID != (?)", (RaidID, UserID, UserID))
+    rows = c.fetchall()
+    if not rows:
+      await DMHelper.DMUserByID(bot, UserID, "There are no other members")
+      conn.close()
+      return
+    if rows:
+      Message = None
+      Nr = 1
+      for row in rows:
+        MemberUserID = row[0]
+        DisplayName = await UserHelper.GetDisplayName(message, MemberUserID, bot)
+        if Message:
+          Message = f"{Message}\n{Nr} - {DisplayName}"
+        if not Message:
+          Message = f"{Nr} - {DisplayName}"
+        Nr += 1
+      conn.close()
+      await DMHelper.DMUserByID(bot, UserID, f"{Message}")
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving raid members")
     conn.close()
     return
