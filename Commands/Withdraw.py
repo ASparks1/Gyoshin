@@ -52,7 +52,7 @@ async def WithdrawFromRaid(message, bot, UserID):
       return
 
     if OrganizerID == UserID:
-      await DMHelper.DMUserByID(bot, UserID, "You cannot withdraw from this run because you're the organizer, please use the cancel button instead")
+      await DMHelper.DMUserByID(bot, UserID, "You cannot withdraw from this run because you're the organizer, please promote someone else to organizer or use the cancel button instead")
       conn.close()
       return
 

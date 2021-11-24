@@ -12,5 +12,5 @@ async def OnButtonClick(interaction, bot):
     await ButtonRowHelper.FirstRowButtons(interaction, bot, UserID)
   if interaction.custom_id in ("members_btn","reserves_btn","messageraidmembers_btn"):
     await ButtonRowHelper.SecondRowButtons(interaction, bot, UserID)
-  if interaction.custom_id in ("editdesc_btn","reschedule_btn","cancel_btn"):
+  if interaction.custom_id in ("editdesc_btn","neworganizer_btn","reschedule_btn","cancel_btn"):
     await ButtonRowHelper.ThirdRowButtons(interaction, bot, UserID)
