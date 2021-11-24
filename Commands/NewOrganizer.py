@@ -35,7 +35,7 @@ async def NewOrganizer(bot, message, UserID):
       await MemberHelper.ListMembersForOrganizer(message, bot, UserID)
     else:
       conn.close()
-      await DMHelper.DMUserByID(bot, UserID, "Only the organizer is allowed to appoint a new organizer.")
+      await DMHelper.DMUserByID(bot, UserID, "Only the organizer of this run is allowed to appoint a new organizer.")
       return
   except:
     conn.close()
