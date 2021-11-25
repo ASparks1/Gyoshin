@@ -25,7 +25,7 @@ async def OnMemberLeaveOrRemove(member):
       c.execute("DELETE FROM RaidReserves WHERE RaidID = (?)", (RaidID,))
       conn.commit()
 
-    c.execute("Select R.ID, R.Status, R.NrOfPlayersSignedUp, RM.ID, RM.RoleID FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE OrganizerUserID != (?) AND UserID = (?) AND Origin = (?)", (UserID, UserID, Origin,))
+    c.execute("Select R.ID, R.Status, R.NrOfPlayersSignedUp, RM.ID, RM.RoleID FROM Raids R JOIN RaidMembers RM ON R.ID = RM.RaidID WHERE R.OrganizerUserID != (?) AND RM.UserID = (?) AND R.Origin = (?)", (UserID, UserID, Origin,))
     rows = c.fetchall()
     if rows:
       print(f"Cleaning up raid data for user {UserID} on server {Origin}")
