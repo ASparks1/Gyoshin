@@ -1,4 +1,4 @@
-# Gyoshin ![Code grade](https://www.code-inspector.com/project/29407/status/svg?) ![Code score](https://www.code-inspector.com/project/29407/score/svg)
+# Gyoshin ![Code grade](https://api.codiga.io/project/29407/status/svg) ![Code score](https://api.codiga.io/project/29407/score/svg)
 A Discord bot to help plan dungeon & raid runs for mmorpgs like FFXIV
 
 ![Screenshot](https://imgur.com/1jWg4Nl.jpg)
