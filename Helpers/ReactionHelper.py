@@ -260,7 +260,7 @@ async def OnAddRallyReaction(message, bot, UserID):
       conn.close()
       return
   else:
-    await DMHelper.DMUserByID(bot, UserID, "You can only rally the crew within an hour of the start time, it's too early to rally the crew for this run or the run has already started.")
+    await DMHelper.DMUserByID(bot, UserID, "You can only rally the crew from within an hour of the start time up to 15 minutes after the start time, it's too early to rally the crew for this run or the run has already started.")
     conn.close()
     return
   return
