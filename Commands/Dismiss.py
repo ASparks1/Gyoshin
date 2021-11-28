@@ -1,6 +1,6 @@
 import asyncio
-import discord
 import sqlite3
+import discord
 from discord import ChannelType
 from Helpers import DateTimeFormatHelper
 from Helpers import DMHelper
