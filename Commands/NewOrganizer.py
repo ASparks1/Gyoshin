@@ -63,7 +63,7 @@ async def NewOrganizer(bot, message, UserID):
           await DMHelper.DMUserByID(bot, UserID, "Please enter a valid number.")
           continue
       except asyncio.TimeoutError:
-        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
+        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to appoint a new organizer for this run.")
         return
 
     CanPromote = None
@@ -90,5 +90,5 @@ async def NewOrganizer(bot, message, UserID):
           await DMHelper.DMUserByID(bot, UserID, "Invalid answer detected, please respond with yes or no.")
           continue
       except asyncio.TimeoutError:
-        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
+        await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to appoint a new organizer for this run.")
         return
