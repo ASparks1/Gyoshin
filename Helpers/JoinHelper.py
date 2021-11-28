@@ -129,9 +129,9 @@ async def JoinTank(bot, message, UserID, NrOfTanksSignedUp, NrOfTanksRequired, J
       await ReservesHelper.DeleteFromReserves(RaidID, UserID)
       await JoinUserToRaid(Origin, UserID, RaidID, RoleID)
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfTanksSignedUp = NrOfTanksSignedUp + 1 WHERE ID = (?)", (RaidID,))
-      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       conn.commit()
       conn.close()
+      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and tanks")
@@ -155,9 +155,9 @@ async def JoinDPS(bot, message, UserID, NrOfDpsSignedUp, NrOfDpsRequired, Joined
       await ReservesHelper.DeleteFromReserves(RaidID, UserID)
       await JoinUserToRaid(Origin, UserID, RaidID, RoleID)
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfDpsSignedUp = NrOfDpsSignedUp + 1 WHERE ID = (?)", (RaidID,))
-      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       conn.commit()
       conn.close()
+      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and dps")
@@ -181,9 +181,9 @@ async def JoinHealer(bot, message, UserID, NrOfHealersSignedUp, NrOfHealersRequi
       await ReservesHelper.DeleteFromReserves(RaidID, UserID)
       await JoinUserToRaid(Origin, UserID, RaidID, RoleID)
       c.execute("Update Raids SET NrOfPlayersSignedUp = NrOfPlayersSignedUp + 1, NrOfHealersSignedUp = NrOfHealersSignedUp + 1 WHERE ID = (?)", (RaidID,))
-      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       conn.commit()
       conn.close()
+      await UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer)
       return
     except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong updating the number of signed up players and healers")
