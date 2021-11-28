@@ -6,6 +6,7 @@ from Helpers import DateTimeFormatHelper
 from Helpers import DMHelper
 from Helpers import MemberHelper
 from Helpers import MessageHelper
+from Helpers import NotificationHelper
 from Helpers import RaidIDHelper
 from Helpers import UserHelper
 
@@ -29,6 +30,11 @@ async def NewOrganizer(bot, message, UserID):
     if OrganizerUserID == UserID:
       c.execute("SELECT RM.UserID FROM RaidMembers RM JOIN Raids R on R.ID = RM.RaidID WHERE R.ID = (?) AND R.OrganizerUserID = (?) AND RM.UserID != (?)", (RaidID, UserID, UserID))
       RaidMembers = c.fetchall()
+      c.execute("SELECT Name, Date FROM Raids WHERE ID = (?)", (RaidID,))
+      row = c.fetchone()
+      RaidName = row[0]
+      Date = row[1]
+      LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
       conn.close()
       # Converting tuple result into list for later use
       RaidMembers = [int(x) for x, in RaidMembers]
@@ -63,24 +69,20 @@ async def NewOrganizer(bot, message, UserID):
     CanPromote = None
     while not CanPromote:
       try:
-        await DMHelper.DMUserByID(bot, UserID, f"Do you want to appoint {NewOrganizerDisplayName} as the new organizer of run {RaidID}? (Y/N)")
+        await DMHelper.DMUserByID(bot, UserID, f"Do you want to appoint {NewOrganizerDisplayName} as the new organizer of {RaidName} on {LocalDate}? (Y/N)")
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if response.content in("Y","y","Yes","yes"):
           CanPromote = 'yes'
           conn = sqlite3.connect('RaidPlanner.db')
           c = conn.cursor()
-          c.execute("SELECT Name, Date FROM Raids WHERE ID = (?)",(RaidID,))
-          row = c.fetchone()
-          RaidName = row[0]
-          Date = row[1]
-          LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
           c.execute("UPDATE Raids SET OrganizerUserID = (?) WHERE ID = (?)", (NewOrganizerUserID, RaidID,))
           conn.commit()
           conn.close()
           UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
           if UpdatedMessage:
             await message.edit(content=UpdatedMessage)
-          await message.channel.send(f"{NewOrganizerDisplayName} is the new organizer of {RaidName} on {LocalDate}.")
+          NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, NewOrganizerUserID)
+          await message.channel.send(f"{NotifyOrganizerMessage} is the new organizer of {RaidName} on {LocalDate}.")
         elif response.content in("N","n","No","no"):
           CanPromote = "no"
           return
