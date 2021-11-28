@@ -4,6 +4,7 @@ from Helpers import MemberHelper
 from Helpers import MessageHelper
 from Commands import Join
 from Commands import NewOrganizer
+from Commands import Dismiss
 
 async def FirstRowButtons(interaction, bot, UserID):
   if interaction.custom_id == "tank_btn":
@@ -60,6 +61,13 @@ async def SecondRowButtons(interaction, bot, UserID):
     try:
       await interaction.respond(type=6)
       await MessageHelper.MessageRaidMembers(interaction.message, bot, UserID)
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
+      return
+  if interaction.custom_id == "dismissmembers_btn":
+    try:
+      await interaction.respond(type=6)
+      await Dismiss.DismissMembers(bot, interaction.message, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
       return
