@@ -96,10 +96,11 @@ async def UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, C
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
   Template = None
+  ValidTemplate = None
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 
-  while not Template:
+  while not ValidTemplate:
     try:
       await DMHelper.DMUserByID(bot, UserID, "Which template would you like to use from the list above? Please respond with the name of the template.")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
@@ -112,6 +113,8 @@ async def UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, C
     try:
       c.execute("SELECT NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Name = (?) and Origin = (?)", (Template, Origin))
       row = c.fetchone()
+      if row:
+        ValidTemplate = "yes"
       if not row:
         await DMHelper.DMUserByID(bot, UserID, f"I could not find the template {Template} on this server, please ensure name is correct.")
         continue
@@ -128,28 +131,40 @@ async def UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, C
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the player and/or role numbers from the template, please try again.")
       continue
 
-  RoleID = await GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHealers)
-  if RoleID == 1:
-    NumberOfCurrentTanks = 1
-    NumberOfCurrentDps = 0
-    NumberOfCurrentHealers = 0
-  elif RoleID == 2:
-    NumberOfCurrentDps = 1
-    NumberOfCurrentTanks = 0
-    NumberOfCurrentHealers = 0
-  elif RoleID == 3:
-    NumberOfCurrentHealers = 1
-    NumberOfCurrentTanks = 0
-    NumberOfCurrentDps = 0
+  try:
+    conn.close()
+    RoleID = await GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHealers)
+    if not RoleID:
+      await DMHelper.DMUserByID(bot, UserID, "Role not found")
 
-  conn.close()
-  Status = await GetRunStatusToSet(NrOfPlayers)
-  Confirm = await SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
+    if RoleID == 1:
+      NumberOfCurrentTanks = 1
+      NumberOfCurrentDps = 0
+      NumberOfCurrentHealers = 0
+    elif RoleID == 2:
+      NumberOfCurrentDps = 1
+      NumberOfCurrentTanks = 0
+      NumberOfCurrentHealers = 0
+    elif RoleID == 3:
+      NumberOfCurrentHealers = 1
+      NumberOfCurrentTanks = 0
+      NumberOfCurrentDps = 0
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong setting the number of players per role.")
+    conn.close()
+    return
 
-  if Confirm == "yes":
-    await CreateRun(bot, message, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
-  if Confirm == "no":
-    await DMHelper.DMUserByID(bot, UserID, "Your request to create a crew has been cancelled, please call the command again in the relevant channel if you wish to try again.")
+  try:
+    Status = await GetRunStatusToSet(NrOfPlayers)
+    Confirm = await SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
+
+    if Confirm == "yes":
+      await CreateRun(bot, message, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
+    if Confirm == "no":
+      await DMHelper.DMUserByID(bot, UserID, "Your request to create a run has been cancelled, please call the command again in the relevant channel if you wish to try again.")
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong during confirmation of this run.")
+    return
 
 # Helper function to get number of players
 async def GetNrOfPlayers(bot, message, UserID):
@@ -253,18 +268,26 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
   RoleName = None
-  while not RoleName:
+  CheckRoleName = True
+  while CheckRoleName == True:
     try:
       await DMHelper.DMUserByID(bot, UserID, "Next, which role (tank/dps/healer) do you intend to play as within the crew?")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
     except asyncio.TimeoutError:
+      CheckRoleName = False
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
-      return
 
     try:
       RoleID = await RoleHelper.GetRoleID(response.content.lower())
+      if not RoleID:
+        await DMHelper.DMUserByID(bot, UserID, "Role not found")
+        CheckRoleName = False
     except:
-      await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles in the servers Gyoshin channel to have available roles sent to this DM.")
+      if response.content != '':
+        await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles in the servers Gyoshin channel to have available roles sent to this DM.")
+        CheckRoleName = True
+      else:
+        CheckRoleName = False
       continue
 
     try:
@@ -273,24 +296,26 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of tank, number of tanks must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
           RoleName = response.content.lower()
+          CheckRoleName = False
           return RoleID
       elif response.content.lower() == "dps":
         if NrOfDps <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of dps, number of dps must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
           RoleName = response.content.lower()
+          CheckRoleName = False
           return RoleID
       elif response.content.lower() == "healer":
         if NrOfHealers <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of healer, number of healers must be greater than to 0 for you to pick this role. Please pick a different role.")
         else:
           RoleName = response.content.lower()
+          CheckRoleName = False
           return RoleID
       else:
         pass
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking the role and number of slots available.")
-      return
 
 # Helper function to get run status to set
 async def GetRunStatusToSet(NrOfPlayers):
@@ -308,10 +333,12 @@ async def SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, 
   Confirm = None
   while not Confirm:
     try:
-      await DMHelper.DMUserByID(bot, UserID, f"Please confirm that you wish to create a crew with the following details (Y/N): \n**Description**: {Name}\n**Date:** {DateTime}\n**Number of Tanks:** {NrOfTanks}\n**Number of Healers:** {NrOfHealers}\n**Number of DPS:** {NrOfDps}")
+      await DMHelper.DMUserByID(bot, UserID, f"Please confirm that you wish to create a run with the following details (Y/N): \n**Description**: {Name}\n**Date:** {DateTime}\n**Number of Tanks:** {NrOfTanks}\n**Number of Healers:** {NrOfHealers}\n**Number of DPS:** {NrOfDps}")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
     except asyncio.TimeoutError:
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please call the command again from a server if you still wish to add a run.")
+      Confirm = "no"
+      return Confirm
 
     if response.content in("Y","y","Yes","yes"):
       Confirm = "yes"

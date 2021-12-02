@@ -39,35 +39,39 @@ async def AddRunInDM(message, bot):
     await AddRunHelper.UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime)
   else:
     ValidNrOfPlayers = None
-    while not ValidNrOfPlayers:
-      NrOfPlayers = await AddRunHelper.GetNrOfPlayers(bot, message, UserID)
-      NrOfTanks = await AddRunHelper.GetNrOfTanks(bot, message, UserID)
-      NrOfDps = await AddRunHelper.GetNrOfDPS(bot, message, UserID)
-      NrOfHealers = await AddRunHelper.GetNrOfHealers(bot, message, UserID)
+    try:
+      while not ValidNrOfPlayers:
+        NrOfPlayers = await AddRunHelper.GetNrOfPlayers(bot, message, UserID)
+        NrOfTanks = await AddRunHelper.GetNrOfTanks(bot, message, UserID)
+        NrOfDps = await AddRunHelper.GetNrOfDPS(bot, message, UserID)
+        NrOfHealers = await AddRunHelper.GetNrOfHealers(bot, message, UserID)
 
-      if NrOfPlayers != NrOfTanks + NrOfDps + NrOfHealers:
-        await DMHelper.DMUserByID(bot, UserID, "Please ensure the total of each role equals the total number of players required.")
-      else:
-        ValidNrOfPlayers = "yes"
+        if NrOfPlayers != NrOfTanks + NrOfDps + NrOfHealers:
+          await DMHelper.DMUserByID(bot, UserID, "Please ensure the total of each role equals the total number of players required.")
+        else:
+          ValidNrOfPlayers = "yes"
 
-    RoleID = await AddRunHelper.GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHealers)
-    if RoleID == 1:
-      NumberOfCurrentTanks = 1
-      NumberOfCurrentDps = 0
-      NumberOfCurrentHealers = 0
-    elif RoleID == 2:
-      NumberOfCurrentDps = 1
-      NumberOfCurrentTanks = 0
-      NumberOfCurrentHealers = 0
-    elif RoleID == 3:
-      NumberOfCurrentHealers = 1
-      NumberOfCurrentTanks = 0
-      NumberOfCurrentDps = 0
+      RoleID = await AddRunHelper.GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHealers)
+      if RoleID == 1:
+        NumberOfCurrentTanks = 1
+        NumberOfCurrentDps = 0
+        NumberOfCurrentHealers = 0
+      elif RoleID == 2:
+        NumberOfCurrentDps = 1
+        NumberOfCurrentTanks = 0
+        NumberOfCurrentHealers = 0
+      elif RoleID == 3:
+        NumberOfCurrentHealers = 1
+        NumberOfCurrentTanks = 0
+        NumberOfCurrentDps = 0
 
-    Status = await AddRunHelper.GetRunStatusToSet(NrOfPlayers)
-    Confirm = await AddRunHelper.SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
+      Status = await AddRunHelper.GetRunStatusToSet(NrOfPlayers)
+      Confirm = await AddRunHelper.SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
 
-    if Confirm == "yes":
-      await AddRunHelper.CreateRun(bot, message, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
-    if Confirm == "no":
-      await DMHelper.DMUserByID(bot, UserID, "Your request to create a crew has been cancelled, please call the command again in the relevant channel if you wish to try again.")
+      if Confirm == "yes":
+        await AddRunHelper.CreateRun(bot, message, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
+      if Confirm == "no":
+        await DMHelper.DMUserByID(bot, UserID, "Your request to create a run has been cancelled, please call the command again in the relevant channel if you wish to try again.")
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong setting your role and the number of other roles required.")
+      return
