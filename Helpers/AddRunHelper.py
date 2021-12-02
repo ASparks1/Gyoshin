@@ -294,21 +294,18 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
         if NrOfTanks <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of tank, number of tanks must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
-          RoleName = response.content.lower()
           CheckRoleName = False
           return RoleID
       elif response.content.lower() == "dps":
         if NrOfDps <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of dps, number of dps must be greater than 0 for you to pick this role. Please pick a different role.")
         else:
-          RoleName = response.content.lower()
           CheckRoleName = False
           return RoleID
       elif response.content.lower() == "healer":
         if NrOfHealers <= 0:
           await DMHelper.DMUserByID(bot, UserID, "You have entered the role of healer, number of healers must be greater than to 0 for you to pick this role. Please pick a different role.")
         else:
-          RoleName = response.content.lower()
           CheckRoleName = False
           return RoleID
       else:
