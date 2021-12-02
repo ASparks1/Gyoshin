@@ -267,7 +267,6 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
 
-  RoleName = None
   CheckRoleName = True
   while CheckRoleName is True:
     try:
