@@ -269,7 +269,7 @@ async def GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHeale
 
   RoleName = None
   CheckRoleName = True
-  while CheckRoleName == True:
+  while CheckRoleName is True:
     try:
       await DMHelper.DMUserByID(bot, UserID, "Next, which role (tank/dps/healer) do you intend to play as within the crew?")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
