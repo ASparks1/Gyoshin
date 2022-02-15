@@ -12,7 +12,7 @@ async def WithdrawFromRaid(message, bot, UserID):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong.")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the run number.")
     return
 
   Origin = await OriginHelper.GetOrigin(message)
