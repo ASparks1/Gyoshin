@@ -52,43 +52,43 @@ async def on_member_remove(member):
 @bot.slash_command()
 async def templates(ctx):
  """Lists all available templates on the server"""
- await ctx.defer()
+ await ctx.respond("Executing command")
  await Templates.GetTemplates(ctx, bot)
 
 @bot.slash_command()
 async def runs(ctx):
  """Lists all runs on a given date"""
- await ctx.defer(hidden=True)
+ await ctx.respond("Executing command")
  await Runs.ListRunsOnDate(ctx, bot)  
 
 @bot.slash_command()
 async def addrun(ctx):
  """Starts a conversation where the bot guides you through the process to create a run"""
- await ctx.defer()
+ await ctx.respond("Executing command")
  await AddRun.AddRunInDM(ctx, bot)
   
 @bot.slash_command()
 async def adddefaulttemplates(ctx):
  """Adds some default templates for FFXIV to the server"""
- await ctx.defer()
+ await ctx.respond("Executing command")
  await AddDefaultTemplates.AddDefaultTemplates(ctx, bot)
 
 @bot.slash_command()
 async def addtemplate(ctx):
  """Starts a conversation where the bot guides you through the process to add a template"""
- await ctx.defer()
+ await ctx.respond("Executing command")
  await AddTemplate.AddTemplate(ctx, bot)
 
 @bot.slash_command()
 async def deletetemplate(ctx):
  """Gives the creator of a template the option to delete it"""
- await ctx.defer()
+ await ctx.respond("Executing command")
  await DeleteTemplate.DeleteTemplate(ctx, bot)
 
 @bot.slash_command()
 async def myruns(ctx):
  """Lists upcoming runs you've signed up for up to a maxium of 5"""
- await ctx.defer()
+ await ctx.respond("Executing command")
  await MyRuns.ListMyRuns(ctx, bot)
 
 # Message events
