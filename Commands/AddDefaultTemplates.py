@@ -7,11 +7,11 @@ async def AddDefaultTemplates(ctx, bot):
   c = conn.cursor()
 
   try:
-    Origin = await OriginHelper.GetOrigin(message)
+    CreatorID = ctx.author.id
+    Origin = await OriginHelper.GetOrigin(ctx, CreatorID)
     if not Origin:
       return
 
-    CreatorID = ctx.author.id
     c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('alliance', (?), (?), 24, 3, 15, 6)", (Origin, CreatorID,))
     c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('raid', (?), (?), 8, 2, 4, 2)", (Origin, CreatorID,))
     c.execute("INSERT INTO Templates (Name, Origin, CreatorUserID, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers) VALUES ('dungeon', (?), (?), 4, 1, 2, 1)", (Origin, CreatorID,))
