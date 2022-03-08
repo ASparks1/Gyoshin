@@ -29,7 +29,7 @@ async def GetTemplates(ctx, bot):
 
   rows = c.fetchall()
   if not rows:
-    await DMHelper.DMUser(message, "No templates found")
+    await DMHelper.DMUserByID(bot, UserID, "No templates found")
     conn.close()
     return
 

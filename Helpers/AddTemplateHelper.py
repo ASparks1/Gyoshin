@@ -4,9 +4,9 @@ import discord
 from discord import ChannelType
 from Helpers import DMHelper
 
-async def NrOfPlayersAndConfirmSection(bot, message, Origin, UserID, TemplateName):
+async def NrOfPlayersAndConfirmSection(bot, ctx, Origin, UserID, TemplateName):
   def DMCheck(dm_message):
-    return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
+    return dm_message.channel.type == ChannelType.private and dm_message.author == ctx.author
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
