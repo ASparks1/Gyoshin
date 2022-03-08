@@ -53,7 +53,7 @@ async def on_member_remove(member):
 async def templates(ctx):
  """Lists all available templates on the server"""
  await ctx.defer()
- await Templates.GetTemplates(ctx)
+ await Templates.GetTemplates(ctx, bot)
 
 @bot.slash_command()
 async def runs(ctx):

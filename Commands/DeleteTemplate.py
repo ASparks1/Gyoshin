@@ -5,17 +5,17 @@ from Helpers import UserHelper
 from Helpers import DMHelper
 from discord import ChannelType
 
-async def DeleteTemplate(message, bot):
+async def DeleteTemplate(ctx, bot):
   try:
-    Origin = await OriginHelper.GetOrigin(message)
-    UserID = message.author.id
-    GuildName = await OriginHelper.GetName(message)
+    UserID = ctx.author.id
+    Origin = await OriginHelper.GetOrigin(ctx, UserID)
+    GuildName = await OriginHelper.GetName(ctx, UserID)
   except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
   def DMCheck(dm_message):
-    return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
+    return dm_message.channel.type == ChannelType.private and dm_message.author == ctx.author
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
