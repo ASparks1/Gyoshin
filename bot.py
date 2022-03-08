@@ -50,31 +50,45 @@ async def on_member_remove(member):
 
 # Bot commands
 @bot.slash_command()
-async def templates(name = "templates", decription = "Lists all available templates on the server"):
-  await Templates.GetTemplates(ctx.message)
+async def templates(ctx):
+ """Lists all available templates on the server"""
+ await ctx.defer(hidden=True)
+ await Templates.GetTemplates(ctx.message)
 
 @bot.slash_command()
-async def runs(name = "runs", decription = "Lists all runs on a given date"):
-  await Runs.ListRunsOnDate(ctx.message, bot)  
+async def runs(ctx):
+ """Lists all runs on a given date"""
+ await ctx.defer(hidden=True)
+ await Runs.ListRunsOnDate(ctx.message, bot)  
 
 @bot.slash_command()
-async def addrun(name = "addrun", decription = "Starts a conversation where the bot guides you through the process to create a run"):
-  await AddRun.AddRunInDM(ctx.message, bot)
+async def addrun(ctx):
+ """Starts a conversation where the bot guides you through the process to create a run"""
+ await ctx.defer(hidden=True)
+ await AddRun.AddRunInDM(ctx.message, bot)
   
 @bot.slash_command()
-async def adddefaulttemplates(name = "adddefaulttemplates", decription = "Adds some default templates for FFXIV to the server"):
+async def adddefaulttemplates(ctx):
+ """Adds some default templates for FFXIV to the server"""
+ await ctx.defer(hidden=True)
  await AddDefaultTemplates.AddDefaultTemplates(ctx.message)
 
 @bot.slash_command()
-async def addtemplate(name = "addtemplate", decription = "Starts a conversation where the bot guides you through the process to add a template"):
+async def addtemplate(ctx):
+ """Starts a conversation where the bot guides you through the process to add a template"""
+ await ctx.defer(hidden=True)
  await AddTemplate.AddTemplate(ctx.message, bot)
 
 @bot.slash_command()
-async def deletetemplate(name = "deletetemplate", decription = "Gives the creator of a template the option to delete it"):
- await DeleteTemplate.DeleteTemplate(ctx.message, bot)
+async def deletetemplate(ctx):
+ """Gives the creator of a template the option to delete it"""
+ await ctx.defer(hidden=True)
+ await DeleteTemplate.DeleteTemplate(ctx.message)
 
 @bot.slash_command()
-async def myruns(name = "myruns", decription = "Lists upcoming runs you've signed up for up to a maxium of 5"):
+async def myruns(ctx):
+ """Lists upcoming runs you've signed up for up to a maxium of 5"""
+ await ctx.defer(hidden=True)
  await MyRuns.ListMyRuns(ctx.message, bot)
 
 # Message events
