@@ -32,7 +32,7 @@ async def ListMyRunsHelper(ctx, bot, RunType):
   c = conn.cursor()
 
   try:
-  current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
+    current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the current date and time")
     conn.close()

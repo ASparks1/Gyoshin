@@ -71,7 +71,7 @@ async def addrun(ctx):
 async def adddefaulttemplates(ctx):
  """Adds some default templates for FFXIV to the server"""
  await ctx.defer()
- await AddDefaultTemplates.AddDefaultTemplates(ctx)
+ await AddDefaultTemplates.AddDefaultTemplates(ctx, bot)
 
 @bot.slash_command()
 async def addtemplate(ctx):
