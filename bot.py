@@ -4,7 +4,6 @@ import discord
 import dotenv
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
-from discord import app_commands
 from discord_components import DiscordComponents, Button, ButtonStyle
 from Commands import Templates
 from Commands import AddDefaultTemplates
@@ -28,7 +27,6 @@ intents.reactions = True
 intents.message_content = True
 
 bot = commands.Bot(intents=intents)
-tree = app_commands.CommandTree(bot)
 
 @bot.event
 async def on_ready():
@@ -51,40 +49,32 @@ async def on_member_remove(member):
   await MemberHelper.OnMemberLeaveOrRemove(member)
 
 # Bot commands
-@tree.command()
-async def templates(interaction: discord.Interaction, ctx):
+@bot.slash_command()
+async def templates(name = "templates", decription = "Lists all available templates on the server"):
   await Templates.GetTemplates(ctx.message)
 
-@tree.command()
-async def runs(interaction: discord.Interaction, ctx, bot):
+@bot.slash_command()
+async def runs(name = "runs", decription = "Lists all runs on a given date"):
   await Runs.ListRunsOnDate(ctx.message, bot)  
 
-@tree.command()
-async def commands(interaction: discord.Interaction, ctx, bot):
-  await Runs.ListRunsOnDate(ctx.message, bot)  
-
-@tree.command()
-async def addrun(interaction: discord.Interaction, ctx, bot):
+@bot.slash_command()
+async def addrun(name = "addrun", decription = "Starts a conversation where the bot guides you through the process to create a run"):
   await AddRun.AddRunInDM(ctx.message, bot)
   
-@tree.command()
-async def adddefaulttemplates(interaction: discord.Interaction, ctx):
+@bot.slash_command()
+async def adddefaulttemplates(name = "adddefaulttemplates", decription = "Adds some default templates for FFXIV to the server"):
  await AddDefaultTemplates.AddDefaultTemplates(ctx.message)
 
-@tree.command()
-async def addtemplate(interaction: discord.Interaction, ctx, bot):
+@bot.slash_command()
+async def addtemplate(name = "addtemplate", decription = "Starts a conversation where the bot guides you through the process to add a template"):
  await AddTemplate.AddTemplate(ctx.message, bot)
 
-@tree.command()
-async def deletetemplate(interaction: discord.Interaction, ctx, bot):
+@bot.slash_command()
+async def deletetemplate(name = "deletetemplate", decription = "Gives the creator of a template the option to delete it"):
  await DeleteTemplate.DeleteTemplate(ctx.message, bot)
 
-@tree.command()
-async def dismiss(interaction: discord.Interaction, ctx, bot):
- await DeleteTemplate.DeleteTemplate(ctx.message, bot)
-
-@tree.command()
-async def myruns(interaction: discord.Interaction, ctx, bot):
+@bot.slash_command()
+async def myruns(name = "myruns", decription = "Lists upcoming runs you've signed up for up to a maxium of 5"):
  await MyRuns.ListMyRuns(ctx.message, bot)
 
 # Message events
