@@ -4,6 +4,7 @@ import discord
 import dotenv
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
+from discord import app_commands
 from discord_components import DiscordComponents, Button, ButtonStyle
 from Commands import Templates
 from Commands import AddDefaultTemplates
@@ -24,7 +25,10 @@ from Helpers import MemberHelper
 intents = discord.Intents.default()
 intents.members = True
 intents.reactions = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+intents.message_content = True
+
+bot = commands.Bot(intents=intents)
+tree = app_commands.CommandTree(bot)
 
 @bot.event
 async def on_ready():
@@ -47,41 +51,41 @@ async def on_member_remove(member):
   await MemberHelper.OnMemberLeaveOrRemove(member)
 
 # Bot commands
-@bot.command(name='templates', aliases=['Templates'])
-async def templates(ctx):
+@tree.command()
+async def templates(interaction: discord.Interaction, ctx):
   await Templates.GetTemplates(ctx.message)
 
-@bot.command(name='runs', aliases=['Runs'])
-async def runs(ctx):
-  await Runs.ListRunsOnDate(ctx.message, bot)
+@tree.command()
+async def runs(interaction: discord.Interaction, ctx, bot):
+  await Runs.ListRunsOnDate(ctx.message, bot)  
 
-@bot.command(name='commands', aliases=['Commands'])
-async def commands(ctx):
-  await Commands.ListCommands(ctx.message, bot)
+@tree.command()
+async def commands(interaction: discord.Interaction, ctx, bot):
+  await Runs.ListRunsOnDate(ctx.message, bot)  
 
-@bot.command(name='addrun', aliases=['Addrun'])
-async def addrun(ctx):
+@tree.command()
+async def addrun(interaction: discord.Interaction, ctx, bot):
   await AddRun.AddRunInDM(ctx.message, bot)
+  
+@tree.command()
+async def adddefaulttemplates(interaction: discord.Interaction, ctx):
+ await AddDefaultTemplates.AddDefaultTemplates(ctx.message)
 
-@bot.command(name='adddefaulttemplates', aliases=['Adddefaulttemplates', 'AddDefaultTemplates'])
-async def adddefaulttemplates(ctx):
-  await AddDefaultTemplates.AddDefaultTemplates(ctx.message)
+@tree.command()
+async def addtemplate(interaction: discord.Interaction, ctx, bot):
+ await AddTemplate.AddTemplate(ctx.message, bot)
 
-@bot.command(name='addtemplate', aliases=['Addtemplate', 'AddTemplate'])
-async def addtemplate(ctx):
-  await AddTemplate.AddTemplate(ctx.message, bot)
+@tree.command()
+async def deletetemplate(interaction: discord.Interaction, ctx, bot):
+ await DeleteTemplate.DeleteTemplate(ctx.message, bot)
 
-@bot.command(name='deletetemplate', aliases=['Deletetemplate', 'DeleteTemplate'])
-async def deletetemplate(ctx):
-  await DeleteTemplate.DeleteTemplate(ctx.message, bot)
+@tree.command()
+async def dismiss(interaction: discord.Interaction, ctx, bot):
+ await DeleteTemplate.DeleteTemplate(ctx.message, bot)
 
-@bot.command(name='dismiss', aliases=['Dismiss'])
-async def dismiss(ctx):
-  await Dismiss.DismissMember(ctx.message, bot)
-
-@bot.command(name='myruns', aliases=['Myruns', 'MyRuns'])
-async def myruns(ctx):
-  await MyRuns.ListMyRuns(ctx.message, bot)
+@tree.command()
+async def myruns(interaction: discord.Interaction, ctx, bot):
+ await MyRuns.ListMyRuns(ctx.message, bot)
 
 # Message events
 # Do nothing if the message is from the bot
