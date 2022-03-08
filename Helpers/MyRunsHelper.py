@@ -1,5 +1,6 @@
 import sqlite3
 import re
+import discord
 from datetime import datetime
 from discord_components import *
 from Helpers import OriginHelper
@@ -13,8 +14,8 @@ from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
 from Helpers import MyRunsHelper
 
-async def ListMyRunsHelper(message, bot, RunType):
-  UserID = message.author.id
+async def ListMyRunsHelper(ctx, bot, RunType):
+  UserID = ctx.author.id
   if not UserID:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting user information")
     return
@@ -31,7 +32,7 @@ async def ListMyRunsHelper(message, bot, RunType):
   c = conn.cursor()
 
   try:
-    current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
+  current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the current date and time")
     conn.close()
@@ -86,7 +87,7 @@ async def ListMyRunsHelper(message, bot, RunType):
           conn.close()
           return
       except:
-        await DMHelper.DMUser(message, "Unable to convert variables")
+        await DMHelper.DMUser(ctx, "Unable to convert variables")
         conn.close()
         return
 
@@ -101,6 +102,6 @@ async def ListMyRunsHelper(message, bot, RunType):
           RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
           Message = f"{Message}{RunMessage}"
 
-    await DMHelper.DMUser(message, f"{Message}")
+    await DMHelper.DMUser(ctx, f"{Message}")
     conn.close()
     return
