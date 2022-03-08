@@ -37,7 +37,7 @@ async def on_ready():
   # Nightly job to clean up old data
   @tasks.loop(minutes=60.0)
   async def CleanUpOldRaidData():
-    if datetime.utcnow().hour == 5:
+    if discord.utils.utcnow().hour == 5:
       print("Starting cleanup of old raid data!")
       await DeleteOldRaidDataHelper.DeleteOldRaidData()
   CleanUpOldRaidData.start()

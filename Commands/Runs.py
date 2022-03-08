@@ -36,7 +36,7 @@ async def ListRunsOnDate(message, bot):
     sqlitedate = f"{year}-{month}-{day}"
 
     try:
-      current_date = datetime.utcnow().strftime("%Y-%m-%d")
+      current_date = discord.utils.utcnow().strftime("%Y-%m-%d")
       if sqlitedate < current_date:
         await DMHelper.DMUser(message, "It's not possible to search on dates in the past")
         conn.close()

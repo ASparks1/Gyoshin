@@ -4,7 +4,7 @@ from datetime import datetime
 from Helpers import DMHelper
 
 async def ValidateDateTime(message, day, month, year, hour, minute):
-  current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+  current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
   newdatetime = f"{year}-{month}-{day} {hour}:{minute}"
 
   try:

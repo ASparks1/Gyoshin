@@ -124,7 +124,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
       conn.close()
       return
 
-    current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+    current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
     await DMHelper.DMUserByID(bot, UserID, f"Hi {username}, please provide me the date to which you want to reschedule the run {RaidName} in the {GuildName} server in the dd-mm-yyyy hh:mm format.")
 
     if OldDate >= current_date:
@@ -204,7 +204,7 @@ async def OnAddRallyReaction(message, bot, UserID):
     return
 
   try:
-    now = datetime.utcnow()
+    now = discord.utils.utcnow()
     DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M")
     TimeDifference = DateTime - now
   except:

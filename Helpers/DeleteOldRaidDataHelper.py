@@ -8,8 +8,8 @@ async def DeleteOldRaidData():
   c = conn.cursor()
 
   try:
-    current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-    current_date = datetime.utcnow().strptime(current_date, "%Y-%m-%d %H:%M")
+    current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
+    current_date = discord.utils.utcnow().strptime(current_date, "%Y-%m-%d %H:%M")
     yesterday = current_date - timedelta(days=1)
     yesterday = datetime.strftime(yesterday, "%Y-%m-%d %H:%M")
   except:
