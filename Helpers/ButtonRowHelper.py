@@ -55,7 +55,7 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
     #  return
   if interaction.custom_id == "messageraidmembers_btn":
     #try:
-    await MessageHelper.MessageRaidMembers(interaction.message, bot, UserID)
+    await MessageHelper.MessageRaidMembers(interaction.message, bot, UserID, ctx)
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return
