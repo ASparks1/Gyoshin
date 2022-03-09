@@ -55,7 +55,7 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
     #  return
   if interaction.custom_id == "messageraidmembers_btn":
     #try:
-    await MessageHelper.MessageRaidMembers(interaction.message, bot, UserID, ctx)
+    await MessageHelper.MessageRaidMembers(interaction.message, bot, UserID)
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return
@@ -69,7 +69,7 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
 async def ThirdRowButtons(interaction, bot, UserID, ctx):
   if interaction.custom_id == "editdesc_btn":
     #try:
-    await ReactionHelper.OnAddEditDescReaction(interaction.message, bot, UserID, ctx)
+    await ReactionHelper.OnAddEditDescReaction(interaction.message, bot, UserID)
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return
