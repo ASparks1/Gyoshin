@@ -205,28 +205,27 @@ async def OnAddRallyReaction(message, bot, UserID, ctx):
     conn.close()
     return
 
-  #try:
-  now = discord.utils.utcnow()
-  splitdate = DateTime.split(' ')
-  date = splitdate[0]
-  time = splitdate[1]
+  try:
+    now = discord.utils.utcnow()
+    splitdate = DateTime.split(' ')
+    date = splitdate[0]
+    time = splitdate[1]
 
-  splitdate = date.split('-')
-  year = int(splitdate[0])
-  month = int(splitdate[1])
-  day = int(splitdate[2])
+    splitdate = date.split('-')
+    year = int(splitdate[0])
+    month = int(splitdate[1])
+    day = int(splitdate[2])
 
-  splittime = time.split(':')
-  hour = int(splittime[0])
-  minute = int(splittime[1])
+    splittime = time.split(':')
+    hour = int(splittime[0])
+    minute = int(splittime[1])
 
-  DateTime = datetime(year, month, day, hour, minute, tzinfo=timezone.utc)
-  #DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M", tzinfo=utc)
-  TimeDifference = DateTime - now
-  #except:
-  #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
-  #  conn.close()
-  #  return
+    DateTime = datetime(year, month, day, hour, minute, tzinfo=timezone.utc)
+    TimeDifference = DateTime - now
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
+    conn.close()
+    return
 
   if timedelta(minutes=-15) < TimeDifference < timedelta(hours=1):
     try:

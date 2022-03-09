@@ -68,13 +68,13 @@ async def MessageRaidMembers(message, bot, UserID, ctx):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
-  #try:
-  RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
-  OrganizerName = await UserHelper.GetDisplayName(message, UserID, bot)
-  GuildName = await OriginHelper.GetName(ctx, bot, UserID)
-  #except:
-  #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the run information.")
-  #  return
+  try:
+    RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
+    OrganizerName = await UserHelper.GetDisplayName(message, UserID, bot)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the run information.")
+    return
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()

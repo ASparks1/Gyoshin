@@ -157,17 +157,17 @@ async def UseTemplateToCreateRun(bot, ctx, UserID, Origin, CreatorDisplay, Chann
     conn.close()
     return
 
-  #try:
-  Status = await GetRunStatusToSet(NrOfPlayers)
-  Confirm = await SummarizeRunInfoForConfirmation(bot, ctx, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
+  try:
+    Status = await GetRunStatusToSet(NrOfPlayers)
+    Confirm = await SummarizeRunInfoForConfirmation(bot, ctx, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
 
-  if Confirm == "yes":
-    await CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
-  if Confirm == "no":
-    await DMHelper.DMUserByID(bot, UserID, "Your request to create a run has been cancelled, please call the command again in the relevant channel if you wish to try again.")
-  #except:
-  #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong during confirmation of this run.")
-  #  return
+    if Confirm == "yes":
+      await CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
+    if Confirm == "no":
+      await DMHelper.DMUserByID(bot, UserID, "Your request to create a run has been cancelled, please call the command again in the relevant channel if you wish to try again.")
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong during confirmation of this run.")
+    return
 
 # Helper function to get number of players
 async def GetNrOfPlayers(bot, ctx, UserID):
@@ -391,59 +391,59 @@ async def CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, Nr
     conn.close()
     return
 
-  #try:
-  conn.commit()
-  conn.close()
+  try:
+    conn.commit()
+    conn.close()
 
-  # Create buttons to add
-  tank_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tank_btn")
-  dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger, custom_id="dps_btn")
-  healer_btn = Button(label="Healer", style=discord.ButtonStyle.success, custom_id="healer_btn")
-  rally_btn = Button(label="Rally", custom_id="rally_btn")
-  members_btn = Button(label="Members", row=1, custom_id="members_btn")
-  reserves_btn = Button(label="Reserves", row=1, custom_id="reserves_btn")
-  messageraidmembers_btn = Button(label="Message members", row=1, custom_id="messageraidmembers_btn")
-  dismissmembers_btn = Button(label="Dismiss members", row=1, custom_id="dismissmembers_btn")
-  editdesc_btn = Button(label="Edit description", row=2, custom_id="editdesc_btn")
-  neworganizer_btn = Button(label="New organizer", row=2, custom_id="neworganizer_btn")
-  reschedule_btn = Button(label="Reschedule", row=2, custom_id="reschedule_btn")
-  cancel_btn = Button(label="Cancel", row=2, style=discord.ButtonStyle.danger, custom_id="cancel_btn")
+    # Create buttons to add
+    tank_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tank_btn")
+    dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger, custom_id="dps_btn")
+    healer_btn = Button(label="Healer", style=discord.ButtonStyle.success, custom_id="healer_btn")
+    rally_btn = Button(label="Rally", custom_id="rally_btn")
+    members_btn = Button(label="Members", row=1, custom_id="members_btn")
+    reserves_btn = Button(label="Reserves", row=1, custom_id="reserves_btn")
+    messageraidmembers_btn = Button(label="Message members", row=1, custom_id="messageraidmembers_btn")
+    dismissmembers_btn = Button(label="Dismiss members", row=1, custom_id="dismissmembers_btn")
+    editdesc_btn = Button(label="Edit description", row=2, custom_id="editdesc_btn")
+    neworganizer_btn = Button(label="New organizer", row=2, custom_id="neworganizer_btn")
+    reschedule_btn = Button(label="Reschedule", row=2, custom_id="reschedule_btn")
+    cancel_btn = Button(label="Cancel", row=2, style=discord.ButtonStyle.danger, custom_id="cancel_btn")
 
-  # Define button callback actions
-  async def button_callback(interaction):
-    await interaction.response.defer(ephemeral=True)
-    await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
-  tank_btn.callback = button_callback
-  dps_btn.callback = button_callback
-  healer_btn.callback = button_callback
-  rally_btn.callback = button_callback
-  members_btn.callback = button_callback
-  reserves_btn.callback = button_callback
-  messageraidmembers_btn.callback = button_callback
-  dismissmembers_btn.callback = button_callback
-  editdesc_btn.callback = button_callback
-  neworganizer_btn.callback = button_callback
-  reschedule_btn.callback = button_callback
-  cancel_btn.callback = button_callback
+    # Define button callback actions
+    async def button_callback(interaction):
+      await interaction.response.defer(ephemeral=True)
+      await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
+    tank_btn.callback = button_callback
+    dps_btn.callback = button_callback
+    healer_btn.callback = button_callback
+    rally_btn.callback = button_callback
+    members_btn.callback = button_callback
+    reserves_btn.callback = button_callback
+    messageraidmembers_btn.callback = button_callback
+    dismissmembers_btn.callback = button_callback
+    editdesc_btn.callback = button_callback
+    neworganizer_btn.callback = button_callback
+    reschedule_btn.callback = button_callback
+    cancel_btn.callback = button_callback
 
-  # Create view and add buttons to it
-  view=View(timeout=None)
-  view.add_item(tank_btn)
-  view.add_item(dps_btn)
-  view.add_item(healer_btn)
-  view.add_item(rally_btn)
-  view.add_item(members_btn)
-  view.add_item(reserves_btn)
-  view.add_item(messageraidmembers_btn)
-  view.add_item(dismissmembers_btn)
-  view.add_item(editdesc_btn)
-  view.add_item(neworganizer_btn)
-  view.add_item(reschedule_btn)
-  view.add_item(cancel_btn)
+    # Create view and add buttons to it
+    view=View(timeout=None)
+    view.add_item(tank_btn)
+    view.add_item(dps_btn)
+    view.add_item(healer_btn)
+    view.add_item(rally_btn)
+    view.add_item(members_btn)
+    view.add_item(reserves_btn)
+    view.add_item(messageraidmembers_btn)
+    view.add_item(dismissmembers_btn)
+    view.add_item(editdesc_btn)
+    view.add_item(neworganizer_btn)
+    view.add_item(reschedule_btn)
+    view.add_item(cancel_btn)
 
-  message = await ctx.respond(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
+    message = await ctx.respond(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
 
-  #except:
-  #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong creating the run")
-  #  conn.close()
-  #  return
+  except:
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong creating the run")
+    conn.close()
+    return

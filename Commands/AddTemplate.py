@@ -7,15 +7,15 @@ from Helpers import DMHelper
 from discord import ChannelType
 
 async def AddTemplate(ctx, bot):
-  #try:
-  UserID = ctx.author.id
-  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
-  GuildName = await OriginHelper.GetName(ctx, bot, UserID)
-  Creator = await UserHelper.GetUserID(ctx, UserID, bot)
-  CreatorDisplay = await UserHelper.GetDisplayName(ctx, Creator, bot)
-  #except:
-  #   await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
-  #   return
+  try:
+    UserID = ctx.author.id
+    Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
+    Creator = await UserHelper.GetUserID(ctx, UserID, bot)
+    CreatorDisplay = await UserHelper.GetDisplayName(ctx, Creator, bot)
+  except:
+     await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
+     return
 
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author == ctx.author
