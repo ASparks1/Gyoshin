@@ -31,7 +31,6 @@ bot = commands.Bot(intents=intents)
 async def on_ready():
   guilds = len(bot.guilds)
   print(f"Ready, I'm active in {guilds} servers!")
-  DiscordComponents(bot)
 
   # Nightly job to clean up old data
   @tasks.loop(minutes=60.0)
@@ -58,14 +57,14 @@ async def templates(ctx):
 async def runs(ctx, date):
  """Lists all runs on a given date"""
  await ctx.respond("Executing command", ephemeral=True)
- await Runs.ListRunsOnDate(ctx, bot, date)  
+ await Runs.ListRunsOnDate(ctx, bot, date)
 
 @bot.slash_command()
 async def addrun(ctx):
  """Starts a conversation where the bot guides you through the process to create a run"""
  await ctx.respond("Executing command", ephemeral=True)
  await AddRun.AddRunInDM(ctx, bot)
-  
+
 @bot.slash_command()
 async def adddefaulttemplates(ctx):
  """Adds some default templates for FFXIV to the server"""

@@ -9,7 +9,7 @@ async def AddRunInDM(ctx, bot):
   try:
     UserID = ctx.author.id
     Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
-    GuildName = await OriginHelper.GetName(ctx, bot, UserID)    
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
     CreatorDisplay = await UserHelper.GetDisplayName(ctx, UserID, bot)
     ChannelID = ctx.channel.id
   except:
