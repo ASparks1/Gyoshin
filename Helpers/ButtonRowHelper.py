@@ -35,7 +35,7 @@ async def FirstRowButtons(interaction, bot, UserID, ctx):
 async def SecondRowButtons(interaction, bot, UserID, ctx):
   if interaction.custom_id == "members_btn":
     try:
-      Message = await ReactionHelper.OnMemberReaction(interaction.message, bot, ctx)
+      Message = await ReactionHelper.OnMemberReaction(interaction.message, bot)
       if Message:
         await ctx.respond(content=f"{Message}", ephemeral=True)
       elif not Message:
@@ -45,7 +45,7 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
       return
   if interaction.custom_id == "reserves_btn":
     try:
-      Message = await ReactionHelper.OnReservesReaction(interaction.message, bot, ctx)
+      Message = await ReactionHelper.OnReservesReaction(interaction.message, bot)
       if Message:
         await ctx.respond(content=f"{Message}", ephemeral=True)
       elif not Message:

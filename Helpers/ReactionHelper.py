@@ -280,16 +280,16 @@ async def OnAddRallyReaction(message, bot, UserID, ctx):
     return
   return
 
-async def OnMemberReaction(message, bot, ctx):
+async def OnMemberReaction(message, bot):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if RaidID:
-    Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID, ctx)
+    Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID)
     return Message
 
-async def OnReservesReaction(message, bot, ctx):
+async def OnReservesReaction(message, bot):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if RaidID:
-    Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID, ctx)
+    Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID)
     return Message
 
 async def OnAddEditDescReaction(message, bot, UserID):
