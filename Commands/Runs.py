@@ -12,6 +12,7 @@ from Helpers import DateTimeFormatHelper
 from Helpers import ReactionHelper
 from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
+from Helpers import ButtonRowHelper
 
 async def ListRunsOnDate(ctx, bot, date):
   UserID = ctx.author.id
@@ -93,7 +94,7 @@ async def ListRunsOnDate(ctx, bot, date):
           # Create buttons to add
           tnk_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary)
           dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger)
-          healer_btn = Button(label="Dps", style=discord.ButtonStyle.success)
+          healer_btn = Button(label="Healer", style=discord.ButtonStyle.success)
           rally_btn = Button(label="Rally")
           members_btn = Button(label="Members", row=1)
           reserves_btn = Button(label="Reserves", row=1)
@@ -105,9 +106,9 @@ async def ListRunsOnDate(ctx, bot, date):
           cancel_btn = Button(label="Cancel", row=2, style=discord.ButtonStyle.danger)
 
           # Define button callback actions
-          async def button_callback(interaction):
-            interaction.response.sendmessage("Hi")
-          tnk_btn.callback = button_callback
+          async def tankbutton_callback(interaction):
+            await ButtonRowHelper.FirstRowButtons(interaction, bot, UserID)
+          tnk_btn.callback = tankbutton_callback
 
           # Create view and add buttons to it
           view=View()

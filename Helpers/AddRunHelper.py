@@ -8,6 +8,7 @@ from Helpers import DateTimeFormatHelper
 from Helpers import DMHelper
 from Helpers import RoleHelper
 from Helpers import RoleIconHelper
+from Helpers import ButtonRowHelper
 
 # Helper function to get users' run name input
 async def GetRunName(bot, ctx, UserID, CreatorDisplay, GuildName):
@@ -396,7 +397,7 @@ async def CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, Nr
   # Create buttons to add
   tnk_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary)
   dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger)
-  healer_btn = Button(label="Dps", style=discord.ButtonStyle.success)
+  healer_btn = Button(label="Healer", style=discord.ButtonStyle.success)
   rally_btn = Button(label="Rally")
   members_btn = Button(label="Members", row=1)
   reserves_btn = Button(label="Reserves", row=1)
