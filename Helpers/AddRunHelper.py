@@ -9,6 +9,7 @@ from Helpers import DMHelper
 from Helpers import RoleHelper
 from Helpers import RoleIconHelper
 from Helpers import ButtonRowHelper
+from Helpers import ButtonInteractionHelper
 
 # Helper function to get users' run name input
 async def GetRunName(bot, ctx, UserID, CreatorDisplay, GuildName):
@@ -440,7 +441,7 @@ async def CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, Nr
   view.add_item(reschedule_btn)
   view.add_item(cancel_btn)
 
-  await ctx.respond(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}", view=view)
+  message = await ctx.respond(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
 
   #except:
   #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong creating the run")
