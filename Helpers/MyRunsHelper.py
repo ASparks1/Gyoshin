@@ -2,7 +2,6 @@ import sqlite3
 import re
 import discord
 from datetime import datetime
-from discord_components import *
 from Helpers import OriginHelper
 from Helpers import UserHelper
 from Helpers import RoleIconHelper
