@@ -123,7 +123,7 @@ async def ListRunsOnDate(ctx, bot, date):
           cancel_btn.callback = button_callback
 
           # Create view and add buttons to it
-          view=View()
+          view=View(timeout=None)
           view.add_item(tank_btn)
           view.add_item(dps_btn)
           view.add_item(healer_btn)

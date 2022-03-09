@@ -75,7 +75,7 @@ async def ThirdRowButtons(interaction, bot, UserID, ctx):
     #  return
   if interaction.custom_id == "neworganizer_btn":
     #try:
-    await NewOrganizer.NewOrganizer(bot, interaction.message, UserID, ctx)
+    await NewOrganizer.NewOrganizer(bot, interaction.message, UserID)
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return
