@@ -61,7 +61,7 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
     #  return
   if interaction.custom_id == "dismissmembers_btn":
     #try:
-    await Dismiss.DismissMembers(bot, interaction.message, UserID, ctx)
+    await Dismiss.DismissMembers(bot, interaction.message, UserID)
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return
