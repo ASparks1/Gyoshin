@@ -56,10 +56,10 @@ async def templates(ctx):
  await Templates.GetTemplates(ctx, bot)
 
 @bot.slash_command()
-async def runs(ctx):
+async def runs(ctx, date):
  """Lists all runs on a given date"""
  await ctx.respond("Executing command")
- await Runs.ListRunsOnDate(ctx, bot)  
+ await Runs.ListRunsOnDate(ctx, bot, date)  
 
 @bot.slash_command()
 async def addrun(ctx):
