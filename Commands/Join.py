@@ -28,8 +28,8 @@ async def JoinRaid(message, bot, RoleName, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles to see available roles.")
     return
 
-  Origin = await OriginHelper.GetOrigin(message)
-  GuildName = await OriginHelper.GetName(message)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
+  GuildName = await OriginHelper.GetName(ctx, bot, UserID)
 
   if not Origin or not UserID:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the user or server ID.")

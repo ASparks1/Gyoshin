@@ -174,7 +174,7 @@ async def OnAddRallyReaction(message, bot, UserID):
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the run number.")
 
-  Origin = await OriginHelper.GetOrigin(message)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
     return
 

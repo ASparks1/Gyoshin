@@ -8,7 +8,7 @@ async def AddDefaultTemplates(ctx, bot):
 
   try:
     CreatorID = ctx.author.id
-    Origin = await OriginHelper.GetOrigin(ctx, CreatorID)
+    Origin = await OriginHelper.GetOrigin(ctx, bot, CreatorID)
     if not Origin:
       return
 

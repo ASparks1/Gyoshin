@@ -8,8 +8,8 @@ from discord import ChannelType
 async def DeleteTemplate(ctx, bot):
   try:
     UserID = ctx.author.id
-    Origin = await OriginHelper.GetOrigin(ctx, UserID)
-    GuildName = await OriginHelper.GetName(ctx, UserID)
+    Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
   except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return

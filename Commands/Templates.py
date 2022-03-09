@@ -5,7 +5,7 @@ from Helpers import DMHelper
 
 async def GetTemplates(ctx, bot):
   UserID = ctx.author.id
-  Origin = await OriginHelper.GetOrigin(ctx, UserID)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
     return
 

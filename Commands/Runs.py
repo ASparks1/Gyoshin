@@ -15,7 +15,7 @@ from Helpers import ButtonInteractionHelper
 
 async def ListRunsOnDate(ctx, bot, date):
   UserID = ctx.author.id
-  Origin = await OriginHelper.GetOrigin(ctx, UserID)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
     return
 
