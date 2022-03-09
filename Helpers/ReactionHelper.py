@@ -164,7 +164,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
       conn.close()
       return
 
-async def OnAddRallyReaction(message, bot, UserID):
+async def OnAddRallyReaction(message, bot, UserID, ctx):
   global RallyNotifications
   RallyNotifications = None
   try:

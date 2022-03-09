@@ -92,23 +92,41 @@ async def ListRunsOnDate(ctx, bot, date):
 
         if OrganizerName:
           # Create buttons to add
-          tnk_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary)
-          dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger)
-          healer_btn = Button(label="Healer", style=discord.ButtonStyle.success)
-          rally_btn = Button(label="Rally")
-          members_btn = Button(label="Members", row=1)
-          reserves_btn = Button(label="Reserves", row=1)
-          messageraidmembers_btn = Button(label="Message members", row=1)
-          dismissmembers_btn = Button(label="Dismiss members", row=1)
-          editdesc_btn = Button(label="Edit description", row=2)
-          neworganizer_btn = Button(label="New organizer", row=2)
-          reschedule_btn = Button(label="Reschedule", row=2)
-          cancel_btn = Button(label="Cancel", row=2, style=discord.ButtonStyle.danger)
+          tnk_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tnk_btn")
+          dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger, custom_id="dps_btn")
+          healer_btn = Button(label="Healer", style=discord.ButtonStyle.success, custom_id="healer_btn")
+          rally_btn = Button(label="Rally", custom_id="rally_btn")
+          members_btn = Button(label="Members", row=1, custom_id="members_btn")
+          reserves_btn = Button(label="Reserves", row=1, custom_id="reserves_btn")
+          messageraidmembers_btn = Button(label="Message members", row=1, custom_id="messageraidmembers_btn")
+          dismissmembers_btn = Button(label="Dismiss members", row=1, custom_id="dismissmembers_btn")
+          editdesc_btn = Button(label="Edit description", row=2, custom_id="editdesc_btn")
+          neworganizer_btn = Button(label="New organizer", row=2, custom_id="neworganizer_btn")
+          reschedule_btn = Button(label="Reschedule", row=2, custom_id="reschedule_btn")
+          cancel_btn = Button(label="Cancel", row=2, style=discord.ButtonStyle.danger, custom_id="cancel_btn")
 
           # Define button callback actions
-          async def tankbutton_callback(interaction):
-            await ButtonRowHelper.FirstRowButtons(interaction, bot, UserID)
-          tnk_btn.callback = tankbutton_callback
+          async def button_callback(interaction):
+            await interaction.response.defer(ephemeral=True)
+            await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
+            #if interaction.custom_id in ("tank_btn", "dps_btn", "healer_btn", "rally_btn"):
+            #  await ButtonRowHelper.FirstRowButtons(interaction, bot, UserID)
+            #elif interaction.custom_id in ("members_btn", "reserves_btn", "messagemembers_btn", "dismissmembers_btn"):
+            #  await ButtonRowHelper.SecondRowButtons(interaction, bot, UserID)
+            #elif interaction.custom_id in ("editdesc_btn", "neworganizer_btn", "reschedule_btn", "cancel_btn"):
+            #  await ButtonRowHelper.ThirdRowButtons(interaction, bot, UserID)
+          tnk_btn.callback = button_callback
+          dps_btn.callback = button_callback
+          healer_btn.callback = button_callback
+          rally_btn.callback = button_callback
+          members_btn.callback = button_callback
+          reserves_btn.callback = button_callback
+          messageraidmembers_btn.callback = button_callback
+          dismissmembers_btn.callback = button_callback
+          editdesc_btn.callback = button_callback
+          neworganizer_btn.callback = button_callback
+          reschedule_btn.callback = button_callback
+          cancel_btn.callback = button_callback
 
           # Create view and add buttons to it
           view=View()

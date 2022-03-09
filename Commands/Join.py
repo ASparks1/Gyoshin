@@ -15,7 +15,7 @@ from Helpers import JoinHelper
 from Commands import Withdraw
 from Commands import ChangeRole
 
-async def JoinRaid(message, bot, RoleName, UserID):
+async def JoinRaid(message, bot, RoleName, UserID, ctx):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:
