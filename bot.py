@@ -4,7 +4,6 @@ import discord
 import dotenv
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
-from discord_components import DiscordComponents, Button, ButtonStyle
 from Commands import Templates
 from Commands import AddDefaultTemplates
 from Commands import AddTemplate
@@ -99,11 +98,6 @@ async def on_message(message):
     return
   # Process commmands if found in message
   await bot.process_commands(message)
-
-# Button events
-@bot.event
-async def on_button_click(interaction):
-  await ButtonInteractionHelper.OnButtonClick(interaction, bot)
 
 # Get bot token and run on server
 load_dotenv()
