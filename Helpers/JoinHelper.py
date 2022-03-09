@@ -49,7 +49,7 @@ async def NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, 
     return
 
 # Helper function to allow a user to withdraw
-async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs):
+async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, ctx):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
@@ -73,7 +73,7 @@ async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName
       return
 
   if CanWithdraw == "yes":
-    await Withdraw.WithdrawFromRaid(message, bot, UserID)
+    await Withdraw.WithdrawFromRaid(message, bot, UserID, ctx)
     conn.close()
     return
   if CanWithdraw == "no":

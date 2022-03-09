@@ -8,7 +8,7 @@ from Helpers import DateTimeFormatHelper
 from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 
-async def WithdrawFromRaid(message, bot, UserID):
+async def WithdrawFromRaid(message, bot, UserID, ctx):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:

@@ -91,7 +91,7 @@ async def JoinRaid(message, bot, RoleName, UserID, ctx):
 
     # Offer to withdraw if user is signed up as this role
     if RoleID == RoleIDSignedUpAs:
-      await JoinHelper.WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs)
+      await JoinHelper.WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, ctx)
       conn.close()
     # Offer to change role if user is signed up with another role
     elif RoleID != RoleIDSignedUpAs:
