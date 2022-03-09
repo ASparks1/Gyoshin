@@ -9,7 +9,6 @@ from Commands import AddDefaultTemplates
 from Commands import AddTemplate
 from Commands import DeleteTemplate
 from Commands import Runs
-from Commands import Commands
 from Commands import Dismiss
 from Commands import AddRun
 from Commands import MyRuns
