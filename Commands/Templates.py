@@ -42,7 +42,7 @@ async def GetTemplates(ctx, bot):
       NrOfDps = row[3]
       NrOfHealers = row[4]
     except:
-      await DMHelper.DMUser(message, "Unable to convert variables")
+      await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
       conn.close()
       return
 

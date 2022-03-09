@@ -120,7 +120,7 @@ async def WithdrawFromRaid(message, bot, UserID):
       conn.close()
       return
   else:
-    await DMHelper.DMUser(message, "Unable to withdraw because you are not a member of this run")
+    await DMHelper.DMUserByID(bot, UserID, "Unable to withdraw because you are not a member of this run")
     conn.close()
     return
 

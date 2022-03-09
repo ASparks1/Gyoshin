@@ -87,7 +87,7 @@ async def ListMyRunsHelper(ctx, bot, RunType):
           conn.close()
           return
       except:
-        await DMHelper.DMUser(ctx, "Unable to convert variables")
+        await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
         conn.close()
         return
 
@@ -102,6 +102,6 @@ async def ListMyRunsHelper(ctx, bot, RunType):
           RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
           Message = f"{Message}{RunMessage}"
 
-    await DMHelper.DMUser(ctx, f"{Message}")
+    await DMHelper.DMUserByID(bot, UserID, f"{Message}")
     conn.close()
     return
