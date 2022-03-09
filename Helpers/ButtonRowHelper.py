@@ -17,8 +17,8 @@ async def FirstRowButtons(interaction, bot, UserID, ctx):
     #try:
     await Join.JoinRaid(interaction.message, bot, "dps", UserID, ctx)
     #except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
-    return
+    #await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
+    #return
   if interaction.custom_id == "healer_btn":
     #try:
     await Join.JoinRaid(interaction.message, bot, "healer", UserID, ctx)

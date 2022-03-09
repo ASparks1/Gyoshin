@@ -19,7 +19,7 @@ from Helpers import MemberHelper
 from Helpers import RescheduleHelper
 from Helpers import CancelHelper
 
-async def OnAddCancelReaction(message, bot, UserID):
+async def OnAddCancelReaction(message, bot, UserID, ctx):
   global CancelNotifications
   CancelNotifications = None
   conn = sqlite3.connect('RaidPlanner.db')
@@ -47,7 +47,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       return
 
   try:
-    GuildName = await OriginHelper.GetName(message)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
     conn.close()
@@ -204,14 +204,14 @@ async def OnAddRallyReaction(message, bot, UserID, ctx):
     conn.close()
     return
 
-  try:
-    now = discord.utils.utcnow()
-    DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M")
-    TimeDifference = DateTime - now
-  except:
-    await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
-    conn.close()
-    return
+  #try:
+  now = discord.utils.utcnow()
+  DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M", tzinfo=timezone.utc)
+  TimeDifference = DateTime - now
+  #except:
+  #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
+  #  conn.close()
+  #  return
 
   if timedelta(minutes=-15) < TimeDifference < timedelta(hours=1):
     try:
