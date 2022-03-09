@@ -4,7 +4,7 @@ from Helpers import DMHelper
 
 # Helper function to convert local date to sqlite format
 # Expected input format is DD-MM-YYYY HH:MM
-async def LocalToSqlite(message, datetime):
+async def LocalToSqlite(ctx, datetime):
   pattern = re.compile(r'((\d{2})-(\d{2})-(\d{4})) (\d{2}):(\d{2})')
   match = pattern.match(datetime)
 
@@ -23,14 +23,14 @@ async def LocalToSqlite(message, datetime):
     minute = splittime[1]
 
     sqlitedatetime = f"{year}-{month}-{day} {hour}:{minute}"
-    isdatevalid = await DateTimeValidationHelper.ValidateDateTime(message, day, month, year, hour, minute)
+    isdatevalid = await DateTimeValidationHelper.ValidateDateTime(ctx, day, month, year, hour, minute)
 
     if isdatevalid:
       return sqlitedatetime
 
 # Helper function to convert sqlite date to local format
 # Expected input format is YYYY-MM-DD HH:MM
-async def SqliteToLocal(message, datetime):
+async def SqliteToLocal(ctx, datetime):
   pattern = re.compile(r'((\d{4})-(\d{2})-(\d{2})) (\d{2}):(\d{2})')
   match = pattern.match(datetime)
 
@@ -48,7 +48,7 @@ async def SqliteToLocal(message, datetime):
     hour = splittime[0]
     minute = splittime[1]
 
-    isdatevalid = await DateTimeValidationHelper.ValidateDateTime(message, day, month, year, hour, minute)
+    isdatevalid = await DateTimeValidationHelper.ValidateDateTime(ctx, day, month, year, hour, minute)
 
     if isdatevalid:
       localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
