@@ -40,14 +40,14 @@ async def GetRunDateTime(bot, ctx, UserID):
       await DMHelper.DMUserByID(bot, UserID, "1: Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
       continue
 
-    #try:
-    sqldatetime = await DateTimeFormatHelper.LocalToSqlite(ctx, response.content)
-    if not sqldatetime:
-      await DMHelper.DMUserByID(bot, UserID, "2: Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
+    try:
+      sqldatetime = await DateTimeFormatHelper.LocalToSqlite(ctx, response.content)
+      if not sqldatetime:
+        await DMHelper.DMUserByID(bot, UserID, "2: Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
+        continue
+    except:
+      await DMHelper.DMUserByID(bot, UserID, "3: Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
       continue
-    #except:
-    #  await DMHelper.DMUserByID(bot, UserID, "3: Invalid date and time detected, please use the dd-mm-yyyy hh:mm format")
-    #  continue
 
     try:
       DateTime = response.content
