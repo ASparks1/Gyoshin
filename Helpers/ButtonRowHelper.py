@@ -37,9 +37,9 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
     #try:
     Message = await ReactionHelper.OnMemberReaction(interaction.message, bot, ctx)
     if Message:
-      await interaction.respond(content=f"{Message}")
+      await ctx.respond(content=f"{Message}", ephemeral=True)
     elif not Message:
-      await interaction.respond(content="No message was returned")
+      await ctx.respond(content="No message was returned", ephemeral=True)
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return
@@ -47,9 +47,9 @@ async def SecondRowButtons(interaction, bot, UserID, ctx):
     #try:
     Message = await ReactionHelper.OnReservesReaction(interaction.message, bot, ctx)
     if Message:
-      await interaction.respond(content=f"{Message}")
+      await ctx.respond(content=f"{Message}")
     elif not Message:
-      await interaction.respond(content="No reserves have signed up for this run")
+      await ctx.respond(content="No reserves have signed up for this run")
     #except:
     #  await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining information for this run.")
     #  return

@@ -1,6 +1,7 @@
 import sqlite3
 import re
 import asyncio
+import discord
 from datetime import datetime
 from datetime import timedelta
 from discord import ChannelType
@@ -77,7 +78,7 @@ async def OnAddCancelReaction(message, bot, UserID):
     conn.close()
     return
 
-async def OnAddRescheduleReaction(message, bot, UserID):
+async def OnAddRescheduleReaction(message, bot, UserID, ctx):
   global RescheduleNotifications
   RescheduleNotifications = None
   conn = sqlite3.connect('RaidPlanner.db')
@@ -118,7 +119,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
       return
 
     try:
-      GuildName = await OriginHelper.GetName(message)
+      GuildName = await OriginHelper.GetName(ctx, bot, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the server information")
       conn.close()
@@ -265,16 +266,16 @@ async def OnAddRallyReaction(message, bot, UserID, ctx):
     return
   return
 
-async def OnMemberReaction(message, bot):
+async def OnMemberReaction(message, bot, ctx):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if RaidID:
-    Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID)
+    Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID, ctx)
     return Message
 
-async def OnReservesReaction(message, bot):
+async def OnReservesReaction(message, bot, ctx):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if RaidID:
-    Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID)
+    Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID, ctx)
     return Message
 
 async def OnAddEditDescReaction(message, bot, UserID):

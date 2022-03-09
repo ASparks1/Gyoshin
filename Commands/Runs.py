@@ -92,7 +92,7 @@ async def ListRunsOnDate(ctx, bot, date):
 
         if OrganizerName:
           # Create buttons to add
-          tnk_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tnk_btn")
+          tank_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tank_btn")
           dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger, custom_id="dps_btn")
           healer_btn = Button(label="Healer", style=discord.ButtonStyle.success, custom_id="healer_btn")
           rally_btn = Button(label="Rally", custom_id="rally_btn")
@@ -109,13 +109,7 @@ async def ListRunsOnDate(ctx, bot, date):
           async def button_callback(interaction):
             await interaction.response.defer(ephemeral=True)
             await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
-            #if interaction.custom_id in ("tank_btn", "dps_btn", "healer_btn", "rally_btn"):
-            #  await ButtonRowHelper.FirstRowButtons(interaction, bot, UserID)
-            #elif interaction.custom_id in ("members_btn", "reserves_btn", "messagemembers_btn", "dismissmembers_btn"):
-            #  await ButtonRowHelper.SecondRowButtons(interaction, bot, UserID)
-            #elif interaction.custom_id in ("editdesc_btn", "neworganizer_btn", "reschedule_btn", "cancel_btn"):
-            #  await ButtonRowHelper.ThirdRowButtons(interaction, bot, UserID)
-          tnk_btn.callback = button_callback
+          tank_btn.callback = button_callback
           dps_btn.callback = button_callback
           healer_btn.callback = button_callback
           rally_btn.callback = button_callback
@@ -130,7 +124,7 @@ async def ListRunsOnDate(ctx, bot, date):
 
           # Create view and add buttons to it
           view=View()
-          view.add_item(tnk_btn)
+          view.add_item(tank_btn)
           view.add_item(dps_btn)
           view.add_item(healer_btn)
           view.add_item(rally_btn)

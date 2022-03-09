@@ -9,7 +9,7 @@ from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 from Helpers import ChangeRoleHelper
 
-async def ChangeRole(message, bot, RoleName, UserID):
+async def ChangeRole(message, bot, RoleName, UserID, ctx):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:

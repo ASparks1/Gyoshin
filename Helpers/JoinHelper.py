@@ -81,7 +81,7 @@ async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName
     return
 
 # Helper function to allow a user to change role
-async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName):
+async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName, ctx):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
@@ -105,7 +105,7 @@ async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildNa
       return
 
   if CanChangeRole == "yes":
-    await ChangeRole.ChangeRole(message, bot, RoleName, UserID)
+    await ChangeRole.ChangeRole(message, bot, RoleName, UserID, ctx)
     conn.close()
     return
   if CanChangeRole == "no":

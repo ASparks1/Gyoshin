@@ -95,7 +95,7 @@ async def JoinRaid(message, bot, RoleName, UserID, ctx):
       conn.close()
     # Offer to change role if user is signed up with another role
     elif RoleID != RoleIDSignedUpAs:
-      await JoinHelper.ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName)
+      await JoinHelper.ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName, ctx)
       conn.close()
 
   if not usercheck:

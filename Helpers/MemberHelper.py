@@ -61,7 +61,7 @@ async def OnMemberLeaveOrRemove(member):
     return
 
 # Helper function to list raid members or reserves
-async def ListMembers(bot, message, Type, RaidID):
+async def ListMembers(bot, message, Type, RaidID, ctx):
   Message = None
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
