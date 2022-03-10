@@ -441,7 +441,7 @@ async def CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, Nr
     view.add_item(reschedule_btn)
     view.add_item(cancel_btn)
 
-    await ctx.respond(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
+    await ctx.channel.send(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
 
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong creating the run")
