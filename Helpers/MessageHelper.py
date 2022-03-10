@@ -105,7 +105,7 @@ async def MessageRaidMembers(message, bot, UserID, ctx):
       MessageToSend = response.content
       MessageToSend = f"{OrganizerName} is messaging you the following from {RaidName} on {LocalDate} from the {GuildName} server:\n{MessageToSend}"
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to message the other members of this run.")
       conn.close()
       return
 
