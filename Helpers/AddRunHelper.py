@@ -411,7 +411,7 @@ async def CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, Nr
 
     # Define button callback actions
     async def button_callback(interaction):
-      await interaction.response.defer(ephemeral=True)
+      await interaction.response.send_message(content="Processing", ephemeral=True)
       await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
     tank_btn.callback = button_callback
     dps_btn.callback = button_callback

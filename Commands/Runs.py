@@ -107,7 +107,7 @@ async def ListRunsOnDate(ctx, bot, date):
 
           # Define button callback actions
           async def button_callback(interaction):
-            await interaction.response.defer(ephemeral=True)
+            await interaction.response.send_message(content="Processing", ephemeral=True)
             await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
           tank_btn.callback = button_callback
           dps_btn.callback = button_callback
