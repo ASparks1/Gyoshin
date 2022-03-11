@@ -1,9 +1,11 @@
 import discord
 from Helpers import ButtonInteractionHelper
 
-class RaidInfoView(discord.ui.View)
+class RaidInfoView(discord.ui.View):
   def __init__(self, bot, ctx):
-      super().__init__(timeout=None)
+    self.bot = bot
+    self.ctx = ctx
+    super().__init__(timeout=None)
 
   @discord.ui.button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tank_btn")
   async def tank(self, button: discord.ui.Button, interaction: discord.Interaction):
