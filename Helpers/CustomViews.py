@@ -3,6 +3,7 @@ from discord.ext import commands
 from Helpers import ButtonInteractionHelper
 
 class RaidInfoView(discord.ui.View):
+"""View with all button options to attach to raid info message."""
   def __init__(self, bot, ctx, *args, **kwargs):
     if bot is not None:
       self.bot=bot
