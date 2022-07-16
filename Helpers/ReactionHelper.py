@@ -56,7 +56,8 @@ async def OnAddCancelReaction(message, bot, UserID, ctx):
 
   CancelRun = None
   while not CancelRun:
-    await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(DateTime)
+    await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDateDisplay} in the {GuildName} server (Y/N)?")
     try:
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       if response.content in("Y","y","Yes","yes"):
@@ -320,7 +321,8 @@ async def OnAddEditDescReaction(message, bot, UserID):
         conn.close()
         return
 
-      await DMHelper.DMUserByID(bot, UserID, f"Please provide the new description for {RaidName} on {LocalDate}")
+      LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+      await DMHelper.DMUserByID(bot, UserID, f"Please provide the new description for {RaidName} on {LocalDateDisplay}")
       try:
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       except asyncio.TimeoutError:
@@ -333,7 +335,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
         NewDescription = response.content
 
         while not EditDescription:
-          await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalDate} (Y/N)?")
+          await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalDateDisplay} (Y/N)?")
           try:
             response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
             if response.content in("Y","y","Yes","yes"):
@@ -352,7 +354,8 @@ async def OnAddEditDescReaction(message, bot, UserID):
           try:
             c.execute("UPDATE Raids set Name = (?) WHERE ID = (?)", (NewDescription, RaidID,))
             conn.commit()
-            await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalDate} from {RaidName} to {NewDescription}.")
+            LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+            await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalDateDisplay} from {RaidName} to {NewDescription}.")
             UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
             await message.edit(content=UpdatedMessage)
             conn.close()

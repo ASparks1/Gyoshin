@@ -2,6 +2,7 @@ import asyncio
 import sqlite3
 import discord
 from discord import ChannelType
+from Helpers import DateTimeFormatHelper
 from Helpers import DMHelper
 from Helpers import MemberHelper
 from Helpers import RoleHelper
@@ -14,7 +15,9 @@ async def RescheduleConfirmationSection(bot, message, UserID, RaidID, RaidName, 
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
   while not RescheduleRun:
-    await DMHelper.DMUserByID(bot, UserID, f"Do you want to reschedule the run {RaidName} from {LocalOldDate} to {NewDate} in the {GuildName} server (Y/N)?")
+    LocalOldDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalOldDate)
+    LocalNewDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(NewDate)
+    await DMHelper.DMUserByID(bot, UserID, f"Do you want to reschedule the run {RaidName} from {LocalOldDateDisplay} to {LocalNewDateDisplay} in the {GuildName} server (Y/N)?")
     try:
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       if response.content in("Y","y","Yes","yes"):
@@ -104,11 +107,13 @@ async def Reschedule(bot, message, UserID, RaidID, RaidName, LocalOldDate, NewDa
   try:
     conn.commit()
     UserName = await UserHelper.GetDisplayName(message, UserID, bot)
+    LocalOldDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalOldDate)
+    LocalNewDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(NewDate)
 
     if RescheduleNotifications:
-      await message.channel.send(f"{RescheduleNotifications}\n{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}, if you were signed up to this run please sign up again on the new date if you can.")
+      await message.channel.send(f"{RescheduleNotifications}\n{UserName} has rescheduled the run {RaidName} from {LocalOldDateDisplay} to {LocalNewDateDisplay}, if you were signed up to this run please sign up again on the new date if you can.")
     elif not RescheduleNotifications:
-      await message.channel.send(f"{UserName} has rescheduled the run {RaidName} from {LocalOldDate} to {NewDate}.")
+      await message.channel.send(f"{UserName} has rescheduled the run {RaidName} from {LocalOldDateDisplay} to {LocalNewDateDisplay}.")
 
     await message.delete()
     conn.close()
