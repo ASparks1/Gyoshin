@@ -332,6 +332,7 @@ async def SummarizeRunInfoForConfirmation(bot, ctx, UserID, Name, DateTime, NrOf
   Confirm = None
   while not Confirm:
     try:
+      DateTime = await DateTimeFormatHelper.LocalToUnixTimestamp(DateTime)
       await DMHelper.DMUserByID(bot, UserID, f"Please confirm that you wish to create a run with the following details (Y/N): \n**Description**: {Name}\n**Date:** {DateTime}\n**Number of Tanks:** {NrOfTanks}\n**Number of Healers:** {NrOfHealers}\n**Number of DPS:** {NrOfDps}")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
     except asyncio.TimeoutError:
@@ -441,7 +442,8 @@ async def CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, Nr
     view.add_item(reschedule_btn)
     view.add_item(cancel_btn)
 
-    await ctx.channel.send(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date (UTC):** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
+    DateTime = await DateTimeFormatHelper.LocalToUnixTimestamp(DateTime)
+    await ctx.channel.send(f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {CreatorDisplay}\n**Date:** {DateTime}\n**Status:** {Status}\n{TankIcon} {NumberOfCurrentTanks}\/{NrOfTanks} {DpsIcon} {NumberOfCurrentDps}\/{NrOfDps} {HealerIcon} {NumberOfCurrentHealers}\/{NrOfHealers}", view=view)
 
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong creating the run")

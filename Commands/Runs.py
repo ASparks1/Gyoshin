@@ -86,9 +86,9 @@ async def ListRunsOnDate(ctx, bot, date):
             return
 
         except:
-          await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
-          conn.close()
-          return
+         await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
+         conn.close()
+         return
 
         if OrganizerName:
           # Create buttons to add
@@ -136,7 +136,8 @@ async def ListRunsOnDate(ctx, bot, date):
           view.add_item(neworganizer_btn)
           view.add_item(reschedule_btn)
           view.add_item(cancel_btn)
-          await ctx.channel.send(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}", view=view)
+          LocalDate = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+          await ctx.respond(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}", view=view)
 
     else:
        await ctx.channel.send(f"No runs found on {date}")

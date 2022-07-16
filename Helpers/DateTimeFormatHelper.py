@@ -1,4 +1,8 @@
 import re
+import datetime
+import math
+from datetime import datetime
+from datetime import timezone
 from Helpers import DateTimeValidationHelper
 from Helpers import DMHelper
 
@@ -51,8 +55,8 @@ async def SqliteToLocal(ctx, datetime):
     isdatevalid = await DateTimeValidationHelper.ValidateDateTime(ctx, day, month, year, hour, minute)
 
     if isdatevalid:
-      localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
-      return localdatetime
+     localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
+     return localdatetime
 
 # Helper function without future check
 async def SqliteToLocalNoCheck(Date):
@@ -68,6 +72,29 @@ async def SqliteToLocalNoCheck(Date):
   splittime = time.split(':')
   hour = splittime[0]
   minute = splittime[1]
-
+  
   localdatetime = f"{day}-{month}-{year} {hour}:{minute}"
   return localdatetime
+
+# Helper function to convert local date time format to unix timestamp
+async def LocalToUnixTimestamp(Date):
+  splitdate = Date.split(' ')
+  date = splitdate[0]
+  time = splitdate[1]
+
+  splitdate = date.split('-')
+  day = splitdate[0]
+  month = splitdate[1]
+  year = splitdate[2]
+
+  splittime = time.split(':')
+  hour = splittime[0]
+  minute = splittime[1]
+
+  # Convert time into users local Discord time
+  dt = datetime(int(year), int(month), int(day), int(hour), int(minute))
+  unixTimestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+  # Truncate in order to remove decimal values as Discord will not translate this into users date & time if the timestamp has a .0 after it as returned by previous action
+  unixTimestamp = math.trunc(unixTimestamp)
+  unixTimestamp = f"<t:{unixTimestamp}:f>"
+  return unixTimestamp
