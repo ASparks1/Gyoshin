@@ -3,6 +3,7 @@ import sqlite3
 from Commands import ChangeRole
 from Commands import Withdraw
 from discord import ChannelType
+from Helpers import DateTimeFormatHelper
 from Helpers import DMHelper
 from Helpers import MessageHelper
 from Helpers import NotificationHelper
@@ -30,7 +31,8 @@ async def NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, 
           UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
           await message.edit(content=UpdatedMessage)
           NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, Organizer)
-          await message.channel.send(f"{NotifyOrganizerMessage}\nYour crew for {Description} on {LocalDate} has been assembled!")
+          LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+          await message.channel.send(f"{NotifyOrganizerMessage}\nYour crew for {Description} on {LocalDateDisplay} has been assembled!")
           return
         except:
           await DMHelper.DMUserByID(bot, UserID, "Something went wrong joining you to this run.")
@@ -57,7 +59,8 @@ async def WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName
 
   CanWithdraw = None
   while not CanWithdraw:
-    await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to withdraw from this run (Y/N)?")
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+    await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDateDisplay} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to withdraw from this run (Y/N)?")
     try:
       withdrawresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       if withdrawresponse.content in("Y","y","Yes","yes"):
@@ -89,7 +92,8 @@ async def ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildNa
 
   CanChangeRole = None
   while not CanChangeRole:
-    await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDate} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to change to {RoleName} for this run (Y/N)?")
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+    await DMHelper.DMUserByID(bot, UserID, f"You have already joined the run {Description} on {LocalDateDisplay} in the {GuildName} server as a {RoleNameSignedUpAs}, would you like to change to {RoleName} for this run (Y/N)?")
     try:
       changeroleresponse = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       if changeroleresponse.content in("Y","y","Yes","yes"):
@@ -201,7 +205,8 @@ async def JoinUserToRaid(Origin, UserID, RaidID, RoleID):
 async def UserJoinedMessage(bot, message, UserID, Description, LocalDate, RoleName, RaidID, Organizer):
   try:
     JoinedUserDisplayName = await UserHelper.GetDisplayName(message, UserID, bot)
-    await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a {RoleName}!")
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+    await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDateDisplay} as a {RoleName}!")
     UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
     await message.edit(content=UpdatedMessage)
     await NotifyOrganizer(message, bot, UserID, RaidID, Organizer, Description, LocalDate)

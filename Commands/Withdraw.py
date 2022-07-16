@@ -94,6 +94,7 @@ async def WithdrawFromRaid(message, bot, UserID, ctx):
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
       rows = c.fetchall()
+      LocalDate = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
       if not rows:
         c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         try:
