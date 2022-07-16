@@ -56,7 +56,7 @@ async def OnAddCancelReaction(message, bot, UserID, ctx):
 
   CancelRun = None
   while not CancelRun:
-    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(DateTime)
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
     await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDateDisplay} in the {GuildName} server (Y/N)?")
     try:
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)

@@ -23,7 +23,7 @@ async def CancelRun(bot, message, Creator, UserID, RaidID, RaidName, LocalDate):
 
   CancelNotifications = await MemberHelper.CheckForMembersBesidesOrganizer(bot, message, RaidID, UserID)
   try:
-    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(DateTime)
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
     if CancelNotifications:
       await message.channel.send(f"{CancelNotifications}\n{OrganizerDisplayName} has cancelled the run {RaidName} on {LocalDateDisplay}.")
     elif not CancelNotifications:
