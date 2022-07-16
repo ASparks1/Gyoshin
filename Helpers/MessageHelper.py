@@ -2,6 +2,7 @@ import sqlite3
 import asyncio
 import discord
 from discord import ChannelType
+from Helpers import DateTimeFormatHelper
 from Helpers import RaidIDHelper
 from Helpers import DMHelper
 from Helpers import RoleIconHelper
@@ -100,10 +101,11 @@ async def MessageRaidMembers(message, bot, UserID, ctx):
   rows = c.fetchall()
   if rows:
     try:
-      await DMHelper.DMUserByID(bot, UserID, f"Please provide the message you want to send to the members of {RaidName} on {LocalDate} in the {GuildName} Server")
+      LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+      await DMHelper.DMUserByID(bot, UserID, f"Please provide the message you want to send to the members of {RaidName} on {LocalDateDisplay} in the {GuildName} Server")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       MessageToSend = response.content
-      MessageToSend = f"{OrganizerName} is messaging you the following from {RaidName} on {LocalDate} from the {GuildName} server:\n{MessageToSend}"
+      MessageToSend = f"{OrganizerName} is messaging you the following from {RaidName} on {LocalDateDisplay} from the {GuildName} server:\n{MessageToSend}"
     except asyncio.TimeoutError:
       await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to message the other members of this run.")
       conn.close()
