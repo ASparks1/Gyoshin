@@ -44,6 +44,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
         NrOfhealersSignedUp = row[8]
         Date = row[9]
         LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
+        LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
         try:
           OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
         except:
@@ -52,7 +53,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
           return
 
         if OrganizerName:
-          UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
+          UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date:** {LocalDateDisplay}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
 
         conn.close()
         return UpdatedMessage

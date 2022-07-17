@@ -73,6 +73,7 @@ async def ListMyRunsHelper(ctx, bot, RunType):
         Date = row[10]
         Origin = row[11]
         LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
+        LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
         try:
           guild = bot.get_guild(Origin)
           member_obj = await guild.fetch_member(OrganizerUserID)
@@ -91,14 +92,14 @@ async def ListMyRunsHelper(ctx, bot, RunType):
         return
 
       if OrganizerName:
-        RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
+        RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date:** {LocalDateDisplay}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
         if not Message:
           if RunType == 'MyRuns':
             Message = f"You have signed up for the following run(s):\n{RunMessage}"
           elif RunType == 'MyReserveRuns':
             Message = f"You are on the reserves list for the following run(s):\n{RunMessage}"
         elif Message:
-          RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
+          RunMessage = f"**Run:** {ID}\n**Description:** {Name}\n**Server:** {guild}\n**Organizer:** {OrganizerName}\n**Date:** {LocalDateDisplay}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}\n"
           Message = f"{Message}{RunMessage}"
 
     await DMHelper.DMUserByID(bot, UserID, f"{Message}")
