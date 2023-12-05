@@ -61,7 +61,7 @@ async def OnMemberLeaveOrRemove(member):
     return
 
 # Helper function to list raid members or reserves
-async def ListMembers(bot, message, Type, RaidID):
+async def ListMembers(bot, ctx, Type, RaidID):
   Message = None
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
@@ -86,7 +86,7 @@ async def ListMembers(bot, message, Type, RaidID):
       UserID = row[0]
       RoleID = row[1]
       RoleName = await RoleHelper.GetRoleName(RoleID)
-      UserName = await UserHelper.GetDisplayName(message, UserID, bot)
+      UserName = await UserHelper.GetDisplayName(ctx, UserID, bot)
       if not RoleName:
         await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the role name for one of the members")
         conn.close()

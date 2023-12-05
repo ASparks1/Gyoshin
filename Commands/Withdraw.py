@@ -8,14 +8,14 @@ from Helpers import DateTimeFormatHelper
 from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 
-async def WithdrawFromRaid(message, bot, UserID):
+async def WithdrawFromRaid(message, bot, UserID, ctx):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the run number.")
     return
 
-  Origin = await OriginHelper.GetOrigin(message)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving the server ID")
     return
@@ -94,6 +94,7 @@ async def WithdrawFromRaid(message, bot, UserID):
     try:
       c.execute("SELECT UserID FROM RaidMembers WHERE RaidID = (?)", (RaidID,))
       rows = c.fetchall()
+      LocalDate = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
       if not rows:
         c.execute("DELETE FROM Raids WHERE ID = (?)", (RaidID,))
         try:
@@ -120,7 +121,7 @@ async def WithdrawFromRaid(message, bot, UserID):
       conn.close()
       return
   else:
-    await DMHelper.DMUser(message, "Unable to withdraw because you are not a member of this run")
+    await DMHelper.DMUserByID(bot, UserID, "Unable to withdraw because you are not a member of this run")
     conn.close()
     return
 

@@ -2,15 +2,14 @@ import os
 from datetime import datetime
 import discord
 import dotenv
+import sys
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
-from discord_components import DiscordComponents, Button, ButtonStyle
 from Commands import Templates
 from Commands import AddDefaultTemplates
 from Commands import AddTemplate
 from Commands import DeleteTemplate
 from Commands import Runs
-from Commands import Commands
 from Commands import Dismiss
 from Commands import AddRun
 from Commands import MyRuns
@@ -24,18 +23,20 @@ from Helpers import MemberHelper
 intents = discord.Intents.default()
 intents.members = True
 intents.reactions = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+intents.message_content = True
+
+bot = commands.Bot(intents=intents)
+client = discord.Client()
 
 @bot.event
 async def on_ready():
   guilds = len(bot.guilds)
   print(f"Ready, I'm active in {guilds} servers!")
-  DiscordComponents(bot)
 
   # Nightly job to clean up old data
   @tasks.loop(minutes=60.0)
   async def CleanUpOldRaidData():
-    if datetime.utcnow().hour == 5:
+    if discord.utils.utcnow().hour == 5:
       print("Starting cleanup of old raid data!")
       await DeleteOldRaidDataHelper.DeleteOldRaidData()
   CleanUpOldRaidData.start()
@@ -47,41 +48,52 @@ async def on_member_remove(member):
   await MemberHelper.OnMemberLeaveOrRemove(member)
 
 # Bot commands
-@bot.command(name='templates', aliases=['Templates'])
+@bot.slash_command()
 async def templates(ctx):
-  await Templates.GetTemplates(ctx.message)
+ """Lists all available templates on the server"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await Templates.GetTemplates(ctx, bot)
 
-@bot.command(name='runs', aliases=['Runs'])
-async def runs(ctx):
-  await Runs.ListRunsOnDate(ctx.message, bot)
+@bot.slash_command()
+async def runs(ctx, date):
+ """Lists all runs on a given date"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await Runs.ListRunsOnDate(ctx, bot, date)
 
-@bot.command(name='commands', aliases=['Commands'])
-async def commands(ctx):
-  await Commands.ListCommands(ctx.message, bot)
-
-@bot.command(name='addrun', aliases=['Addrun'])
+@bot.slash_command()
 async def addrun(ctx):
-  await AddRun.AddRunInDM(ctx.message, bot)
+ """Starts a conversation where the bot guides you through the process to create a run"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await AddRun.AddRunInDM(ctx, bot)
 
-@bot.command(name='adddefaulttemplates', aliases=['Adddefaulttemplates', 'AddDefaultTemplates'])
+@bot.slash_command()
 async def adddefaulttemplates(ctx):
-  await AddDefaultTemplates.AddDefaultTemplates(ctx.message)
+ """Adds some default templates for FFXIV to the server"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await AddDefaultTemplates.AddDefaultTemplates(ctx, bot)
 
-@bot.command(name='addtemplate', aliases=['Addtemplate', 'AddTemplate'])
+@bot.slash_command()
 async def addtemplate(ctx):
-  await AddTemplate.AddTemplate(ctx.message, bot)
+ """Starts a conversation where the bot guides you through the process to add a template"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await AddTemplate.AddTemplate(ctx, bot)
 
-@bot.command(name='deletetemplate', aliases=['Deletetemplate', 'DeleteTemplate'])
+@bot.slash_command()
 async def deletetemplate(ctx):
-  await DeleteTemplate.DeleteTemplate(ctx.message, bot)
+ """Gives the creator of a template the option to delete it"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await DeleteTemplate.DeleteTemplate(ctx, bot)
 
-@bot.command(name='dismiss', aliases=['Dismiss'])
-async def dismiss(ctx):
-  await Dismiss.DismissMember(ctx.message, bot)
-
-@bot.command(name='myruns', aliases=['Myruns', 'MyRuns'])
+@bot.slash_command()
 async def myruns(ctx):
-  await MyRuns.ListMyRuns(ctx.message, bot)
+ """Lists upcoming runs you've signed up for up to a maxium of 5"""
+ await ctx.respond("Executing command", ephemeral=True)
+ await MyRuns.ListMyRuns(ctx, bot)
+
+@bot.slash_command()
+async def testpersistentview(ctx):
+ """Testing something to add a persistent view"""
+ await ctx.respond("Test", view=RaidInfoView(interaction, bot, ctx))
 
 # Message events
 # Do nothing if the message is from the bot
@@ -93,8 +105,9 @@ async def on_message(message):
   await bot.process_commands(message)
 
 # Button events
-@bot.event
+@client.event
 async def on_button_click(interaction):
+  print("Button click detected")
   await ButtonInteractionHelper.OnButtonClick(interaction, bot)
 
 # Get bot token and run on server

@@ -6,19 +6,19 @@ from Helpers import UserHelper
 from Helpers import DMHelper
 from discord import ChannelType
 
-async def AddTemplate(message, bot):
+async def AddTemplate(ctx, bot):
   try:
-    Origin = await OriginHelper.GetOrigin(message)
-    UserID = message.author.id
-    GuildName = await OriginHelper.GetName(message)
-    Creator = await UserHelper.GetUserID(message)
-    CreatorDisplay = await UserHelper.GetDisplayName(message, Creator, bot)
+    UserID = ctx.author.id
+    Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
+    Creator = await UserHelper.GetUserID(ctx, UserID, bot)
+    CreatorDisplay = await UserHelper.GetDisplayName(ctx, Creator, bot)
   except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
   def DMCheck(dm_message):
-    return dm_message.channel.type == ChannelType.private and dm_message.author == message.author
+    return dm_message.channel.type == ChannelType.private and dm_message.author == ctx.author
 
   await DMHelper.DMUserByID(bot, UserID, f"Hi {CreatorDisplay}, let's create a template in the {GuildName} server.\nFirst, give me the name of your template, please beware that spaces are not allowed in template names.\n")
   try:
@@ -46,6 +46,6 @@ async def AddTemplate(message, bot):
       conn.close()
       return
 
-  await AddTemplateHelper.NrOfPlayersAndConfirmSection(bot, message, Origin, UserID, TemplateName)
+  await AddTemplateHelper.NrOfPlayersAndConfirmSection(bot, ctx, Origin, UserID, TemplateName)
   conn.close()
   return

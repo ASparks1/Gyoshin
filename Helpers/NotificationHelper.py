@@ -3,7 +3,7 @@ from Helpers import DMHelper
 from Helpers import OriginHelper
 
 # Helper function to tag a list of users
-async def NotifyRaidMembers(message, raidmembers):
+async def NotifyRaidMembers(ctx, raidmembers):
   try:
     Message = None
     for member in raidmembers:
@@ -14,14 +14,14 @@ async def NotifyRaidMembers(message, raidmembers):
         Message = f"{Message} {Notification}"
     return Message
   except:
-    await DMHelper.DMUser(message, "Something went wrong tagging one of the users.")
+    await DMHelper.DMUser(ctx, "Something went wrong tagging one of the users.")
     return
 
 # Helper function to tag a single user
-async def NotifyUser(message, userid):
+async def NotifyUser(ctx, userid):
   try:
     Message = f"<@!{userid}>"
     return Message
   except:
-    await DMHelper.DMUser(message, "Something went wrong tagging the user.")
+    await DMHelper.DMUser(ctx, "Something went wrong tagging the user.")
     return

@@ -2,6 +2,7 @@ import sqlite3
 import asyncio
 import discord
 from discord import ChannelType
+from Helpers import DateTimeFormatHelper
 from Helpers import DMHelper
 
 # Helper function to join reserves
@@ -12,6 +13,7 @@ async def JoinReserves(bot, message, JoinedUserDisplayName, Description, LocalDa
     c.execute("INSERT INTO RaidReserves (Origin, UserID, RaidID, RoleID) VALUES (?, ?, ?, ?)", (Origin, UserID, RaidID, RoleID))
     conn.commit()
     conn.close()
+    LocalDate = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
     await message.channel.send(f"{JoinedUserDisplayName} has joined the party {Description} on {LocalDate} as a reserve {RoleName}!")
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong adding you to the reserves")
@@ -26,6 +28,7 @@ async def WithdrawFromReserves(bot, message, JoinedUserDisplayName, Description,
     c.execute("DELETE FROM RaidReserves WHERE Origin = (?) AND RaidID = (?) and UserID = (?)", (Origin, RaidID, UserID,))
     conn.commit()
     conn.close()
+    LocalDate = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
     await message.channel.send(f"{JoinedUserDisplayName} has withdrawn from the reserves for the party {Description} on {LocalDate}!")
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong removing you from the reserves")

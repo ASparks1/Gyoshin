@@ -3,8 +3,9 @@ from Helpers import OriginHelper
 from Helpers import RoleIconHelper
 from Helpers import DMHelper
 
-async def GetTemplates(message):
-  Origin = await OriginHelper.GetOrigin(message)
+async def GetTemplates(ctx, bot):
+  UserID = ctx.author.id
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
     return
 
@@ -16,19 +17,19 @@ async def GetTemplates(message):
     DpsIcon = await RoleIconHelper.GetDpsIcon()
     HealerIcon = await RoleIconHelper.GetHealerIcon()
   except:
-    await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
     return
 
   try:
     c.execute("SELECT Name, NrOfPlayers, NrOfTanks, NrOfDps, NrOfHealers FROM Templates WHERE Origin = (?)", (Origin,))
   except:
-    await DMHelper.DMUser(message, "Something went wrong trying to retrieve templates")
+    await DMHelper.DMUserByID(bot, UserID, "Something went wrong trying to retrieve templates")
     conn.close()
     return
 
   rows = c.fetchall()
   if not rows:
-    await DMHelper.DMUser(message, "No templates found")
+    await DMHelper.DMUserByID(bot, UserID, "No templates found")
     conn.close()
     return
 
@@ -41,7 +42,7 @@ async def GetTemplates(message):
       NrOfDps = row[3]
       NrOfHealers = row[4]
     except:
-      await DMHelper.DMUser(message, "Unable to convert variables")
+      await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
       conn.close()
       return
 
@@ -53,6 +54,6 @@ async def GetTemplates(message):
         TemplateMessage = f"Name: {Name}\nNumber of players: {NrOfPlayers}\n{TankIcon} {NrOfTanks} {DpsIcon} {NrOfDps} {HealerIcon} {NrOfHealers}"
         Message = f"{Message}{TemplateMessage}\n"
 
-  await DMHelper.DMUser(message, f"{Message}")
+  await DMHelper.DMUserByID(bot, UserID, f"{Message}")
   conn.close()
   return

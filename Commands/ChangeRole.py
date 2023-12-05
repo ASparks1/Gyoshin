@@ -9,14 +9,14 @@ from Helpers import RaidIDHelper
 from Helpers import MessageHelper
 from Helpers import ChangeRoleHelper
 
-async def ChangeRole(message, bot, RoleName, UserID):
+async def ChangeRole(message, bot, RoleName, UserID, ctx):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining run information")
     return
 
-  Origin = await OriginHelper.GetOrigin(message)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
 

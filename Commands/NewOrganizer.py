@@ -69,7 +69,8 @@ async def NewOrganizer(bot, message, UserID):
     CanPromote = None
     while not CanPromote:
       try:
-        await DMHelper.DMUserByID(bot, UserID, f"Do you want to appoint {NewOrganizerDisplayName} as the new organizer of {RaidName} on {LocalDate}? (Y/N)")
+        LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(DateTime)
+        await DMHelper.DMUserByID(bot, UserID, f"Do you want to appoint {NewOrganizerDisplayName} as the new organizer of {RaidName} on {LocalDateDisplay}? (Y/N)")
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if response.content in("Y","y","Yes","yes"):
           CanPromote = 'yes'
@@ -82,7 +83,7 @@ async def NewOrganizer(bot, message, UserID):
           if UpdatedMessage:
             await message.edit(content=UpdatedMessage)
           NotifyOrganizerMessage = await NotificationHelper.NotifyUser(message, NewOrganizerUserID)
-          await message.channel.send(f"{NotifyOrganizerMessage} is the new organizer of {RaidName} on {LocalDate}.")
+          await message.channel.send(f"{NotifyOrganizerMessage} is the new organizer of {RaidName} on {LocalDateDisplay}.")
         elif response.content in("N","n","No","no"):
           CanPromote = "no"
           return

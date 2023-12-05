@@ -15,7 +15,7 @@ from Helpers import JoinHelper
 from Commands import Withdraw
 from Commands import ChangeRole
 
-async def JoinRaid(message, bot, RoleName, UserID):
+async def JoinRaid(message, bot, RoleName, UserID, ctx):
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   except:
@@ -28,8 +28,8 @@ async def JoinRaid(message, bot, RoleName, UserID):
     await DMHelper.DMUserByID(bot, UserID, "Invalid role, please enter a valid role, you can call !roles to see available roles.")
     return
 
-  Origin = await OriginHelper.GetOrigin(message)
-  GuildName = await OriginHelper.GetName(message)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
+  GuildName = await OriginHelper.GetName(ctx, bot, UserID)
 
   if not Origin or not UserID:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the user or server ID.")
@@ -91,11 +91,11 @@ async def JoinRaid(message, bot, RoleName, UserID):
 
     # Offer to withdraw if user is signed up as this role
     if RoleID == RoleIDSignedUpAs:
-      await JoinHelper.WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs)
+      await JoinHelper.WithdrawHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, ctx)
       conn.close()
     # Offer to change role if user is signed up with another role
     elif RoleID != RoleIDSignedUpAs:
-      await JoinHelper.ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName)
+      await JoinHelper.ChangeRoleHelper(message, bot, UserID, Description, LocalDate, GuildName, RoleNameSignedUpAs, RoleName, ctx)
       conn.close()
 
   if not usercheck:

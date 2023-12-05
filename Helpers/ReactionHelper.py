@@ -1,8 +1,10 @@
 import sqlite3
 import re
 import asyncio
+import discord
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 from discord import ChannelType
 from Helpers import DateTimeFormatHelper
 from Helpers import DateTimeValidationHelper
@@ -18,7 +20,7 @@ from Helpers import MemberHelper
 from Helpers import RescheduleHelper
 from Helpers import CancelHelper
 
-async def OnAddCancelReaction(message, bot, UserID):
+async def OnAddCancelReaction(message, bot, UserID, ctx):
   global CancelNotifications
   CancelNotifications = None
   conn = sqlite3.connect('RaidPlanner.db')
@@ -46,7 +48,7 @@ async def OnAddCancelReaction(message, bot, UserID):
       return
 
   try:
-    GuildName = await OriginHelper.GetName(message)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining your nickname.")
     conn.close()
@@ -54,7 +56,8 @@ async def OnAddCancelReaction(message, bot, UserID):
 
   CancelRun = None
   while not CancelRun:
-    await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDate} in the {GuildName} server (Y/N)?")
+    LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+    await DMHelper.DMUserByID(bot, UserID, f"Do you want to cancel the run {RaidName} on {LocalDateDisplay} in the {GuildName} server (Y/N)?")
     try:
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       if response.content in("Y","y","Yes","yes"):
@@ -77,7 +80,7 @@ async def OnAddCancelReaction(message, bot, UserID):
     conn.close()
     return
 
-async def OnAddRescheduleReaction(message, bot, UserID):
+async def OnAddRescheduleReaction(message, bot, UserID, ctx):
   global RescheduleNotifications
   RescheduleNotifications = None
   conn = sqlite3.connect('RaidPlanner.db')
@@ -118,13 +121,13 @@ async def OnAddRescheduleReaction(message, bot, UserID):
       return
 
     try:
-      GuildName = await OriginHelper.GetName(message)
+      GuildName = await OriginHelper.GetName(ctx, bot, UserID)
     except:
       await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the server information")
       conn.close()
       return
 
-    current_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+    current_date = discord.utils.utcnow().strftime("%Y-%m-%d %H:%M")
     await DMHelper.DMUserByID(bot, UserID, f"Hi {username}, please provide me the date to which you want to reschedule the run {RaidName} in the {GuildName} server in the dd-mm-yyyy hh:mm format.")
 
     if OldDate >= current_date:
@@ -164,7 +167,7 @@ async def OnAddRescheduleReaction(message, bot, UserID):
       conn.close()
       return
 
-async def OnAddRallyReaction(message, bot, UserID):
+async def OnAddRallyReaction(message, bot, UserID, ctx):
   global RallyNotifications
   RallyNotifications = None
   try:
@@ -174,7 +177,7 @@ async def OnAddRallyReaction(message, bot, UserID):
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong resolving the run number.")
 
-  Origin = await OriginHelper.GetOrigin(message)
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
     return
 
@@ -204,8 +207,21 @@ async def OnAddRallyReaction(message, bot, UserID):
     return
 
   try:
-    now = datetime.utcnow()
-    DateTime = datetime.strptime(DateTime, "%Y-%m-%d %H:%M")
+    now = discord.utils.utcnow()
+    splitdate = DateTime.split(' ')
+    date = splitdate[0]
+    time = splitdate[1]
+
+    splitdate = date.split('-')
+    year = int(splitdate[0])
+    month = int(splitdate[1])
+    day = int(splitdate[2])
+
+    splittime = time.split(':')
+    hour = int(splittime[0])
+    minute = int(splittime[1])
+
+    DateTime = datetime(year, month, day, hour, minute, tzinfo=timezone.utc)
     TimeDifference = DateTime - now
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong checking dates.")
@@ -265,16 +281,16 @@ async def OnAddRallyReaction(message, bot, UserID):
     return
   return
 
-async def OnMemberReaction(message, bot):
+async def OnMemberReaction(message, bot, ctx):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if RaidID:
-    Message = await MemberHelper.ListMembers(bot, message, 'Members', RaidID)
+    Message = await MemberHelper.ListMembers(bot, ctx, 'Members', RaidID)
     return Message
 
-async def OnReservesReaction(message, bot):
+async def OnReservesReaction(message, bot, ctx):
   RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
   if RaidID:
-    Message = await MemberHelper.ListMembers(bot, message, 'Reserves', RaidID)
+    Message = await MemberHelper.ListMembers(bot, ctx, 'Reserves', RaidID)
     return Message
 
 async def OnAddEditDescReaction(message, bot, UserID):
@@ -305,7 +321,8 @@ async def OnAddEditDescReaction(message, bot, UserID):
         conn.close()
         return
 
-      await DMHelper.DMUserByID(bot, UserID, f"Please provide the new description for {RaidName} on {LocalDate}")
+      LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+      await DMHelper.DMUserByID(bot, UserID, f"Please provide the new description for {RaidName} on {LocalDateDisplay}")
       try:
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       except asyncio.TimeoutError:
@@ -318,7 +335,7 @@ async def OnAddEditDescReaction(message, bot, UserID):
         NewDescription = response.content
 
         while not EditDescription:
-          await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalDate} (Y/N)?")
+          await DMHelper.DMUserByID(bot, UserID, f"Do you want to change the description from {RaidName} to {NewDescription} on {LocalDateDisplay} (Y/N)?")
           try:
             response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
             if response.content in("Y","y","Yes","yes"):
@@ -337,7 +354,8 @@ async def OnAddEditDescReaction(message, bot, UserID):
           try:
             c.execute("UPDATE Raids set Name = (?) WHERE ID = (?)", (NewDescription, RaidID,))
             conn.commit()
-            await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalDate} from {RaidName} to {NewDescription}.")
+            LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+            await message.channel.send(f"{CreatorDisplay} has changed the description of run {RaidID} on {LocalDateDisplay} from {RaidName} to {NewDescription}.")
             UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
             await message.edit(content=UpdatedMessage)
             conn.close()

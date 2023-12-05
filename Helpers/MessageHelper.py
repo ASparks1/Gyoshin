@@ -2,6 +2,7 @@ import sqlite3
 import asyncio
 import discord
 from discord import ChannelType
+from Helpers import DateTimeFormatHelper
 from Helpers import RaidIDHelper
 from Helpers import DMHelper
 from Helpers import RoleIconHelper
@@ -43,6 +44,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
         NrOfhealersSignedUp = row[8]
         Date = row[9]
         LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
+        LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
         try:
           OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
         except:
@@ -51,7 +53,7 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
           return
 
         if OrganizerName:
-          UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
+          UpdatedMessage = f"**Run:** {RaidID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date:** {LocalDateDisplay}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}"
 
         conn.close()
         return UpdatedMessage
@@ -64,14 +66,14 @@ async def UpdateRaidInfoMessage(message, bot, UserID):
       return UpdatedMessage
 
 # Helper function to send a message to raidmembers
-async def MessageRaidMembers(message, bot, UserID):
+async def MessageRaidMembers(message, bot, UserID, ctx):
   def DMCheck(dm_message):
     return dm_message.channel.type == ChannelType.private and dm_message.author.id == UserID
 
   try:
     RaidID = await RaidIDHelper.GetRaidIDFromMessage(message)
     OrganizerName = await UserHelper.GetDisplayName(message, UserID, bot)
-    GuildName = await OriginHelper.GetName(message)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
   except:
     await DMHelper.DMUserByID(bot, UserID, "Something went wrong obtaining the run information.")
     return
@@ -100,12 +102,13 @@ async def MessageRaidMembers(message, bot, UserID):
   rows = c.fetchall()
   if rows:
     try:
-      await DMHelper.DMUserByID(bot, UserID, f"Please provide the message you want to send to the members of {RaidName} on {LocalDate} in the {GuildName} Server")
+      LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+      await DMHelper.DMUserByID(bot, UserID, f"Please provide the message you want to send to the members of {RaidName} on {LocalDateDisplay} in the {GuildName} Server")
       response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
       MessageToSend = response.content
-      MessageToSend = f"{OrganizerName} is messaging you the following from {RaidName} on {LocalDate} from the {GuildName} server:\n{MessageToSend}"
+      MessageToSend = f"{OrganizerName} is messaging you the following from {RaidName} on {LocalDateDisplay} from the {GuildName} server:\n{MessageToSend}"
     except asyncio.TimeoutError:
-      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to reschedule this run.")
+      await DMHelper.DMUserByID(bot, UserID, "Your request has timed out, please click the button again from the channel if you still want to message the other members of this run.")
       conn.close()
       return
 

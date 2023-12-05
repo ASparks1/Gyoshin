@@ -79,7 +79,8 @@ async def DismissMembers(bot, message, UserID):
     CanDismiss = None
     while not CanDismiss:
       try:
-        await DMHelper.DMUserByID(bot, UserID, f"Do you want to dismiss {MembersToDismissMessage} from {RaidName} on {LocalDate}? (Y/N)")
+        LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+        await DMHelper.DMUserByID(bot, UserID, f"Do you want to dismiss {MembersToDismissMessage} from {RaidName} on {LocalDateDisplay}? (Y/N)")
         response = await bot.wait_for(event='message', timeout=60, check=DMCheck)
         if response.content in("Y","y","Yes","yes"):
           CanDismiss = 'yes'
@@ -91,7 +92,7 @@ async def DismissMembers(bot, message, UserID):
           UpdatedMessage = await MessageHelper.UpdateRaidInfoMessage(message, bot, UserID)
           if UpdatedMessage:
             await message.edit(content=UpdatedMessage)
-          await message.channel.send(f"{MembersToDismissMessage} {DismissMessage} from {RaidName} on {LocalDate}.")
+          await message.channel.send(f"{MembersToDismissMessage} {DismissMessage} from {RaidName} on {LocalDateDisplay}.")
         elif response.content in("N","n","No","no"):
           CanDismiss = "no"
           return

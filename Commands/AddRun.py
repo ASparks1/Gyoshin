@@ -5,30 +5,30 @@ from Helpers import UserHelper
 from Helpers import DMHelper
 from Commands import Templates
 
-async def AddRunInDM(message, bot):
+async def AddRunInDM(ctx, bot):
   try:
-    Origin = await OriginHelper.GetOrigin(message)
-    GuildName = await OriginHelper.GetName(message)
-    UserID = message.author.id
-    CreatorDisplay = await UserHelper.GetDisplayName(message, UserID, bot)
-    ChannelID = message.channel.id
+    UserID = ctx.author.id
+    Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
+    GuildName = await OriginHelper.GetName(ctx, bot, UserID)
+    CreatorDisplay = await UserHelper.GetDisplayName(ctx, UserID, bot)
+    ChannelID = ctx.channel.id
   except:
      await DMHelper.DMUserByID(bot, UserID, "Something went wrong when gathering server and user information.")
      return
 
   try:
-    Name = await AddRunHelper.GetRunName(bot, message, UserID, CreatorDisplay, GuildName)
+    Name = await AddRunHelper.GetRunName(bot, ctx, UserID, CreatorDisplay, GuildName)
     if Name:
-      DateTime = await AddRunHelper.GetRunDateTime(bot, message, UserID)
+      DateTime = await AddRunHelper.GetRunDateTime(bot, ctx, UserID)
     else:
       return
     if DateTime:
-      sqldatetime = await DateTimeFormatHelper.LocalToSqlite(message, DateTime)
+      sqldatetime = await DateTimeFormatHelper.LocalToSqlite(ctx, DateTime)
     else:
       return
     if sqldatetime:
-      await Templates.GetTemplates(message)
-      UsingTemplate = await AddRunHelper.UseTemplateQuestion(bot, message, UserID, Origin)
+      await Templates.GetTemplates(ctx, bot)
+      UsingTemplate = await AddRunHelper.UseTemplateQuestion(bot, ctx, UserID, Origin)
     else:
       return
   except:
@@ -36,22 +36,22 @@ async def AddRunInDM(message, bot):
     return
 
   if UsingTemplate == 'yes':
-    await AddRunHelper.UseTemplateToCreateRun(bot, message, UserID, Origin, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime)
+    await AddRunHelper.UseTemplateToCreateRun(bot, ctx, UserID, Origin, CreatorDisplay, ChannelID, Name, DateTime, sqldatetime)
   else:
     ValidNrOfPlayers = None
     try:
       while not ValidNrOfPlayers:
-        NrOfPlayers = await AddRunHelper.GetNrOfPlayers(bot, message, UserID)
-        NrOfTanks = await AddRunHelper.GetNrOfTanks(bot, message, UserID)
-        NrOfDps = await AddRunHelper.GetNrOfDPS(bot, message, UserID)
-        NrOfHealers = await AddRunHelper.GetNrOfHealers(bot, message, UserID)
+        NrOfPlayers = await AddRunHelper.GetNrOfPlayers(bot, ctx, UserID)
+        NrOfTanks = await AddRunHelper.GetNrOfTanks(bot, ctx, UserID)
+        NrOfDps = await AddRunHelper.GetNrOfDPS(bot, ctx, UserID)
+        NrOfHealers = await AddRunHelper.GetNrOfHealers(bot, ctx, UserID)
 
         if NrOfPlayers != NrOfTanks + NrOfDps + NrOfHealers:
           await DMHelper.DMUserByID(bot, UserID, "Please ensure the total of each role equals the total number of players required.")
         else:
           ValidNrOfPlayers = "yes"
 
-      RoleID = await AddRunHelper.GetOrganizerRoleID(bot, message, UserID, NrOfTanks, NrOfDps, NrOfHealers)
+      RoleID = await AddRunHelper.GetOrganizerRoleID(bot, ctx, UserID, NrOfTanks, NrOfDps, NrOfHealers)
       if RoleID == 1:
         NumberOfCurrentTanks = 1
         NumberOfCurrentDps = 0
@@ -66,10 +66,10 @@ async def AddRunInDM(message, bot):
         NumberOfCurrentDps = 0
 
       Status = await AddRunHelper.GetRunStatusToSet(NrOfPlayers)
-      Confirm = await AddRunHelper.SummarizeRunInfoForConfirmation(bot, message, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
+      Confirm = await AddRunHelper.SummarizeRunInfoForConfirmation(bot, ctx, UserID, Name, DateTime, NrOfTanks, NrOfHealers, NrOfDps)
 
       if Confirm == "yes":
-        await AddRunHelper.CreateRun(bot, message, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
+        await AddRunHelper.CreateRun(bot, ctx, UserID, Name, Origin, sqldatetime, NrOfPlayers, NrOfTanks, NumberOfCurrentTanks, NrOfDps, NumberOfCurrentDps, NrOfHealers, NumberOfCurrentHealers, Status, ChannelID, RoleID, CreatorDisplay, DateTime)
       if Confirm == "no":
         await DMHelper.DMUserByID(bot, UserID, "Your request to create a run has been cancelled, please call the command again in the relevant channel if you wish to try again.")
     except:

@@ -1,7 +1,8 @@
 import sqlite3
 import re
+import discord
 from datetime import datetime
-from discord_components import *
+from discord.ui import Button, View
 from Helpers import OriginHelper
 from Helpers import UserHelper
 from Helpers import RoleIconHelper
@@ -11,20 +12,16 @@ from Helpers import DateTimeFormatHelper
 from Helpers import ReactionHelper
 from Helpers import RaidIDHelper
 from Helpers import ButtonInteractionHelper
+from Helpers import ButtonRowHelper
 
-async def ListRunsOnDate(message, bot):
-  Origin = await OriginHelper.GetOrigin(message)
+async def ListRunsOnDate(ctx, bot, date):
+  UserID = ctx.author.id
+  Origin = await OriginHelper.GetOrigin(ctx, bot, UserID)
   if not Origin:
-    return
-
-  if message.content == '!runs':
-    await DMHelper.DMUser(message, "Incomplete command received, please provide the date as well")
     return
 
   conn = sqlite3.connect('RaidPlanner.db')
   c = conn.cursor()
-  splitmessage = str.split(message.content, ' ')
-  date = splitmessage[1]
   pattern = re.compile(r'(\d{2})-(\d{2})-(\d{4})')
   match = pattern.match(date)
 
@@ -36,14 +33,13 @@ async def ListRunsOnDate(message, bot):
     sqlitedate = f"{year}-{month}-{day}"
 
     try:
-      current_date = datetime.utcnow().strftime("%Y-%m-%d")
+      current_date = discord.utils.utcnow().strftime("%Y-%m-%d")
       if sqlitedate < current_date:
-        await DMHelper.DMUser(message, "It's not possible to search on dates in the past")
+        await DMHelper.DMUserByID(bot, UserID, "It's not possible to search on dates in the past")
         conn.close()
-        await message.delete()
         return
     except:
-      await DMHelper.DMUser(message, "Unable to convert date from local to sqlite format")
+      await DMHelper.DMUserByID(bot, UserID, "Unable to convert date from local to sqlite format")
       conn.close()
       return
 
@@ -52,22 +48,21 @@ async def ListRunsOnDate(message, bot):
       DpsIcon = await RoleIconHelper.GetDpsIcon()
       HealerIcon = await RoleIconHelper.GetHealerIcon()
     except:
-      await DMHelper.DMUser(message, "Something went wrong retrieving role icons")
+      await DMHelper.DMUserByID(bot, UserID, "Something went wrong retrieving role icons")
       conn.close()
       return
 
     try:
-      ChannelID = message.channel.id
+      ChannelID = ctx.channel.id
       c.execute("SELECT ID, Name, OrganizerUserID, Status, NrOfTanksRequired, NrOfTanksSignedUp, NrOfDpsRequired, NrOfDpsSignedUp, NrOfHealersRequired, NrOfhealersSignedUp, Date FROM Raids WHERE Date like (?) AND Origin = (?) AND Status != 'Cancelled' AND ChannelID = (?) ORDER BY Date ASC, ID ASC", (sqlitedate+'%', Origin, ChannelID))
     except:
-      await DMHelper.DMUser(message, "Run not found")
+      await DMHelper.DMUserByID(bot, UserID, "Run not found")
       conn.close()
       return
 
-    await message.delete()
     rows = c.fetchall()
     if rows:
-      await message.channel.send(f"The following runs are planned on {date}:\n")
+      await ctx.channel.send(f"The following runs are planned on {date}:\n")
 
       for row in rows:
         try:
@@ -84,26 +79,72 @@ async def ListRunsOnDate(message, bot):
           Date = row[10]
           LocalDate = await DateTimeFormatHelper.SqliteToLocalNoCheck(Date)
           try:
-            OrganizerName = await UserHelper.GetDisplayName(message, OrganizerUserID, bot)
+            OrganizerName = await UserHelper.GetDisplayName(ctx, OrganizerUserID, bot)
           except:
-            await DMHelper.DMUser(message, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
+            await DMHelper.DMUserByID(bot, UserID, "Something went wrong getting the display name of the organizer, perhaps they have left the server")
             conn.close()
             return
 
         except:
-          await DMHelper.DMUser(message, "Unable to convert variables")
-          conn.close()
-          return
+         await DMHelper.DMUserByID(bot, UserID, "Unable to convert variables")
+         conn.close()
+         return
 
         if OrganizerName:
-          await message.channel.send(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date (UTC):** {LocalDate}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}",components=[[Button(style=ButtonStyle.blue, label="Tank", custom_id="tank_btn"),Button(style=ButtonStyle.red, label="DPS", custom_id="dps_btn"),Button(style=ButtonStyle.green, label="Healer", custom_id="healer_btn"),Button(style=ButtonStyle.grey, label="Rally", custom_id="rally_btn")],[Button(style=ButtonStyle.grey, label="Members", custom_id="members_btn"),Button(style=ButtonStyle.grey, label="Reserves", custom_id="reserves_btn"),Button(style=ButtonStyle.grey, label="Message members", custom_id="messageraidmembers_btn"),Button(style=ButtonStyle.grey, label="Dismiss members", custom_id="dismissmembers_btn")],[Button(style=ButtonStyle.grey, label="Edit description", custom_id="editdesc_btn"),Button(style=ButtonStyle.grey, label="New organizer", custom_id="neworganizer_btn"),Button(style=ButtonStyle.grey, label="Reschedule", custom_id="reschedule_btn"),Button(style=ButtonStyle.red, label="Cancel", custom_id="cancel_btn")]])
+          # Create buttons to add
+          tank_btn = Button(label="Tank", row=0, style=discord.ButtonStyle.primary, custom_id="tank_btn")
+          dps_btn = Button(label="Dps", row=0, style=discord.ButtonStyle.danger, custom_id="dps_btn")
+          healer_btn = Button(label="Healer", style=discord.ButtonStyle.success, custom_id="healer_btn")
+          rally_btn = Button(label="Rally", custom_id="rally_btn")
+          members_btn = Button(label="Members", row=1, custom_id="members_btn")
+          reserves_btn = Button(label="Reserves", row=1, custom_id="reserves_btn")
+          messageraidmembers_btn = Button(label="Message members", row=1, custom_id="messageraidmembers_btn")
+          dismissmembers_btn = Button(label="Dismiss members", row=1, custom_id="dismissmembers_btn")
+          editdesc_btn = Button(label="Edit description", row=2, custom_id="editdesc_btn")
+          neworganizer_btn = Button(label="New organizer", row=2, custom_id="neworganizer_btn")
+          reschedule_btn = Button(label="Reschedule", row=2, custom_id="reschedule_btn")
+          cancel_btn = Button(label="Cancel", row=2, style=discord.ButtonStyle.danger, custom_id="cancel_btn")
+
+          # Define button callback actions
+          async def button_callback(interaction):
+            await interaction.response.send_message(content="Processing", ephemeral=True)
+            await ButtonInteractionHelper.OnButtonClick(interaction, bot, ctx)
+          tank_btn.callback = button_callback
+          dps_btn.callback = button_callback
+          healer_btn.callback = button_callback
+          rally_btn.callback = button_callback
+          members_btn.callback = button_callback
+          reserves_btn.callback = button_callback
+          messageraidmembers_btn.callback = button_callback
+          dismissmembers_btn.callback = button_callback
+          editdesc_btn.callback = button_callback
+          neworganizer_btn.callback = button_callback
+          reschedule_btn.callback = button_callback
+          cancel_btn.callback = button_callback
+
+          # Create view and add buttons to it
+          view=View(timeout=None)
+          view.add_item(tank_btn)
+          view.add_item(dps_btn)
+          view.add_item(healer_btn)
+          view.add_item(rally_btn)
+          view.add_item(members_btn)
+          view.add_item(reserves_btn)
+          view.add_item(messageraidmembers_btn)
+          view.add_item(dismissmembers_btn)
+          view.add_item(editdesc_btn)
+          view.add_item(neworganizer_btn)
+          view.add_item(reschedule_btn)
+          view.add_item(cancel_btn)
+          LocalDateDisplay = await DateTimeFormatHelper.LocalToUnixTimestamp(LocalDate)
+          await ctx.respond(f"**Run:** {ID}\n**Description:** {Name}\n**Organizer:** {OrganizerName}\n**Date:** {LocalDateDisplay}\n**Status:** {Status}\n{TankIcon} {NrOfTanksSignedUp}\/{NrOfTanksRequired} {DpsIcon} {NrOfDpsSignedUp}\/{NrOfDpsRequired} {HealerIcon} {NrOfhealersSignedUp}\/{NrOfHealersRequired}", view=view)
 
     else:
-       await message.channel.send(f"No runs found on {date}")
+       await ctx.channel.send(f"No runs found on {date}")
        conn.close()
        return
   else:
-    await DMHelper.DMUser(message, "Invalid date and time detected please use the dd-mm-yyyy format")
+    await DMHelper.DMUserByID(bot, UserID, "Invalid date and time detected please use the dd-mm-yyyy format")
     conn.close()
     return
 
