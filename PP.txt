@@ -1,0 +1,43 @@
+Last Updated: 08-12-2023
+
+Welcome to the Gyoshin Raid Planner Bot Privacy Policy. This document outlines how the Bot collects, uses, and stores information related to your use of the Bot's services. 
+Please read this Privacy Policy carefully to understand our practices regarding your data.
+
+1. Information We Collect
+
+The Gyoshin Raid Planner Bot collects the following information:
+
+Discord Server IDs: The unique identifier assigned to each Discord server where the Bot is present.
+Channel IDs: The unique identifier assigned to the Discord channels within the server where the Bot is used.
+User IDs: The unique identifier assigned to each Discord user who interacts with the Bot.
+
+2. Purpose of Data Collection
+
+The collected information is used for the following purposes:
+
+Raid Planning: Gyoshin Raid Planner Bot utilizes Server IDs and Channel IDs to associate raids with specific Discord servers and channels.
+User Interaction: User IDs are used to manage and organize user participation in raids, allowing for effective communication and coordination.
+
+3. Data Storage Retention
+
+The Bot stores Discord Server IDs, Channel IDs, and User IDs associated with a raid for a maximum period of up to 24 hours after the scheduled raid time after which your data will be permanently deleted. 
+This temporary storage is essential for the Bot's functionality to facilitate raid planning and coordination.
+
+4. Data Security
+
+The Gyoshin Raid Planner Bot employs industry-standard security measures to protect the data collected. We take precautions to ensure that your information is treated securely and in accordance with this Privacy Policy.
+
+5. Data Sharing
+
+The Bot does not share or disclose user data with third parties. The information collected is used solely for the purpose of providing raid planning services within Discord servers.
+User Control Over Data
+
+Users have the right to manage their data by interacting with the Bot. This includes opting out of raid participation and removing their data associated with specific raids.
+
+6. Changes to the Privacy Policy
+
+The Bot reserves the right to update or modify this Privacy Policy at any time. Users will be notified of changes, and continued use of the Bot after changes are made constitutes acceptance of those changes.
+Contact Information
+
+For any questions or concerns regarding this Privacy Policy, please contact sparksmkii@gmail.com.
+By using the Gyoshin Raid Planner Bot, you agree to the terms outlined in this Privacy Policy. Thank you for using our service!
