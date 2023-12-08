@@ -29,8 +29,7 @@ The Bot does not guarantee the success or attendance of any raid. Users are resp
 6. Privacy
 
 The Gyoshin Raid Planner Bot collects and stores user data as necessary for its operation.
-The privacy of user data is important therefor we only store the following data (ServerIDs, ChannelIDs and UserIDs).
-This data is stored up to a maximum of 24 hours after the raid date and time you have signed up for after it will be permanently deleted.
+The privacy of user data is important, please refer to our Privacy Policy for details on how we handle your information.
 
 7. Intellectual Property
 
