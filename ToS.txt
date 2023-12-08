@@ -1,0 +1,62 @@
+Last Updated: 08-12-2023
+
+Welcome to the Gyoshin Raid Planner Bot! Please carefully read and understand the following Terms of Service ("Terms") before using the Bot. By using the Bot, you agree to comply with and be bound by these Terms. If you do not agree with any part of these Terms, please do not use the Bot.
+
+1. Acceptance of Terms
+
+By using the Gyoshin Raid Planner Bot, you agree to be bound by these Terms. If you do not agree to all the terms and conditions of this agreement, you may not use the Bot.
+
+2. Description of Service
+
+The Gyoshin Raid Planner Bot is a Discord bot designed to facilitate raid planning for games within Discord servers. It allows users to create, manage, and organize raids efficiently.
+
+3. Use of the Bot
+
+You agree to use the Gyoshin Raid Planner Bot only for lawful purposes and in a manner consistent with all applicable local, national, and international laws and regulations.
+
+4. User Responsibilities
+
+You are responsible for all activities that occur under your Discord account.
+You will not use the Gyoshin Raid Planner Bot for any illegal or unauthorized purpose.
+You agree not to access the Bot through any means other than the interface provided by Discord.
+You will not attempt to interfere with the proper functioning of the Gyoshin Raid Planner Bot.
+
+5. Raid Planning
+
+The Gyoshin Raid Planner Bot provides tools for raid planning, including creating raids, setting details, and managing members.
+The Bot does not guarantee the success or attendance of any raid. Users are responsible for promoting and managing their raids.
+
+6. Privacy
+
+The Gyoshin Raid Planner Bot collects and stores user data as necessary for its operation.
+The privacy of user data is important therefor we only store the following data (ServerIDs, ChannelIDs and UserIDs).
+This data is stored up to a maximum of 24 hours after the raid date and time you have signed up for after it will be permanently deleted.
+
+7. Intellectual Property
+
+The Gyoshin Raid Planner Bot and its original content, features, and functionality are and will remain the exclusive property of the Bot's creator.
+
+8. Changes to Terms
+
+The Gyoshin Raid Planner Bot reserves the right to modify these Terms at any time. Users will be notified of changes, and continued use of the Bot after changes are made constitutes acceptance of those changes.
+
+9. Termination
+
+The Gyoshin Raid Planner Bot reserves the right to terminate your access to the Bot at any time, without notice, for any reason.
+
+10. Disclaimer of Warranty
+
+The Gyoshin Raid Planner Bot is provided "as is" without warranties of any kind, whether express or implied.
+
+11. Limitation of Liability
+
+The Gyoshin Raid Planner Bot shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.
+
+12. Governing Law
+
+These Terms shall be governed and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+
+13. Contact Information
+
+For any questions about these Terms, please contact sparksmkii@gmail.com.
+By using the Gyoshin Raid Planner Bot, you agree to abide by these Terms of Service. Thank you for using our service!
